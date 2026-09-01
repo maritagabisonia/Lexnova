@@ -45,7 +45,6 @@ async function getSupabaseStatus() {
       };
     }
 
-    // A missing-table error still means the URL, anon key, and client work.
     return { ok: true, message: "Connected to Supabase." };
   } catch (error) {
     const message = error instanceof Error ? error.message : "Unknown error";
@@ -60,18 +59,12 @@ export default async function Home() {
   const supabaseStatus = await getSupabaseStatus();
 
   return (
-    <main className="flex min-h-full flex-1 flex-col items-center justify-center gap-6 px-6">
-      <h1 className="text-center text-5xl font-semibold tracking-tight sm:text-7xl">
-        LexNova — coming soon
-      </h1>
-      <p
-        className={`max-w-xl text-center text-sm sm:text-base ${
-          supabaseStatus.ok ? "text-zinc-600" : "text-zinc-500"
-        }`}
-      >
+    <section className="mx-auto flex w-full max-w-3xl flex-1 flex-col items-center justify-center px-6 py-20">
+      <h1 className="text-center text-4xl sm:text-6xl">LexNova — coming soon</h1>
+      <p className="mt-6 max-w-xl text-center text-sm text-ink-muted sm:text-base">
         {supabaseStatus.ok ? "Supabase: connected. " : "Supabase: not connected. "}
         {supabaseStatus.message}
       </p>
-    </main>
+    </section>
   );
 }
