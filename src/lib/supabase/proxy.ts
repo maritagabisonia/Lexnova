@@ -1,5 +1,13 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { isAdminPath, isDashboardPath } from "@/lib/auth-paths";
+
+function copyCookies(from: NextResponse, to: NextResponse) {
+  from.cookies.getAll().forEach(({ name, value, ...options }) => {
+    to.cookies.set(name, value, options);
+  });
+  return to;
+}
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -32,7 +40,34 @@ export async function updateSession(request: NextRequest) {
     },
   );
 
-  await supabase.auth.getUser();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  const pathname = request.nextUrl.pathname;
+  const needsAuth = isDashboardPath(pathname) || isAdminPath(pathname);
+
+  if (needsAuth && !user) {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.search = "";
+    return copyCookies(supabaseResponse, NextResponse.redirect(url));
+  }
+
+  if (isAdminPath(pathname) && user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+
+    if (profile?.role !== "admin") {
+      const url = request.nextUrl.clone();
+      url.pathname = "/not-authorized";
+      url.search = "";
+      return copyCookies(supabaseResponse, NextResponse.redirect(url));
+    }
+  }
 
   return supabaseResponse;
 }
