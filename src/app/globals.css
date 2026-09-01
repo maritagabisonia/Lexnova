@@ -1,0 +1,24 @@
+@import "tailwindcss";
+@config "../../tailwind.config.ts";
+
+@theme inline {
+  --font-sans: var(--font-source-sans);
+  --font-serif: var(--font-source-serif);
+}
+
+@layer base {
+  html {
+    @apply bg-paper text-ink;
+  }
+
+  body {
+    @apply min-h-full bg-paper font-sans text-ink antialiased;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    @apply font-serif tracking-tight text-ink;
+  }
+}
