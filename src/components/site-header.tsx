@@ -31,10 +31,10 @@ export function SiteHeader() {
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-sm tracking-wide ${
+                className={`text-sm tracking-wide transition-colors ${
                   current
                     ? "text-ink"
-                    : "text-ink-muted hover:text-ink"
+                    : "text-ink-muted hover:text-accent"
                 }`}
                 aria-current={current ? "page" : undefined}
               >
@@ -47,13 +47,13 @@ export function SiteHeader() {
         <div className="hidden items-center gap-4 md:flex">
           <Link
             href={authNav[0].href}
-            className="text-sm text-ink-muted hover:text-ink"
+            className="text-sm text-ink-muted transition-colors hover:text-accent"
           >
             {authNav[0].label}
           </Link>
           <Link
             href={authNav[1].href}
-            className="rounded-sm bg-ink px-4 py-2 text-sm text-paper hover:bg-ink-muted"
+            className="rounded-sm bg-ink px-4 py-2 text-sm text-paper transition-colors hover:bg-ink-muted"
           >
             {authNav[1].label}
           </Link>
