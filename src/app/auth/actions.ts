@@ -3,7 +3,6 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { authErrorMessage, originFromHeaders } from "@/lib/auth-errors";
-import { ensureStudentProfile } from "@/lib/ensure-student-profile";
 import { createClient } from "@/lib/supabase/server";
 
 export type AuthActionState = {
@@ -47,21 +46,6 @@ export async function register(
 
   if (data.user?.identities && data.user.identities.length === 0) {
     return { error: "That email is already registered." };
-  }
-
-  if (data.user && data.session) {
-    try {
-      await ensureStudentProfile(supabase, {
-        id: data.user.id,
-        fullName,
-        email: data.user.email ?? email,
-      });
-    } catch {
-      return {
-        error:
-          "Your account was created, but we could not save your profile. Please contact us.",
-      };
-    }
   }
 
   if (!data.session) {
