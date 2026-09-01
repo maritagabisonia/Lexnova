@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { ensureStudentProfile } from "@/lib/ensure-student-profile";
 import { createClient } from "@/lib/supabase/server";
 
 function safeNextPath(next: string | null) {
@@ -17,6 +18,28 @@ export async function GET(request: Request) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (user) {
+        const fullName =
+          typeof user.user_metadata?.full_name === "string"
+            ? user.user_metadata.full_name.trim()
+            : "";
+
+        try {
+          await ensureStudentProfile(supabase, {
+            id: user.id,
+            fullName,
+            email: user.email ?? "",
+          });
+        } catch {
+          // Profile may already exist via the signup trigger, or the
+          // table may not be applied yet. Do not block sign-in either way.
+        }
+      }
+
       return NextResponse.redirect(`${origin}${next}`);
     }
   }

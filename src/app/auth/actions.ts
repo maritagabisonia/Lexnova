@@ -3,37 +3,13 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { authErrorMessage, originFromHeaders } from "@/lib/auth-errors";
+import { ensureStudentProfile } from "@/lib/ensure-student-profile";
 import { createClient } from "@/lib/supabase/server";
 
 export type AuthActionState = {
   error?: string;
   success?: string;
 };
-
-async function createProfileForUser(input: {
-  id: string;
-  fullName: string;
-  email: string;
-}) {
-  const supabase = await createClient();
-  const { error } = await supabase.from("profiles").upsert(
-    {
-      id: input.id,
-      full_name: input.fullName,
-      email: input.email,
-      role: "student",
-    },
-    { onConflict: "id" },
-  );
-
-  if (error) {
-    const details = `${error.code ?? ""} ${error.message}`.toLowerCase();
-    if (details.includes("duplicate") || error.code === "23505") {
-      return;
-    }
-    throw error;
-  }
-}
 
 export async function register(
   _prev: AuthActionState,
@@ -75,7 +51,7 @@ export async function register(
 
   if (data.user && data.session) {
     try {
-      await createProfileForUser({
+      await ensureStudentProfile(supabase, {
         id: data.user.id,
         fullName,
         email: data.user.email ?? email,
