@@ -1,5 +1,10 @@
 -- Create a student profile whenever a new Auth user is created.
 -- Reads full_name from signup metadata so the row exists even before first login.
+-- Run after 0001 (profiles table) and 0002 (RLS). Tables created in the SQL
+-- editor may lack API grants, which would block profile inserts from the app.
+
+grant select, insert, update on table public.profiles to authenticated;
+grant all on table public.profiles to service_role;
 
 create or replace function public.handle_new_user()
 returns trigger

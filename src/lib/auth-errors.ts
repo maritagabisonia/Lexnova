@@ -1,6 +1,7 @@
 export function authErrorMessage(error: {
   message?: string;
   code?: string;
+  status?: number;
 } | null): string {
   if (!error) {
     return "Something went wrong. Please try again.";
@@ -8,6 +9,7 @@ export function authErrorMessage(error: {
 
   const code = (error.code ?? "").toLowerCase();
   const message = (error.message ?? "").toLowerCase();
+  const status = error.status ?? 0;
 
   if (
     code === "user_already_exists" ||
@@ -40,8 +42,10 @@ export function authErrorMessage(error: {
 
   if (
     code === "over_email_send_rate_limit" ||
+    status === 429 ||
     message.includes("rate limit") ||
-    message.includes("too many requests")
+    message.includes("too many requests") ||
+    message.includes("too many attempts")
   ) {
     return "Too many attempts. Please wait a minute and try again.";
   }
