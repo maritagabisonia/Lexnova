@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { logout } from "@/app/auth/actions";
 import { authNav, primaryNav, site } from "@/lib/site";
 
-export function SiteHeader() {
+export function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -45,18 +46,7 @@ export function SiteHeader() {
         </nav>
 
         <div className="hidden items-center gap-4 md:flex">
-          <Link
-            href={authNav[0].href}
-            className="text-sm text-ink-muted transition-colors hover:text-accent"
-          >
-            {authNav[0].label}
-          </Link>
-          <Link
-            href={authNav[1].href}
-            className="rounded-sm bg-ink px-4 py-2 text-sm text-paper transition-colors hover:bg-ink-muted"
-          >
-            {authNav[1].label}
-          </Link>
+          <AuthControls isLoggedIn={isLoggedIn} />
         </div>
 
         <button
@@ -113,24 +103,43 @@ export function SiteHeader() {
               );
             })}
             <div className="mt-2 flex items-center gap-4 border-t border-ink/10 pt-4">
-              <Link
-                href={authNav[0].href}
-                className="text-sm text-ink-muted"
-                onClick={() => setOpen(false)}
-              >
-                {authNav[0].label}
-              </Link>
-              <Link
-                href={authNav[1].href}
-                className="rounded-sm bg-ink px-4 py-2 text-sm text-paper"
-                onClick={() => setOpen(false)}
-              >
-                {authNav[1].label}
-              </Link>
+              <AuthControls isLoggedIn={isLoggedIn} />
             </div>
           </div>
         </nav>
       ) : null}
     </header>
+  );
+}
+
+function AuthControls({ isLoggedIn }: { isLoggedIn: boolean }) {
+  if (isLoggedIn) {
+    return (
+      <form action={logout}>
+        <button
+          type="submit"
+          className="text-sm text-ink-muted transition-colors hover:text-accent"
+        >
+          Log Out
+        </button>
+      </form>
+    );
+  }
+
+  return (
+    <>
+      <Link
+        href={authNav[0].href}
+        className="text-sm text-ink-muted transition-colors hover:text-accent"
+      >
+        {authNav[0].label}
+      </Link>
+      <Link
+        href={authNav[1].href}
+        className="rounded-sm bg-ink px-4 py-2 text-sm text-paper transition-colors hover:bg-ink-muted"
+      >
+        {authNav[1].label}
+      </Link>
+    </>
   );
 }
