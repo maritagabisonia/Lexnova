@@ -7,7 +7,7 @@ import {
   typeBadgeClass,
   typeLabel,
   type ProgramSummary,
-} from "@/lib/catalog";
+} from "@/lib/program-display";
 
 export function ProgramCard({ program }: { program: ProgramSummary }) {
   return (

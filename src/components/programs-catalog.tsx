@@ -7,7 +7,7 @@ import {
   programStatusFilters,
   programTypeFilters,
   type ProgramSummary,
-} from "@/lib/catalog";
+} from "@/lib/program-display";
 
 const selectClass =
   "w-full rounded-sm border border-ink/15 bg-paper px-3 py-2 text-sm text-ink";
@@ -118,7 +118,6 @@ export function ProgramsCatalog({
       </form>
 
       {programs.length > 0 ? (
-      {programs.length > 0 ? (
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-ink-muted">
           <p>
             Showing {filtered.length} of {programs.length} programs
@@ -133,7 +132,6 @@ export function ProgramsCatalog({
             </button>
           ) : null}
         </div>
-      ) : null}
       ) : null}
 
       {filtered.length > 0 ? (
