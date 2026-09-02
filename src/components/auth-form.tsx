@@ -32,12 +32,14 @@ export function Field({
   type = "text",
   autoComplete,
   required = true,
+  defaultValue,
 }: {
   id: string;
   label: string;
   type?: string;
   autoComplete?: string;
   required?: boolean;
+  defaultValue?: string;
 }) {
   return (
     <div className="space-y-1.5">
@@ -50,6 +52,7 @@ export function Field({
         type={type}
         autoComplete={autoComplete}
         required={required}
+        defaultValue={defaultValue}
         className="w-full rounded-sm border border-ink/15 bg-paper px-3 py-2 text-ink outline-none focus:border-accent"
       />
     </div>
