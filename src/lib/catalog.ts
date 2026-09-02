@@ -1,16 +1,18 @@
 import { createClient } from "@/lib/supabase/server";
+import type { ProgramSummary } from "@/lib/program-display";
 
-export type ProgramSummary = {
-  id: string;
-  title: string;
-  slug: string;
-  short_description: string | null;
-  status: string;
-  format: string;
-  type: string;
-  start_date: string | null;
-  created_at: string;
-};
+export type { ProgramSummary } from "@/lib/program-display";
+export {
+  formatDate,
+  formatLabel,
+  programFormatFilters,
+  programStatusFilters,
+  programTypeFilters,
+  statusBadgeClass,
+  statusLabel,
+  typeBadgeClass,
+  typeLabel,
+} from "@/lib/program-display";
 
 export type NewsSummary = {
   id: string;
@@ -23,45 +25,6 @@ export type NewsSummary = {
 
 const programFields =
   "id, title, slug, short_description, status, format, type, start_date, created_at";
-
-export function statusLabel(status: string) {
-  const labels: Record<string, string> = {
-    registration_open: "Registration open",
-    coming_soon: "Coming soon",
-    fully_booked: "Fully booked",
-    in_progress: "In progress",
-    completed: "Completed",
-    archived: "Archived",
-  };
-  return labels[status] ?? status.replaceAll("_", " ");
-}
-
-export function formatLabel(format: string) {
-  const labels: Record<string, string> = {
-    online: "Online",
-    in_person: "In person",
-    hybrid: "Hybrid",
-  };
-  return labels[format] ?? format.replaceAll("_", " ");
-}
-
-export function formatDate(value: string | null) {
-  if (!value) {
-    return null;
-  }
-
-  const [year, month, day] = value.split("-").map(Number);
-  if (!year || !month || !day) {
-    return value;
-  }
-
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "long",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(new Date(Date.UTC(year, month - 1, day)));
-}
 
 async function rowsOrEmpty<T>(query: PromiseLike<{ data: T[] | null; error: unknown }>) {
   try {
@@ -126,19 +89,15 @@ export async function getLatestNews() {
   return getPublishedNews(3);
 }
 
-export async function getPrograms(type?: string) {
+export async function getPrograms() {
   const supabase = await createClient();
-  let query = supabase
-    .from("programs")
-    .select(programFields)
-    .neq("status", "archived")
-    .order("start_date", { ascending: true });
-
-  if (type === "course" || type === "training") {
-    query = query.eq("type", type);
-  }
-
-  return rowsOrEmpty<ProgramSummary>(query);
+  return rowsOrEmpty<ProgramSummary>(
+    supabase
+      .from("programs")
+      .select(programFields)
+      .neq("status", "archived")
+      .order("start_date", { ascending: true, nullsFirst: false }),
+  );
 }
 
 export async function getProgramBySlug(slug: string) {
