@@ -45,6 +45,51 @@ export function formatLabel(format: string) {
   return labels[format] ?? format.replaceAll("_", " ");
 }
 
+export function typeLabel(type: string) {
+  const labels: Record<string, string> = {
+    course: "Course",
+    training: "Training",
+  };
+  return labels[type] ?? type.replaceAll("_", " ");
+}
+
+export const programTypeFilters = [
+  { value: "course", label: "Course" },
+  { value: "training", label: "Training" },
+] as const;
+
+export const programFormatFilters = [
+  { value: "online", label: "Online" },
+  { value: "in_person", label: "In person" },
+  { value: "hybrid", label: "Hybrid" },
+] as const;
+
+export const programStatusFilters = [
+  { value: "registration_open", label: "Registration open" },
+  { value: "coming_soon", label: "Coming soon" },
+  { value: "fully_booked", label: "Fully booked" },
+  { value: "in_progress", label: "In progress" },
+  { value: "completed", label: "Completed" },
+] as const;
+
+export function statusBadgeClass(status: string) {
+  const classes: Record<string, string> = {
+    registration_open: "border-transparent bg-accent text-ink",
+    coming_soon: "border-ink/15 bg-paper-muted text-ink",
+    fully_booked: "border-transparent bg-ink text-paper",
+    in_progress: "border-transparent bg-ink-muted text-paper",
+    completed: "border-ink/20 bg-transparent text-ink-muted",
+    archived: "border-ink/10 bg-transparent text-ink-muted",
+  };
+  return classes[status] ?? "border-ink/15 bg-paper-muted text-ink";
+}
+
+export function typeBadgeClass(type: string) {
+  return type === "training"
+    ? "border-accent/60 bg-transparent text-ink"
+    : "border-ink/20 bg-transparent text-ink";
+}
+
 export function formatDate(value: string | null) {
   if (!value) {
     return null;
@@ -126,19 +171,15 @@ export async function getLatestNews() {
   return getPublishedNews(3);
 }
 
-export async function getPrograms(type?: string) {
+export async function getPrograms() {
   const supabase = await createClient();
-  let query = supabase
-    .from("programs")
-    .select(programFields)
-    .neq("status", "archived")
-    .order("start_date", { ascending: true });
-
-  if (type === "course" || type === "training") {
-    query = query.eq("type", type);
-  }
-
-  return rowsOrEmpty<ProgramSummary>(query);
+  return rowsOrEmpty<ProgramSummary>(
+    supabase
+      .from("programs")
+      .select(programFields)
+      .neq("status", "archived")
+      .order("start_date", { ascending: true, nullsFirst: false }),
+  );
 }
 
 export async function getProgramBySlug(slug: string) {
