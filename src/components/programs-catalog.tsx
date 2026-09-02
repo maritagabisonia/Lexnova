@@ -117,11 +117,15 @@ export function ProgramsCatalog({
         </label>
       </form>
 
-      {programs.length > 0 ? (
+      {programs.length > 0 || filtersActive ? (
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-ink-muted">
-          <p>
-            Showing {filtered.length} of {programs.length} programs
-          </p>
+          {programs.length > 0 ? (
+            <p>
+              Showing {filtered.length} of {programs.length} programs
+            </p>
+          ) : (
+            <p />
+          )}
           {filtersActive ? (
             <button
               type="button"
