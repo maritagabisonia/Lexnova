@@ -55,7 +55,7 @@ export async function register(
     };
   }
 
-  redirect("/");
+  redirect("/dashboard");
 }
 
 export async function login(
@@ -76,7 +76,7 @@ export async function login(
     return { error: authErrorMessage(error) };
   }
 
-  redirect("/");
+  redirect("/dashboard");
 }
 
 export async function logout() {

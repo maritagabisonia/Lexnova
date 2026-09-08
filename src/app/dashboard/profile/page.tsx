@@ -22,12 +22,14 @@ export default async function ProfilePage() {
   const email = profile?.email || user.email || "";
 
   return (
-    <section className="mx-auto w-full max-w-md flex-1 px-6 py-16">
+    <section>
       <h1 className="text-3xl sm:text-4xl">Profile</h1>
       <p className="mt-3 text-sm text-ink-muted">
         Update your name or choose a new password.
       </p>
-      <ProfileForms fullName={fullName} email={email} />
+      <div className="max-w-md">
+        <ProfileForms fullName={fullName} email={email} />
+      </div>
     </section>
   );
 }
