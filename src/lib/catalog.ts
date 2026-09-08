@@ -22,7 +22,11 @@ export type NewsSummary = {
   short_description: string | null;
   published_at: string | null;
   author: string | null;
+  cover_image_url: string | null;
 };
+
+const newsSummaryFields =
+  "id, title, slug, short_description, published_at, author, cover_image_url";
 
 const programFields =
   "id, title, slug, short_description, status, format, type, start_date, created_at";
@@ -74,16 +78,19 @@ export async function getUpcomingPrograms() {
   );
 }
 
-export async function getPublishedNews(limit = 20) {
+export async function getPublishedNews(limit?: number) {
   const supabase = await createClient();
-  return rowsOrEmpty<NewsSummary>(
-    supabase
-      .from("news_articles")
-      .select("id, title, slug, short_description, published_at, author")
-      .eq("published", true)
-      .order("published_at", { ascending: false, nullsFirst: false })
-      .limit(limit),
-  );
+  let query = supabase
+    .from("news_articles")
+    .select(newsSummaryFields)
+    .eq("published", true)
+    .order("published_at", { ascending: false, nullsFirst: false });
+
+  if (limit) {
+    query = query.limit(limit);
+  }
+
+  return rowsOrEmpty<NewsSummary>(query);
 }
 
 export async function getLatestNews() {
@@ -221,20 +228,58 @@ function rowsOrEmptySync<T>(data: T[] | null | undefined, error: unknown) {
   return data;
 }
 
-export async function getNewsBySlug(slug: string) {
+export type NewsArticle = {
+  id: string;
+  title: string;
+  slug: string;
+  short_description: string | null;
+  content: string | null;
+  author: string | null;
+  published_at: string | null;
+  cover_image_url: string | null;
+  relatedProgram: ProgramSummary | null;
+};
+
+export async function getNewsBySlug(slug: string): Promise<NewsArticle | null> {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("news_articles")
-      .select("id, title, slug, short_description, content, author, published_at")
+      .select(
+        "id, title, slug, short_description, content, author, published_at, cover_image_url, related_program_id",
+      )
       .eq("slug", slug)
       .eq("published", true)
       .maybeSingle();
 
-    if (error) {
+    if (error || !data) {
       return null;
     }
-    return data;
+
+    let relatedProgram: ProgramSummary | null = null;
+    if (data.related_program_id) {
+      const { data: program, error: programError } = await supabase
+        .from("programs")
+        .select(programFields)
+        .eq("id", data.related_program_id)
+        .maybeSingle();
+
+      if (!programError && program) {
+        relatedProgram = program;
+      }
+    }
+
+    return {
+      id: data.id,
+      title: data.title,
+      slug: data.slug,
+      short_description: data.short_description,
+      content: data.content,
+      author: data.author,
+      published_at: data.published_at,
+      cover_image_url: data.cover_image_url,
+      relatedProgram,
+    };
   } catch {
     return null;
   }
