@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
 import type { ProgramSummary } from "@/lib/program-display";
 
@@ -150,7 +151,9 @@ export type ProgramDetail = {
 const programDetailFields =
   "id, type, title, slug, short_description, full_description, target_audience, objectives, learning_outcomes, duration_text, start_date, end_date, registration_deadline, format, location, lecturer_id, max_participants, status";
 
-export async function getProgramBySlug(slug: string): Promise<ProgramDetail | null> {
+export const getProgramBySlug = cache(async function getProgramBySlug(
+  slug: string,
+): Promise<ProgramDetail | null> {
   try {
     const supabase = await createClient();
     const { data: program, error } = await supabase
@@ -216,6 +219,27 @@ export async function getProgramBySlug(slug: string): Promise<ProgramDetail | nu
   } catch {
     return null;
   }
+});
+
+export async function getProgramSitemapEntries() {
+  const supabase = await createClient();
+  return rowsOrEmpty<{ slug: string; updated_at: string }>(
+    supabase
+      .from("programs")
+      .select("slug, updated_at")
+      .order("updated_at", { ascending: false }),
+  );
+}
+
+export async function getPublishedNewsSitemapEntries() {
+  const supabase = await createClient();
+  return rowsOrEmpty<{ slug: string; published_at: string | null }>(
+    supabase
+      .from("news_articles")
+      .select("slug, published_at")
+      .eq("published", true)
+      .order("published_at", { ascending: false, nullsFirst: false }),
+  );
 }
 
 function rowsOrEmptySync<T>(data: T[] | null | undefined, error: unknown) {
@@ -240,7 +264,9 @@ export type NewsArticle = {
   relatedProgram: ProgramSummary | null;
 };
 
-export async function getNewsBySlug(slug: string): Promise<NewsArticle | null> {
+export const getNewsBySlug = cache(async function getNewsBySlug(
+  slug: string,
+): Promise<NewsArticle | null> {
   try {
     const supabase = await createClient();
     const { data, error } = await supabase
@@ -283,4 +309,4 @@ export async function getNewsBySlug(slug: string): Promise<NewsArticle | null> {
   } catch {
     return null;
   }
-}
+});

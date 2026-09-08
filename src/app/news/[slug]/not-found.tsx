@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Article not found",
+  description: "That article is not published, or it is not in the catalog.",
+};
 
 export default function NewsNotFound() {
   return (

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { publicPages } from "@/lib/seo";
 import { LoginForm } from "./login-form";
 
-export const metadata: Metadata = {
-  title: "Log in",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return publicPages.login;
+}
 
 export default async function LoginPage({
   searchParams,

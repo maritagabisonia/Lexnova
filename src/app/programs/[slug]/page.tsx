@@ -13,6 +13,7 @@ import {
   type ProgramDetail,
   type ProgramSession,
 } from "@/lib/catalog";
+import { descriptionFromFields } from "@/lib/seo";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -21,7 +22,16 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const program = await getProgramBySlug(slug);
-  return { title: program?.title ?? "Program" };
+  if (!program) {
+    return { title: "Program" };
+  }
+
+  return {
+    title: program.title,
+    description:
+      descriptionFromFields(program.short_description, program.full_description) ??
+      `A LexNova ${typeLabel(program.type).toLowerCase()}.`,
+  };
 }
 
 export default async function ProgramDetailPage({ params }: Props) {

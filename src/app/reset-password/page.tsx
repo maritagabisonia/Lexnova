@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { publicPages } from "@/lib/seo";
 import { createClient } from "@/lib/supabase/server";
 import { ResetPasswordForm } from "./reset-password-form";
 
-export const metadata: Metadata = {
-  title: "Reset password",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return publicPages.resetPassword;
+}
 
 export default async function ResetPasswordPage() {
   const supabase = await createClient();

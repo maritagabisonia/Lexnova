@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { ContactFaq } from "@/app/contact/faq";
 import { ContactForm } from "@/app/contact/contact-form";
+import { publicPages } from "@/lib/seo";
 import { site, socialLinks } from "@/lib/site";
 
-export const metadata: Metadata = {
-  title: "Contact",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return publicPages.contact;
+}
 
 export default function ContactPage() {
   return (

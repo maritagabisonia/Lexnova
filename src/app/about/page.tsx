@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
+import { publicPages } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "About",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return publicPages.about;
+}
 
 /**
  * Renders an HTML comment in the page source so placeholder copy is easy to

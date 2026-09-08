@@ -4,6 +4,7 @@ import { notFound } from "next/navigation";
 import { CoverImage } from "@/components/cover-image";
 import { ProgramCard } from "@/components/program-card";
 import { formatDate, getNewsBySlug } from "@/lib/catalog";
+import { descriptionFromFields } from "@/lib/seo";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -12,7 +13,16 @@ type Props = {
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const article = await getNewsBySlug(slug);
-  return { title: article?.title ?? "News" };
+  if (!article) {
+    return { title: "News" };
+  }
+
+  return {
+    title: article.title,
+    description:
+      descriptionFromFields(article.short_description, article.content) ??
+      article.title,
+  };
 }
 
 export default async function NewsArticlePage({ params }: Props) {

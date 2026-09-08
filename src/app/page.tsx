@@ -1,5 +1,6 @@
+import type { Metadata } from "next";
 import Link from "next/link";
-import { site } from "@/lib/site";
+import { ProgramCard } from "@/components/program-card";
 import {
   formatDate,
   formatLabel,
@@ -7,7 +8,12 @@ import {
   getLatestNews,
   getUpcomingPrograms,
 } from "@/lib/catalog";
-import { ProgramCard } from "@/components/program-card";
+import { publicPages } from "@/lib/seo";
+import { site } from "@/lib/site";
+
+export async function generateMetadata(): Promise<Metadata> {
+  return publicPages.home;
+}
 
 export default async function Home() {
   const [featured, upcoming, news] = await Promise.all([

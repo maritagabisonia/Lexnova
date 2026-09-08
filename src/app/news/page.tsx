@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { NewsCard } from "@/components/news-card";
 import { getPublishedNews } from "@/lib/catalog";
+import { publicPages } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "News",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return publicPages.news;
+}
 
 export default async function NewsIndexPage() {
   const news = await getPublishedNews();

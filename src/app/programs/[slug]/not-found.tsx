@@ -1,4 +1,10 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = {
+  title: "Program not found",
+  description: "That program is not in the catalog.",
+};
 
 export default function ProgramNotFound() {
   return (
