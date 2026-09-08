@@ -93,3 +93,16 @@ export function formatDate(value: string | null) {
     timeZone: "UTC",
   }).format(new Date(Date.UTC(year, month - 1, day)));
 }
+
+export function formatTime(value: string | null) {
+  if (!value) {
+    return null;
+  }
+
+  const [hours, minutes] = value.split(":");
+  if (hours == null || minutes == null) {
+    return value;
+  }
+
+  return `${hours.padStart(2, "0")}:${minutes.slice(0, 2).padStart(2, "0")}`;
+}

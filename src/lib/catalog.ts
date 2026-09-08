@@ -5,6 +5,7 @@ export type { ProgramSummary } from "@/lib/program-display";
 export {
   formatDate,
   formatLabel,
+  formatTime,
   programFormatFilters,
   programStatusFilters,
   programTypeFilters,
@@ -100,24 +101,124 @@ export async function getPrograms() {
   );
 }
 
-export async function getProgramBySlug(slug: string) {
+export type LecturerSummary = {
+  full_name: string;
+  photo_url: string | null;
+  bio: string | null;
+  title: string | null;
+};
+
+export type ProgramSession = {
+  id: string;
+  session_date: string;
+  start_time: string;
+  end_time: string;
+  location: string | null;
+  format: string;
+};
+
+export type ProgramDetail = {
+  id: string;
+  type: string;
+  title: string;
+  slug: string;
+  short_description: string | null;
+  full_description: string | null;
+  target_audience: string | null;
+  objectives: string | null;
+  learning_outcomes: string | null;
+  duration_text: string | null;
+  start_date: string | null;
+  end_date: string | null;
+  registration_deadline: string | null;
+  format: string;
+  location: string | null;
+  max_participants: number | null;
+  status: string;
+  lecturer: LecturerSummary | null;
+  sessions: ProgramSession[];
+  registeredCount: number | null;
+};
+
+const programDetailFields =
+  "id, type, title, slug, short_description, full_description, target_audience, objectives, learning_outcomes, duration_text, start_date, end_date, registration_deadline, format, location, lecturer_id, max_participants, status";
+
+export async function getProgramBySlug(slug: string): Promise<ProgramDetail | null> {
   try {
     const supabase = await createClient();
-    const { data, error } = await supabase
+    const { data: program, error } = await supabase
       .from("programs")
-      .select(
-        "id, title, slug, short_description, full_description, status, format, type, start_date, end_date, duration_text, location",
-      )
+      .select(programDetailFields)
       .eq("slug", slug)
       .maybeSingle();
 
-    if (error) {
+    if (error || !program) {
       return null;
     }
-    return data;
+
+    const [lecturerResult, sessionsResult, countResult] = await Promise.all([
+      supabase
+        .from("lecturers")
+        .select("full_name, photo_url, bio, title")
+        .eq("id", program.lecturer_id)
+        .maybeSingle(),
+      supabase
+        .from("program_sessions")
+        .select("id, session_date, start_time, end_time, location, format")
+        .eq("program_id", program.id)
+        .order("session_date", { ascending: true })
+        .order("start_time", { ascending: true }),
+      program.max_participants
+        ? supabase.rpc("confirmed_registration_count", {
+            p_program_id: program.id,
+          })
+        : Promise.resolve({ data: null, error: null }),
+    ]);
+
+    let registeredCount: number | null = null;
+    if (program.max_participants) {
+      if (countResult.error || countResult.data == null) {
+        registeredCount = null;
+      } else {
+        registeredCount = Number(countResult.data);
+      }
+    }
+
+    return {
+      id: program.id,
+      type: program.type,
+      title: program.title,
+      slug: program.slug,
+      short_description: program.short_description,
+      full_description: program.full_description,
+      target_audience: program.target_audience,
+      objectives: program.objectives,
+      learning_outcomes: program.learning_outcomes,
+      duration_text: program.duration_text,
+      start_date: program.start_date,
+      end_date: program.end_date,
+      registration_deadline: program.registration_deadline,
+      format: program.format,
+      location: program.location,
+      max_participants: program.max_participants,
+      status: program.status,
+      lecturer: lecturerResult.data ?? null,
+      sessions: rowsOrEmptySync(sessionsResult.data, sessionsResult.error),
+      registeredCount,
+    };
   } catch {
     return null;
   }
+}
+
+function rowsOrEmptySync<T>(data: T[] | null | undefined, error: unknown) {
+  if (error || !data) {
+    if (error) {
+      console.error("Catalog query failed:", error);
+    }
+    return [] as T[];
+  }
+  return data;
 }
 
 export async function getNewsBySlug(slug: string) {
