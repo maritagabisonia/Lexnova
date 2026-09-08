@@ -16,7 +16,7 @@ export default async function ProgramsPage({
   const programs = await getPrograms();
 
   return (
-    <section className="mx-auto w-full max-w-6xl flex-1 px-6 py-16">
+    <section className="mx-auto w-full max-w-6xl flex-1 px-4 py-16 sm:px-6">
       <h1 className="text-3xl sm:text-5xl">Programs</h1>
       <p className="mt-4 max-w-2xl text-sm text-ink-muted sm:text-base">
         Courses and trainings currently offered by LexNova.

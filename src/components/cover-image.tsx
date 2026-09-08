@@ -10,7 +10,7 @@ export function CoverImage({
   if (!src) {
     return (
       <div
-        className={`flex items-center justify-center bg-paper-muted font-serif text-ink-muted ${className}`}
+        className={`flex max-w-full items-center justify-center bg-paper-muted font-serif text-ink-muted ${className}`}
         aria-hidden="true"
       >
         News
@@ -20,6 +20,6 @@ export function CoverImage({
 
   return (
     // eslint-disable-next-line @next/next/no-img-element
-    <img src={src} alt={alt} className={`object-cover ${className}`} />
+    <img src={src} alt={alt} className={`max-w-full object-cover ${className}`} />
   );
 }

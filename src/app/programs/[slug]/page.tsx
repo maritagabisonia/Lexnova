@@ -48,9 +48,9 @@ export default async function ProgramDetailPage({ params }: Props) {
   const capacityLine = programCapacityLine(program);
 
   return (
-    <article className="mx-auto w-full max-w-3xl flex-1 px-6 py-16">
+    <article className="mx-auto w-full max-w-3xl flex-1 px-4 py-16 sm:px-6">
       <p className="text-sm text-ink-muted">
-        <Link href="/programs" className="hover:text-accent">
+        <Link href="/programs" className="inline-flex min-h-11 items-center hover:text-accent">
           Programs
         </Link>
       </p>
@@ -90,7 +90,7 @@ export default async function ProgramDetailPage({ params }: Props) {
         {canRegister ? (
           <Link
             href="/register"
-            className="inline-flex rounded-sm bg-ink px-6 py-3 text-sm text-paper transition-colors hover:bg-ink-muted"
+            className="inline-flex min-h-11 items-center justify-center rounded-sm bg-ink px-6 text-sm text-paper transition-colors hover:bg-ink-muted"
           >
             Register
           </Link>
@@ -98,7 +98,7 @@ export default async function ProgramDetailPage({ params }: Props) {
           <button
             type="button"
             disabled
-            className="inline-flex cursor-not-allowed rounded-sm border border-ink/20 bg-paper-muted px-6 py-3 text-sm text-ink-muted"
+            className="inline-flex min-h-11 cursor-not-allowed items-center justify-center rounded-sm border border-ink/20 bg-paper-muted px-6 text-sm text-ink-muted"
           >
             {statusLabel(program.status)}
           </button>
@@ -201,7 +201,7 @@ function LecturerSection({
           <img
             src={lecturer.photo_url}
             alt={lecturer.full_name}
-            className="h-36 w-36 shrink-0 object-cover"
+            className="h-36 w-36 max-w-full shrink-0 object-cover"
           />
         ) : (
           <div
@@ -233,37 +233,56 @@ function ScheduleTable({ sessions }: { sessions: ProgramSession[] }) {
   }
 
   return (
-    <div className="mt-4 overflow-x-auto">
-      <table className="w-full min-w-[28rem] border-collapse text-left text-sm">
-        <thead>
-          <tr className="border-b border-ink/15 text-xs tracking-wide text-ink-muted">
-            <th className="py-2 pr-4 font-medium">Date</th>
-            <th className="py-2 pr-4 font-medium">Time</th>
-            <th className="py-2 pr-4 font-medium">Format</th>
-            <th className="py-2 font-medium">Location</th>
-          </tr>
-        </thead>
-        <tbody>
-          {sessions.map((session) => (
-            <tr key={session.id} className="border-b border-ink/10">
-              <td className="py-3 pr-4 text-ink">
-                {formatDate(session.session_date)}
-              </td>
-              <td className="py-3 pr-4 text-ink-muted">
-                {formatTime(session.start_time)} – {formatTime(session.end_time)}
-              </td>
-              <td className="py-3 pr-4 text-ink-muted">
-                {formatLabel(session.format)}
-              </td>
-              <td className="py-3 text-ink-muted">
-                {session.format === "online"
-                  ? "Online"
-                  : session.location || "—"}
-              </td>
+    <>
+      <ul className="mt-4 space-y-3 sm:hidden">
+        {sessions.map((session) => (
+          <li
+            key={session.id}
+            className="border border-ink/10 bg-paper p-4 text-sm leading-relaxed"
+          >
+            <p className="text-ink">{formatDate(session.session_date)}</p>
+            <p className="mt-1 text-ink-muted">
+              {formatTime(session.start_time)} – {formatTime(session.end_time)}
+            </p>
+            <p className="mt-1 text-ink-muted">{formatLabel(session.format)}</p>
+            <p className="mt-1 text-ink-muted">
+              {session.format === "online" ? "Online" : session.location || "—"}
+            </p>
+          </li>
+        ))}
+      </ul>
+      <div className="mt-4 hidden overflow-x-auto sm:block">
+        <table className="w-full border-collapse text-left text-sm">
+          <thead>
+            <tr className="border-b border-ink/15 text-xs tracking-wide text-ink-muted">
+              <th className="py-2 pr-4 font-medium">Date</th>
+              <th className="py-2 pr-4 font-medium">Time</th>
+              <th className="py-2 pr-4 font-medium">Format</th>
+              <th className="py-2 font-medium">Location</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {sessions.map((session) => (
+              <tr key={session.id} className="border-b border-ink/10">
+                <td className="py-3 pr-4 text-ink">
+                  {formatDate(session.session_date)}
+                </td>
+                <td className="whitespace-nowrap py-3 pr-4 text-ink-muted">
+                  {formatTime(session.start_time)} – {formatTime(session.end_time)}
+                </td>
+                <td className="py-3 pr-4 text-ink-muted">
+                  {formatLabel(session.format)}
+                </td>
+                <td className="py-3 text-ink-muted">
+                  {session.format === "online"
+                    ? "Online"
+                    : session.location || "—"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </>
   );
 }

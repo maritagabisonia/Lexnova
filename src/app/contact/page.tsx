@@ -11,7 +11,7 @@ export async function generateMetadata(): Promise<Metadata> {
 export default function ContactPage() {
   return (
     <div className="flex flex-1 flex-col">
-      <section className="mx-auto w-full max-w-6xl px-6 py-16">
+      <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
         <h1 className="text-3xl sm:text-5xl">Contact</h1>
         <p className="mt-4 max-w-2xl text-sm text-ink-muted sm:text-base">
           Write to us about programs, group bookings, or a question about your
@@ -28,12 +28,18 @@ export default function ContactPage() {
               <address className="mt-3 not-italic leading-relaxed text-ink-muted">
                 <p>{site.address}</p>
                 <p className="mt-2">
-                  <a className="text-ink hover:text-accent" href={`mailto:${site.email}`}>
+                  <a
+                    className="inline-flex min-h-11 items-center text-ink hover:text-accent"
+                    href={`mailto:${site.email}`}
+                  >
                     {site.email}
                   </a>
                 </p>
-                <p className="mt-1">
-                  <a className="text-ink hover:text-accent" href={`tel:${site.phone}`}>
+                <p>
+                  <a
+                    className="inline-flex min-h-11 items-center text-ink hover:text-accent"
+                    href={`tel:${site.phone}`}
+                  >
                     {site.phone}
                   </a>
                 </p>
@@ -43,12 +49,12 @@ export default function ContactPage() {
             {/* PLACEHOLDER: Social links */}
             <div>
               <h2 className="text-xl">Follow</h2>
-              <ul className="mt-3 space-y-2 text-ink-muted">
+              <ul className="mt-3 text-ink-muted">
                 {socialLinks.map((item) => (
                   <li key={item.href}>
                     <a
                       href={item.href}
-                      className="text-ink hover:text-accent"
+                      className="inline-flex min-h-11 items-center text-ink hover:text-accent"
                       rel="noreferrer"
                     >
                       {item.label}
@@ -62,7 +68,7 @@ export default function ContactPage() {
       </section>
 
       <section className="border-t border-ink/10 bg-paper-muted/50">
-        <div className="mx-auto w-full max-w-6xl px-6 py-16">
+        <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
           <h2 className="text-3xl">FAQ</h2>
           <p className="mt-2 text-sm text-ink-muted">
             Short answers while we write the full handbook.

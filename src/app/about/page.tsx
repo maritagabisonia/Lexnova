@@ -22,7 +22,7 @@ function PlaceholderComment({ name }: { name: string }) {
 export default function AboutPage() {
   return (
     <div className="flex flex-1 flex-col">
-      <section className="mx-auto w-full max-w-6xl px-6 py-16 sm:py-20">
+      <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
         <p className="text-sm tracking-wide text-accent">About</p>
         <h1 className="mt-3 max-w-3xl text-4xl sm:text-6xl">
           A legal education center, in public.
@@ -37,7 +37,7 @@ export default function AboutPage() {
       </section>
 
       <section className="border-t border-ink/10">
-        <div className="mx-auto w-full max-w-6xl px-6 py-16">
+        <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
           <h2 className="text-3xl">Mission</h2>
           {/* PLACEHOLDER: Mission */}
           <PlaceholderComment name="Mission" />
@@ -52,7 +52,7 @@ export default function AboutPage() {
       </section>
 
       <section className="border-t border-ink/10 bg-paper-muted/50">
-        <div className="mx-auto w-full max-w-6xl px-6 py-16">
+        <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
           <h2 className="text-3xl">Vision</h2>
           {/* PLACEHOLDER: Vision */}
           <PlaceholderComment name="Vision" />
@@ -66,7 +66,7 @@ export default function AboutPage() {
       </section>
 
       <section className="border-t border-ink/10">
-        <div className="mx-auto w-full max-w-6xl px-6 py-16">
+        <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
           <h2 className="text-3xl">Objectives</h2>
           {/* PLACEHOLDER: Objectives */}
           <PlaceholderComment name="Objectives" />
@@ -92,7 +92,7 @@ export default function AboutPage() {
       </section>
 
       <section className="border-t border-ink/10 bg-paper-muted/50">
-        <div className="mx-auto w-full max-w-6xl px-6 py-16">
+        <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
           <h2 className="text-3xl">Main Areas of Activity</h2>
           {/* PLACEHOLDER: Main Areas of Activity */}
           <PlaceholderComment name="Main Areas of Activity" />
@@ -134,7 +134,7 @@ export default function AboutPage() {
       </section>
 
       <section className="border-t border-ink/10">
-        <div className="mx-auto w-full max-w-6xl px-6 py-16">
+        <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
           <h2 className="text-3xl">Team</h2>
           {/* PLACEHOLDER: Team */}
           <PlaceholderComment name="Team" />

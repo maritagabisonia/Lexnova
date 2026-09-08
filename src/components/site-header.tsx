@@ -13,7 +13,7 @@ export function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
   return (
     <header className="border-b border-ink/10 bg-paper/95 backdrop-blur">
       <div className="h-1 bg-accent" aria-hidden="true" />
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-6 py-4">
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6 sm:py-4">
         <Link
           href="/"
           className="font-serif text-2xl tracking-tight text-ink"
@@ -51,7 +51,7 @@ export function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
 
         <button
           type="button"
-          className="inline-flex items-center justify-center rounded-sm border border-ink/15 p-2 text-ink md:hidden"
+          className="inline-flex size-11 items-center justify-center rounded-sm border border-ink/15 text-ink md:hidden"
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen((value) => !value)}
@@ -84,17 +84,19 @@ export function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
       {open ? (
         <nav
           id="mobile-nav"
-          className="border-t border-ink/10 px-6 py-4 md:hidden"
+          className="border-t border-ink/10 px-4 py-3 sm:px-6 md:hidden"
           aria-label="Mobile"
         >
-          <div className="flex flex-col gap-3">
+          <div className="flex flex-col">
             {primaryNav.map((item) => {
               const current = pathname === item.href;
               return (
                 <Link
                   key={item.href}
                   href={item.href}
-                  className={`text-base ${current ? "text-ink" : "text-ink-muted"}`}
+                  className={`flex min-h-11 items-center text-base ${
+                    current ? "text-ink" : "text-ink-muted"
+                  }`}
                   aria-current={current ? "page" : undefined}
                   onClick={() => setOpen(false)}
                 >
@@ -102,8 +104,8 @@ export function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
                 </Link>
               );
             })}
-            <div className="mt-2 flex items-center gap-4 border-t border-ink/10 pt-4">
-              <AuthControls isLoggedIn={isLoggedIn} />
+            <div className="mt-2 flex flex-col gap-2 border-t border-ink/10 pt-4">
+              <AuthControls isLoggedIn={isLoggedIn} stacked />
             </div>
           </div>
         </nav>
@@ -112,13 +114,23 @@ export function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
   );
 }
 
-function AuthControls({ isLoggedIn }: { isLoggedIn: boolean }) {
+function AuthControls({
+  isLoggedIn,
+  stacked = false,
+}: {
+  isLoggedIn: boolean;
+  stacked?: boolean;
+}) {
   if (isLoggedIn) {
     return (
       <form action={logout}>
         <button
           type="submit"
-          className="text-sm text-ink-muted transition-colors hover:text-accent"
+          className={
+            stacked
+              ? "flex min-h-11 w-full items-center text-base text-ink-muted transition-colors hover:text-accent"
+              : "text-sm text-ink-muted transition-colors hover:text-accent"
+          }
         >
           Log Out
         </button>
@@ -130,13 +142,21 @@ function AuthControls({ isLoggedIn }: { isLoggedIn: boolean }) {
     <>
       <Link
         href={authNav[0].href}
-        className="text-sm text-ink-muted transition-colors hover:text-accent"
+        className={
+          stacked
+            ? "flex min-h-11 items-center text-base text-ink-muted transition-colors hover:text-accent"
+            : "text-sm text-ink-muted transition-colors hover:text-accent"
+        }
       >
         {authNav[0].label}
       </Link>
       <Link
         href={authNav[1].href}
-        className="rounded-sm bg-ink px-4 py-2 text-sm text-paper transition-colors hover:bg-ink-muted"
+        className={
+          stacked
+            ? "inline-flex min-h-11 items-center justify-center rounded-sm bg-ink px-4 text-sm text-paper transition-colors hover:bg-ink-muted"
+            : "rounded-sm bg-ink px-4 py-2 text-sm text-paper transition-colors hover:bg-ink-muted"
+        }
       >
         {authNav[1].label}
       </Link>

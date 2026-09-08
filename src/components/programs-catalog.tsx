@@ -10,7 +10,7 @@ import {
 } from "@/lib/program-display";
 
 const selectClass =
-  "w-full rounded-sm border border-ink/15 bg-paper px-3 py-2 text-sm text-ink";
+  "min-h-11 w-full rounded-sm border border-ink/15 bg-paper px-3 py-2 text-sm text-ink";
 
 export function ProgramsCatalog({
   programs,
@@ -130,7 +130,7 @@ export function ProgramsCatalog({
             <button
               type="button"
               onClick={clearFilters}
-              className="text-ink hover:text-accent"
+              className="inline-flex min-h-11 items-center text-ink hover:text-accent"
             >
               Clear filters
             </button>
