@@ -49,7 +49,7 @@ export function ContactFaq() {
                 type="button"
                 aria-expanded={expanded}
                 aria-controls={panelId}
-                className="flex w-full items-center justify-between gap-4 py-4 text-left text-base text-ink hover:text-accent"
+                className="flex min-h-11 w-full items-center justify-between gap-4 py-3 text-left text-base text-ink hover:text-accent"
                 onClick={() => setOpen(expanded ? null : index)}
               >
                 <span>{item.question}</span>

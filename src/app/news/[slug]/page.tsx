@@ -38,9 +38,9 @@ export default async function NewsArticlePage({ params }: Props) {
     : null;
 
   return (
-    <article className="mx-auto w-full max-w-3xl flex-1 px-6 py-16">
+    <article className="mx-auto w-full max-w-3xl flex-1 px-4 py-16 sm:px-6">
       <p className="text-sm text-ink-muted">
-        <Link href="/news" className="hover:text-accent">
+        <Link href="/news" className="inline-flex min-h-11 items-center hover:text-accent">
           News
         </Link>
       </p>

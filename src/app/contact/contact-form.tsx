@@ -40,13 +40,13 @@ export function ContactForm() {
           name="message"
           required
           rows={6}
-          className="w-full rounded-sm border border-ink/15 bg-paper px-3 py-2 text-ink outline-none focus:border-accent"
+          className="min-h-32 w-full rounded-sm border border-ink/15 bg-paper px-3 py-2 text-ink outline-none focus:border-accent"
         />
       </div>
       <button
         type="submit"
         disabled={pending}
-        className="rounded-sm bg-ink px-5 py-2.5 text-sm text-paper transition-colors hover:bg-ink-muted disabled:opacity-60"
+        className="inline-flex min-h-11 items-center justify-center rounded-sm bg-ink px-5 text-sm text-paper transition-colors hover:bg-ink-muted disabled:opacity-60"
       >
         {pending ? "Sending…" : "Send message"}
       </button>

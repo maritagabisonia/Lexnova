@@ -11,7 +11,7 @@ export default async function NewsIndexPage() {
   const news = await getPublishedNews();
 
   return (
-    <section className="mx-auto w-full max-w-6xl flex-1 px-6 py-16">
+    <section className="mx-auto w-full max-w-6xl flex-1 px-4 py-16 sm:px-6">
       <h1 className="text-3xl sm:text-5xl">News</h1>
       <p className="mt-4 max-w-2xl text-sm text-ink-muted sm:text-base">
         Notes from LexNova on programs, teaching, and public legal education.

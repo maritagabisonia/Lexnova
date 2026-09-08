@@ -5,7 +5,7 @@ export function SiteFooter() {
 
   return (
     <footer className="border-t border-accent/40 bg-ink text-paper">
-      <div className="mx-auto grid max-w-6xl gap-10 px-6 py-12 md:grid-cols-3">
+      <div className="mx-auto grid max-w-6xl gap-10 px-4 py-12 sm:px-6 md:grid-cols-3">
         <div className="space-y-3">
           <p className="font-serif text-2xl tracking-tight">{site.name}</p>
           <p className="max-w-xs text-sm leading-relaxed text-paper/80">
@@ -17,12 +17,18 @@ export function SiteFooter() {
           <p className="font-medium text-paper">Contact</p>
           <p>{site.address}</p>
           <p>
-            <a className="hover:text-accent" href={`mailto:${site.email}`}>
+            <a
+              className="inline-flex min-h-11 items-center hover:text-accent md:min-h-0"
+              href={`mailto:${site.email}`}
+            >
               {site.email}
             </a>
           </p>
           <p>
-            <a className="hover:text-accent" href={`tel:${site.phone}`}>
+            <a
+              className="inline-flex min-h-11 items-center hover:text-accent md:min-h-0"
+              href={`tel:${site.phone}`}
+            >
               {site.phone}
             </a>
           </p>

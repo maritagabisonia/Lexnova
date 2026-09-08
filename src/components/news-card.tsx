@@ -33,7 +33,7 @@ export function NewsCard({ article }: { article: NewsSummary }) {
         )}
         <Link
           href={`/news/${article.slug}`}
-          className="mt-5 text-sm text-ink hover:text-accent"
+          className="mt-5 inline-flex min-h-11 items-center text-sm text-ink hover:text-accent"
         >
           Read article
         </Link>
