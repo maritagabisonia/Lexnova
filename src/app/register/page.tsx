@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { publicPages } from "@/lib/seo";
 import { RegisterForm } from "./register-form";
 
-export const metadata: Metadata = {
-  title: "Register",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return publicPages.register;
+}
 
 export default function RegisterPage() {
   return (

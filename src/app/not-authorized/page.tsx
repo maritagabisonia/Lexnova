@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { publicPages } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Not authorized",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return publicPages.notAuthorized;
+}
 
 export default function NotAuthorizedPage() {
   return (

@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
+import { publicPages } from "@/lib/seo";
 import { ForgotPasswordForm } from "./forgot-password-form";
 
-export const metadata: Metadata = {
-  title: "Forgot password",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return publicPages.forgotPassword;
+}
 
 export default function ForgotPasswordPage() {
   return (

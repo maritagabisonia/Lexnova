@@ -1,10 +1,11 @@
 import type { Metadata } from "next";
 import { ProgramsCatalog } from "@/components/programs-catalog";
 import { getPrograms } from "@/lib/catalog";
+import { publicPages } from "@/lib/seo";
 
-export const metadata: Metadata = {
-  title: "Programs",
-};
+export async function generateMetadata(): Promise<Metadata> {
+  return publicPages.programs;
+}
 
 export default async function ProgramsPage({
   searchParams,
