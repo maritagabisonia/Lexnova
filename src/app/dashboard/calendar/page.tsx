@@ -2,25 +2,25 @@ import type { Metadata } from "next";
 import Link from "next/link";
 
 export const metadata: Metadata = {
-  title: "My Courses",
+  title: "Calendar",
 };
 
-export default function MyCoursesPage() {
+export default function CalendarPage() {
   return (
     <section>
-      <h1 className="text-3xl sm:text-4xl">My Courses</h1>
+      <h1 className="text-3xl sm:text-4xl">Calendar</h1>
       <p className="mt-3 max-w-xl text-sm text-ink-muted sm:text-base">
-        Courses and trainings you are registered for.
+        Upcoming sessions for the programs you are registered for.
       </p>
       <p className="mt-8 text-sm text-ink-muted">
-        You have not registered for a program yet.
+        No sessions to show yet.
       </p>
       <p className="mt-2">
         <Link
-          href="/programs"
+          href="/dashboard"
           className="inline-flex min-h-11 items-center text-sm text-ink hover:text-accent"
         >
-          Browse programs
+          View your courses
         </Link>
       </p>
     </section>

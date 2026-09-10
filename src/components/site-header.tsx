@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { logout } from "@/app/auth/actions";
+import { isDashboardPath } from "@/lib/auth-paths";
 import { authNav, primaryNav, site } from "@/lib/site";
 
 export function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
@@ -121,20 +122,40 @@ function AuthControls({
   isLoggedIn: boolean;
   stacked?: boolean;
 }) {
+  const pathname = usePathname();
+  const onDashboard = isDashboardPath(pathname);
+
   if (isLoggedIn) {
     return (
-      <form action={logout}>
-        <button
-          type="submit"
+      <>
+        <Link
+          href="/dashboard"
           className={
             stacked
-              ? "flex min-h-11 w-full items-center text-base text-ink-muted transition-colors hover:text-accent"
-              : "text-sm text-ink-muted transition-colors hover:text-accent"
+              ? `flex min-h-11 items-center text-base ${
+                  onDashboard ? "text-ink" : "text-ink-muted"
+                } transition-colors hover:text-accent`
+              : `text-sm transition-colors hover:text-accent ${
+                  onDashboard ? "text-ink" : "text-ink-muted"
+                }`
           }
+          aria-current={onDashboard ? "page" : undefined}
         >
-          Log Out
-        </button>
-      </form>
+          Dashboard
+        </Link>
+        <form action={logout}>
+          <button
+            type="submit"
+            className={
+              stacked
+                ? "flex min-h-11 w-full items-center text-base text-ink-muted transition-colors hover:text-accent"
+                : "text-sm text-ink-muted transition-colors hover:text-accent"
+            }
+          >
+            Log Out
+          </button>
+        </form>
+      </>
     );
   }
 

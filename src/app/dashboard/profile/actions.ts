@@ -33,7 +33,7 @@ export async function updateFullName(
     data: { full_name: fullName },
   });
 
-  revalidatePath("/dashboard/profile");
+  revalidatePath("/dashboard", "layout");
   return { success: "Your name has been saved." };
 }
 
