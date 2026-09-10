@@ -106,3 +106,15 @@ export function formatTime(value: string | null) {
 
   return `${hours.padStart(2, "0")}:${minutes.slice(0, 2).padStart(2, "0")}`;
 }
+
+export function todayIsoDate() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+/** Deadline day is still open. No deadline means registration is not time-limited. */
+export function isRegistrationDeadlineOpen(deadline: string | null) {
+  if (!deadline) {
+    return true;
+  }
+  return todayIsoDate() <= deadline;
+}

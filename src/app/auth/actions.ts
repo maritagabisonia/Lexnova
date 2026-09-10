@@ -3,6 +3,7 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { authErrorMessage, originFromHeaders } from "@/lib/auth-errors";
+import { safeNextPath } from "@/lib/auth-paths";
 import { createClient } from "@/lib/supabase/server";
 
 export type AuthActionState = {
@@ -30,13 +31,14 @@ export async function register(
 
   const supabase = await createClient();
   const origin = originFromHeaders(await headers());
+  const next = safeNextPath(String(formData.get("next") ?? ""), "/dashboard");
 
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: {
       data: { full_name: fullName },
-      emailRedirectTo: `${origin}/auth/callback?next=/`,
+      emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(next)}`,
     },
   });
 
@@ -55,7 +57,7 @@ export async function register(
     };
   }
 
-  redirect("/dashboard");
+  redirect(next);
 }
 
 export async function login(
@@ -76,7 +78,7 @@ export async function login(
     return { error: authErrorMessage(error) };
   }
 
-  redirect("/dashboard");
+  redirect(safeNextPath(String(formData.get("next") ?? ""), "/dashboard"));
 }
 
 export async function logout() {

@@ -1,12 +1,13 @@
 import { cache } from "react";
 import { createClient } from "@/lib/supabase/server";
-import type { ProgramSummary } from "@/lib/program-display";
+import { todayIsoDate, type ProgramSummary } from "@/lib/program-display";
 
 export type { ProgramSummary } from "@/lib/program-display";
 export {
   formatDate,
   formatLabel,
   formatTime,
+  isRegistrationDeadlineOpen,
   programFormatFilters,
   programStatusFilters,
   programTypeFilters,
@@ -46,10 +47,6 @@ async function rowsOrEmpty<T>(query: PromiseLike<{ data: T[] | null; error: unkn
     console.error("Catalog query failed:", error);
     return [] as T[];
   }
-}
-
-function todayIsoDate() {
-  return new Date().toISOString().slice(0, 10);
 }
 
 export async function getFeaturedPrograms() {
