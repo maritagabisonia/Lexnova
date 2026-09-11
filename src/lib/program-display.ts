@@ -94,6 +94,24 @@ export function formatDate(value: string | null) {
   }).format(new Date(Date.UTC(year, month - 1, day)));
 }
 
+/** Month and day only, e.g. "September 15". */
+export function formatCalendarDate(value: string | null) {
+  if (!value) {
+    return null;
+  }
+
+  const [year, month, day] = value.split("-").map(Number);
+  if (!year || !month || !day) {
+    return value;
+  }
+
+  return new Intl.DateTimeFormat("en-US", {
+    month: "long",
+    day: "numeric",
+    timeZone: "UTC",
+  }).format(new Date(Date.UTC(year, month - 1, day)));
+}
+
 export function formatTime(value: string | null) {
   if (!value) {
     return null;
