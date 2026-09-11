@@ -17,7 +17,7 @@ export default function CalendarPage() {
       </p>
       <p className="mt-2">
         <Link
-          href="/dashboard"
+          href="/dashboard/courses"
           className="inline-flex min-h-11 items-center text-sm text-ink hover:text-accent"
         >
           View your courses

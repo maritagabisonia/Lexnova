@@ -102,6 +102,7 @@ export async function registerForProgram(
 
   revalidatePath(returnPath);
   revalidatePath("/dashboard");
+  revalidatePath("/dashboard/courses");
   return {
     success: registrationSuccessMessage(program.title),
   };
