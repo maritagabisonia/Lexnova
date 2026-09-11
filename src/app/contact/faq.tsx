@@ -7,7 +7,7 @@ const faqs = [
   {
     question: "How do I register for a course or training?",
     answer:
-      "Open the program page and use Register while status is registration open. You will create a LexNova account first; enrollment itself will be confirmed from that account in a later step.",
+      "Open the program page and use Register while registration is open. If you are not signed in, you will be asked to log in (or create a student account) and then returned to the program to complete enrollment.",
   },
   {
     question: "Will I receive a certificate?",

@@ -6,6 +6,7 @@ import {
   formatLabel,
   formatTime,
   getProgramBySlug,
+  isRegistrationDeadlineOpen,
   statusBadgeClass,
   statusLabel,
   typeBadgeClass,
@@ -14,6 +15,8 @@ import {
   type ProgramSession,
 } from "@/lib/catalog";
 import { descriptionFromFields } from "@/lib/seo";
+import { createClient } from "@/lib/supabase/server";
+import { ProgramRegisterForm } from "./register-form";
 
 type Props = {
   params: Promise<{ slug: string }>;
@@ -42,7 +45,28 @@ export default async function ProgramDetailPage({ params }: Props) {
     notFound();
   }
 
-  const canRegister = program.status === "registration_open";
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  let alreadyRegistered = false;
+  if (user) {
+    const { data: existing } = await supabase
+      .from("registrations")
+      .select("id")
+      .eq("program_id", program.id)
+      .eq("student_id", user.id)
+      .maybeSingle();
+    alreadyRegistered = Boolean(existing);
+  }
+
+  const deadlineOpen = isRegistrationDeadlineOpen(program.registration_deadline);
+  const fullyBooked =
+    program.max_participants != null &&
+    program.registeredCount != null &&
+    program.registeredCount >= program.max_participants;
+  const registrationOpen = program.status === "registration_open" && deadlineOpen;
   const showLocation = program.format !== "online" && Boolean(program.location);
   const dateLine = programDateLine(program);
   const capacityLine = programCapacityLine(program);
@@ -87,22 +111,13 @@ export default async function ProgramDetailPage({ params }: Props) {
       </dl>
 
       <div className="mt-8">
-        {canRegister ? (
-          <Link
-            href="/register"
-            className="inline-flex min-h-11 items-center justify-center rounded-sm bg-ink px-6 text-sm text-paper transition-colors hover:bg-ink-muted"
-          >
-            Register
-          </Link>
-        ) : (
-          <button
-            type="button"
-            disabled
-            className="inline-flex min-h-11 cursor-not-allowed items-center justify-center rounded-sm border border-ink/20 bg-paper-muted px-6 text-sm text-ink-muted"
-          >
-            {statusLabel(program.status)}
-          </button>
-        )}
+        <RegisterCta
+          slug={program.slug}
+          status={program.status}
+          alreadyRegistered={alreadyRegistered}
+          fullyBooked={fullyBooked}
+          registrationOpen={registrationOpen}
+        />
       </div>
 
       <div className="mt-10 whitespace-pre-wrap text-base leading-relaxed text-ink">
@@ -145,6 +160,50 @@ export default async function ProgramDetailPage({ params }: Props) {
         <ScheduleTable sessions={program.sessions} />
       </section>
     </article>
+  );
+}
+
+function RegisterCta({
+  slug,
+  status,
+  alreadyRegistered,
+  fullyBooked,
+  registrationOpen,
+}: {
+  slug: string;
+  status: string;
+  alreadyRegistered: boolean;
+  fullyBooked: boolean;
+  registrationOpen: boolean;
+}) {
+  if (alreadyRegistered) {
+    return <ProgramRegisterForm slug={slug} alreadyRegistered />;
+  }
+
+  if (fullyBooked) {
+    return <DisabledCta label="Fully Booked" />;
+  }
+
+  if (registrationOpen) {
+    return <ProgramRegisterForm slug={slug} />;
+  }
+
+  if (status === "registration_open") {
+    return <DisabledCta label="Registration closed" />;
+  }
+
+  return <DisabledCta label={statusLabel(status)} />;
+}
+
+function DisabledCta({ label }: { label: string }) {
+  return (
+    <button
+      type="button"
+      disabled
+      className="inline-flex min-h-11 cursor-not-allowed items-center justify-center rounded-sm border border-ink/20 bg-paper-muted px-6 text-sm text-ink-muted"
+    >
+      {label}
+    </button>
   );
 }
 

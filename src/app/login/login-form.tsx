@@ -7,11 +7,12 @@ import { AuthMessage, Field } from "@/components/auth-form";
 
 const initialState: AuthActionState = {};
 
-export function LoginForm() {
+export function LoginForm({ next = "/dashboard" }: { next?: string }) {
   const [state, action, pending] = useActionState(login, initialState);
 
   return (
     <form action={action} className="space-y-5">
+      <input type="hidden" name="next" value={next} />
       <AuthMessage state={state} />
       <Field id="email" label="Email" type="email" autoComplete="email" />
       <Field
@@ -34,7 +35,10 @@ export function LoginForm() {
       </p>
       <p className="text-center text-sm text-ink-muted">
         New to LexNova?{" "}
-        <Link href="/register" className="text-ink hover:text-accent">
+        <Link
+          href={`/register?next=${encodeURIComponent(next)}`}
+          className="text-ink hover:text-accent"
+        >
           Register
         </Link>
       </p>

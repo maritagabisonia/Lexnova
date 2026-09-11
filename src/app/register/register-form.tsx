@@ -7,11 +7,12 @@ import { AuthMessage, Field } from "@/components/auth-form";
 
 const initialState: AuthActionState = {};
 
-export function RegisterForm() {
+export function RegisterForm({ next = "/dashboard" }: { next?: string }) {
   const [state, action, pending] = useActionState(register, initialState);
 
   return (
     <form action={action} className="space-y-5">
+      <input type="hidden" name="next" value={next} />
       <AuthMessage state={state} />
       <Field id="fullName" label="Full name" autoComplete="name" />
       <Field id="email" label="Email" type="email" autoComplete="email" />
@@ -30,7 +31,10 @@ export function RegisterForm() {
       </button>
       <p className="text-center text-sm text-ink-muted">
         Already have an account?{" "}
-        <Link href="/login" className="text-ink hover:text-accent">
+        <Link
+          href={`/login?next=${encodeURIComponent(next)}`}
+          className="text-ink hover:text-accent"
+        >
           Log in
         </Link>
       </p>
