@@ -1,28 +1,5 @@
-import type { Metadata } from "next";
-import Link from "next/link";
+import { redirect } from "next/navigation";
 
-export const metadata: Metadata = {
-  title: "My Courses",
-};
-
-export default function MyCoursesPage() {
-  return (
-    <section>
-      <h1 className="text-3xl sm:text-4xl">My Courses</h1>
-      <p className="mt-3 max-w-xl text-sm text-ink-muted sm:text-base">
-        Courses and trainings you are registered for.
-      </p>
-      <p className="mt-8 text-sm text-ink-muted">
-        You have not registered for a program yet.
-      </p>
-      <p className="mt-2">
-        <Link
-          href="/programs"
-          className="inline-flex min-h-11 items-center text-sm text-ink hover:text-accent"
-        >
-          Browse programs
-        </Link>
-      </p>
-    </section>
-  );
+export default function DashboardIndexPage() {
+  redirect("/dashboard/courses");
 }

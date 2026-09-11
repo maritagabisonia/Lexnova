@@ -1,12 +1,12 @@
 export const dashboardNav = [
-  { href: "/dashboard", label: "My Courses" },
+  { href: "/dashboard/courses", label: "My Courses" },
   { href: "/dashboard/calendar", label: "Calendar" },
   { href: "/dashboard/profile", label: "Profile" },
 ] as const;
 
 export function isDashboardNavActive(pathname: string, href: string) {
-  if (href === "/dashboard") {
-    return pathname === "/dashboard";
+  if (href === "/dashboard/courses") {
+    return pathname === "/dashboard" || pathname === "/dashboard/courses";
   }
   return pathname === href || pathname.startsWith(`${href}/`);
 }
