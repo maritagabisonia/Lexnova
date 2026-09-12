@@ -12,7 +12,7 @@ export type SessionActionState = {
 };
 
 function editPath(programId: string, result: "added" | "saved" | "deleted") {
-  return `/admin/programs/${programId}/edit?session=${result}`;
+  return `/admin/programs/${programId}/edit?tab=sessions&session=${result}`;
 }
 
 function revalidateSessionPaths(slug?: string, programId?: string) {

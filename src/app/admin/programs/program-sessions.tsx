@@ -45,7 +45,7 @@ export function ProgramSessions({
   );
 
   return (
-    <div className="mt-12 max-w-3xl border-t border-ink/10 pt-8">
+    <div className="mt-8 max-w-3xl">
       {notice ? (
         <p
           role="status"
