@@ -92,7 +92,7 @@ export const getAdminLecturers = cache(async function getAdminLecturers(): Promi
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("lecturers")
-      .select("id, full_name")
+      .select("id, full_name, title")
       .order("full_name", { ascending: true });
     if (error || !data) {
       if (error) {
@@ -100,7 +100,11 @@ export const getAdminLecturers = cache(async function getAdminLecturers(): Promi
       }
       return [];
     }
-    return data.map((row) => ({ id: row.id, fullName: row.full_name }));
+    return data.map((row) => ({
+      id: row.id,
+      fullName: row.full_name,
+      title: row.title,
+    }));
   } catch (error) {
     console.error("Admin lecturers list failed:", error);
     return [];

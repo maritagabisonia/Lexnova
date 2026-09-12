@@ -18,6 +18,7 @@ export const programFormatOptions = [
 export type AdminLecturerOption = {
   id: string;
   fullName: string;
+  title?: string | null;
 };
 
 export type ProgramFormValues = {

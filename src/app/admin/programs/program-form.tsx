@@ -121,7 +121,9 @@ export function ProgramForm({
           { value: "", label: "Select a lecturer" },
           ...lecturers.map((lecturer) => ({
             value: lecturer.id,
-            label: lecturer.fullName,
+            label: lecturer.title
+              ? `${lecturer.fullName} — ${lecturer.title}`
+              : lecturer.fullName,
           })),
         ]}
       />
