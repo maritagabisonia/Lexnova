@@ -34,13 +34,23 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
     data: { user },
   } = await supabase.auth.getUser();
 
+  let isAdmin = false;
+  if (user) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", user.id)
+      .maybeSingle();
+    isAdmin = profile?.role === "admin";
+  }
+
   return (
     <html
       lang="en"
       className={`${sourceSans.variable} ${sourceSerif.variable} h-full`}
     >
       <body className="flex min-h-full flex-col">
-        <SiteHeader isLoggedIn={Boolean(user)} />
+        <SiteHeader isLoggedIn={Boolean(user)} isAdmin={isAdmin} />
         <main className="flex flex-1 flex-col">{children}</main>
         <SiteFooter />
       </body>

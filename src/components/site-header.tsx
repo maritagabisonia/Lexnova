@@ -4,10 +4,16 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { logout } from "@/app/auth/actions";
-import { isDashboardPath } from "@/lib/auth-paths";
+import { isAdminPath, isDashboardPath } from "@/lib/auth-paths";
 import { authNav, primaryNav, site } from "@/lib/site";
 
-export function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
+export function SiteHeader({
+  isLoggedIn,
+  isAdmin = false,
+}: {
+  isLoggedIn: boolean;
+  isAdmin?: boolean;
+}) {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -47,7 +53,7 @@ export function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
         </nav>
 
         <div className="hidden items-center gap-4 md:flex">
-          <AuthControls isLoggedIn={isLoggedIn} />
+          <AuthControls isLoggedIn={isLoggedIn} isAdmin={isAdmin} />
         </div>
 
         <button
@@ -106,7 +112,7 @@ export function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
               );
             })}
             <div className="mt-2 flex flex-col gap-2 border-t border-ink/10 pt-4">
-              <AuthControls isLoggedIn={isLoggedIn} stacked />
+              <AuthControls isLoggedIn={isLoggedIn} isAdmin={isAdmin} stacked />
             </div>
           </div>
         </nav>
@@ -117,17 +123,37 @@ export function SiteHeader({ isLoggedIn }: { isLoggedIn: boolean }) {
 
 function AuthControls({
   isLoggedIn,
+  isAdmin = false,
   stacked = false,
 }: {
   isLoggedIn: boolean;
+  isAdmin?: boolean;
   stacked?: boolean;
 }) {
   const pathname = usePathname();
   const onDashboard = isDashboardPath(pathname);
+  const onAdmin = isAdminPath(pathname);
 
   if (isLoggedIn) {
     return (
       <>
+        {isAdmin ? (
+          <Link
+            href="/admin"
+            className={
+              stacked
+                ? `flex min-h-11 items-center text-base ${
+                    onAdmin ? "text-ink" : "text-ink-muted"
+                  } transition-colors hover:text-accent`
+                : `text-sm transition-colors hover:text-accent ${
+                    onAdmin ? "text-ink" : "text-ink-muted"
+                  }`
+            }
+            aria-current={onAdmin ? "page" : undefined}
+          >
+            Admin
+          </Link>
+        ) : null}
         <Link
           href="/dashboard"
           className={
