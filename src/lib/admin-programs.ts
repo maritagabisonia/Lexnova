@@ -4,9 +4,11 @@ import {
   type AdminLecturerOption,
   type ProgramFormValues,
 } from "@/lib/program-fields";
+import { toTimeInput, type AdminSessionValues } from "@/lib/session-fields";
 import { createClient } from "@/lib/supabase/server";
 
 export type { AdminLecturerOption, ProgramFormValues } from "@/lib/program-fields";
+export type { AdminSessionValues } from "@/lib/session-fields";
 export { emptyProgramFormValues } from "@/lib/program-fields";
 
 export type AdminProgramRow = {
@@ -154,5 +156,45 @@ export const getAdminProgram = cache(async function getAdminProgram(
     };
   } catch {
     return null;
+  }
+});
+
+export const getAdminProgramSessions = cache(async function getAdminProgramSessions(
+  programId: string,
+): Promise<AdminSessionValues[]> {
+  try {
+    const supabase = await createClient();
+    const { data, error } = await supabase
+      .from("program_sessions")
+      .select("id, session_date, start_time, end_time, location, format, lecturer_id")
+      .eq("program_id", programId)
+      .order("session_date", { ascending: true })
+      .order("start_time", { ascending: true });
+
+    if (error || !data) {
+      if (error) {
+        console.error("Admin program sessions failed:", error);
+      }
+      return [];
+    }
+
+    return data.map((row) => {
+      const format =
+        row.format === "in_person" || row.format === "hybrid"
+          ? row.format
+          : "online";
+      return {
+        id: row.id,
+        session_date: row.session_date ?? "",
+        start_time: toTimeInput(row.start_time),
+        end_time: toTimeInput(row.end_time),
+        location: row.location ?? "",
+        format,
+        lecturer_id: row.lecturer_id ?? "",
+      };
+    });
+  } catch (error) {
+    console.error("Admin program sessions failed:", error);
+    return [];
   }
 });
