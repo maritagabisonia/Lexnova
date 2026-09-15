@@ -89,6 +89,21 @@ export const publicPages = {
     title: "Not authorized",
     description: "You do not have permission to view that page.",
   },
+  privacyPolicy: {
+    title: "Privacy policy",
+    description:
+      "How LexNova handles names, email addresses, and course registrations. Placeholder text pending legal review.",
+  },
+  terms: {
+    title: "Terms",
+    description:
+      "Placeholder terms of use for the LexNova website, accounts, and program registrations.",
+  },
+  cookiePolicy: {
+    title: "Cookie policy",
+    description:
+      "Cookies LexNova uses for sign-in and the cookie-notice preference. Placeholder text pending legal review.",
+  },
 } as const satisfies Record<string, Metadata>;
 
 export const publicSitemapPaths = [
@@ -97,4 +112,7 @@ export const publicSitemapPaths = [
   "/programs",
   "/news",
   "/contact",
+  "/privacy-policy",
+  "/terms",
+  "/cookie-policy",
 ] as const;
