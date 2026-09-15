@@ -1,3 +1,5 @@
+import { FIELD_MAX, isHttpUrl, tooLong } from "@/lib/form-input";
+
 export type LecturerFormValues = {
   id?: string;
   full_name: string;
@@ -38,8 +40,24 @@ export function parseLecturerForm(
   if (!fullName) {
     return { error: "Please enter a name." };
   }
-  if (photoUrl && !/^https?:\/\//i.test(photoUrl)) {
+  const nameLength = tooLong(fullName, FIELD_MAX.name, "Name");
+  if (nameLength) {
+    return { error: nameLength };
+  }
+  const titleLength = title ? tooLong(title, FIELD_MAX.title, "Title") : null;
+  if (titleLength) {
+    return { error: titleLength };
+  }
+  if (photoUrl && !isHttpUrl(photoUrl)) {
     return { error: "Photo URL must start with http:// or https://." };
+  }
+  const photoLength = photoUrl ? tooLong(photoUrl, FIELD_MAX.url, "Photo URL") : null;
+  if (photoLength) {
+    return { error: photoLength };
+  }
+  const bioLength = bio ? tooLong(bio, FIELD_MAX.longText, "Bio") : null;
+  if (bioLength) {
+    return { error: bioLength };
   }
 
   return {

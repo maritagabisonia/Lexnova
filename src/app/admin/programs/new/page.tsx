@@ -4,6 +4,7 @@ import {
   emptyProgramFormValues,
   getAdminLecturers,
 } from "@/lib/admin-programs";
+import { requireAdmin } from "@/lib/require-auth";
 import { ProgramForm } from "../program-form";
 
 export const metadata: Metadata = {
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function NewProgramPage() {
+  await requireAdmin();
   const lecturers = await getAdminLecturers();
 
   return (

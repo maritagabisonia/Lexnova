@@ -1,3 +1,5 @@
+import { FIELD_MAX, isIsoDate, isUuid, tooLong } from "@/lib/form-input";
+
 export type AdminSessionValues = {
   id: string;
   session_date: string;
@@ -52,11 +54,14 @@ export function parseSessionForm(
   const format = String(formData.get("format") ?? "");
   const lecturerId = String(formData.get("lecturer_id") ?? "").trim();
 
-  if (!programId) {
+  if (!isUuid(programId)) {
     return { error: "We could not find that program." };
   }
   if (!sessionDate) {
     return { error: "Please choose a date." };
+  }
+  if (!isIsoDate(sessionDate)) {
+    return { error: "Please enter a valid date." };
   }
   if (!startTime || !endTime) {
     return { error: "Please enter a start and end time." };
@@ -72,6 +77,16 @@ export function parseSessionForm(
   if (format !== "online" && format !== "in_person" && format !== "hybrid") {
     return { error: "Please choose a format." };
   }
+  if (lecturerId && !isUuid(lecturerId)) {
+    return { error: "Please choose a valid lecturer." };
+  }
+  const location = emptyToNull(String(formData.get("location") ?? ""));
+  const locationLength = location
+    ? tooLong(location, FIELD_MAX.shortText, "Location")
+    : null;
+  if (locationLength) {
+    return { error: locationLength };
+  }
 
   return {
     data: {
@@ -79,7 +94,7 @@ export function parseSessionForm(
       session_date: sessionDate,
       start_time: startTime,
       end_time: endTime,
-      location: emptyToNull(String(formData.get("location") ?? "")),
+      location,
       format,
       lecturer_id: lecturerId || null,
     },

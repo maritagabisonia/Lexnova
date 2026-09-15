@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAdminLecturer } from "@/lib/admin-lecturers";
+import { requireAdmin } from "@/lib/require-auth";
 import { LecturerForm } from "../../lecturer-form";
 
 type Props = {
@@ -15,6 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function EditLecturerPage({ params }: Props) {
+  await requireAdmin();
   const { id } = await params;
   const lecturer = await getAdminLecturer(id);
   if (!lecturer?.id) {

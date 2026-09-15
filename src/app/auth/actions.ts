@@ -4,6 +4,7 @@ import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { authErrorMessage, originFromHeaders } from "@/lib/auth-errors";
 import { safeNextPath } from "@/lib/auth-paths";
+import { FIELD_MAX, tooLong } from "@/lib/form-input";
 import { createClient } from "@/lib/supabase/server";
 
 export type AuthActionState = {
@@ -22,11 +23,22 @@ export async function register(
   if (!fullName) {
     return { error: "Please enter your full name." };
   }
+  const nameLength = tooLong(fullName, FIELD_MAX.name, "Name");
+  if (nameLength) {
+    return { error: nameLength };
+  }
   if (!email || !email.includes("@")) {
     return { error: "Please enter a valid email address." };
   }
+  const emailLength = tooLong(email, FIELD_MAX.email, "Email");
+  if (emailLength) {
+    return { error: emailLength };
+  }
   if (password.length < 6) {
     return { error: "Please choose a stronger password (at least 6 characters)." };
+  }
+  if (password.length > FIELD_MAX.password) {
+    return { error: "Please choose a shorter password." };
   }
 
   const supabase = await createClient();
@@ -70,6 +82,9 @@ export async function login(
   if (!email || !password) {
     return { error: "Please enter your email and password." };
   }
+  if (tooLong(email, FIELD_MAX.email, "Email")) {
+    return { error: "Please enter a valid email address." };
+  }
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
@@ -93,7 +108,7 @@ export async function requestPasswordReset(
 ): Promise<AuthActionState> {
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
 
-  if (!email || !email.includes("@")) {
+  if (!email || !email.includes("@") || tooLong(email, FIELD_MAX.email, "Email")) {
     return { error: "Please enter a valid email address." };
   }
 
@@ -123,6 +138,9 @@ export async function updatePassword(
 
   if (password.length < 6) {
     return { error: "Please choose a stronger password (at least 6 characters)." };
+  }
+  if (password.length > FIELD_MAX.password) {
+    return { error: "Please choose a shorter password." };
   }
   if (password !== confirm) {
     return { error: "Those passwords do not match." };

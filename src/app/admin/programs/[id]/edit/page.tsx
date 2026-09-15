@@ -7,6 +7,7 @@ import {
   getAdminProgramSessions,
 } from "@/lib/admin-programs";
 import { getAdminProgramRegistrations } from "@/lib/admin-registrations";
+import { requireAdmin } from "@/lib/require-auth";
 import { DeleteProgramButton } from "../../program-actions";
 import {
   ProgramEditTabs,
@@ -43,6 +44,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function EditProgramPage({ params, searchParams }: Props) {
+  await requireAdmin();
   const { id } = await params;
   const query = await searchParams;
   const tab = resolveProgramEditTab(query);

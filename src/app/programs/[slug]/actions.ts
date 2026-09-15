@@ -21,7 +21,7 @@ export async function registerForProgram(
   formData: FormData,
 ): Promise<ProgramRegisterState> {
   const slug = String(formData.get("slug") ?? "").trim();
-  if (!slug) {
+  if (!slug || !/^[a-z0-9-]{1,80}$/.test(slug)) {
     return { error: "We could not find that program. Please try again." };
   }
 

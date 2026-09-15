@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { parseUuid } from "@/lib/form-input";
 import { isProfileRole, roleLabel } from "@/lib/user-roles";
 import { requireAdmin } from "@/lib/require-auth";
 import { createServiceClient } from "@/lib/supabase/service";
@@ -15,16 +16,16 @@ export async function updateUserRole(
   formData: FormData,
 ): Promise<UserRoleActionState> {
   const { user } = await requireAdmin();
-  const userId = String(formData.get("userId") ?? "").trim();
+  const userId = parseUuid(String(formData.get("userId") ?? ""));
   const role = String(formData.get("role") ?? "").trim();
 
-  if (!userId) {
+  if ("error" in userId) {
     return { error: "We could not find that user." };
   }
   if (!isProfileRole(role)) {
     return { error: "Choose student, teacher, or admin." };
   }
-  if (userId === user.id) {
+  if (userId.id === user.id) {
     return { error: "You cannot change your own role." };
   }
 
@@ -32,7 +33,7 @@ export async function updateUserRole(
   const { error } = await supabase
     .from("profiles")
     .update({ role })
-    .eq("id", userId);
+    .eq("id", userId.id);
 
   if (error) {
     console.error("Update user role failed:", error);
@@ -40,7 +41,7 @@ export async function updateUserRole(
   }
 
   revalidatePath("/admin/users");
-  revalidatePath(`/admin/users/${userId}`);
+  revalidatePath(`/admin/users/${userId.id}`);
   revalidatePath("/", "layout");
   return { success: `Role updated to ${roleLabel(role)}.` };
 }

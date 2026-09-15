@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { parseUuid } from "@/lib/form-input";
 import {
   lecturerWriteErrorMessage,
   parseLecturerForm,
@@ -52,8 +53,8 @@ export async function updateLecturer(
   formData: FormData,
 ): Promise<LecturerActionState> {
   await requireAdmin();
-  const id = String(formData.get("id") ?? "").trim();
-  if (!id) {
+  const id = parseUuid(String(formData.get("id") ?? ""));
+  if ("error" in id) {
     return { error: "We could not find that lecturer." };
   }
 
@@ -66,12 +67,12 @@ export async function updateLecturer(
   const { error } = await supabase
     .from("lecturers")
     .update(parsed.data)
-    .eq("id", id);
+    .eq("id", id.id);
   if (error) {
     console.error("Update lecturer failed:", error);
     return { error: lecturerWriteErrorMessage(error) };
   }
 
-  revalidateLecturerPaths(id);
+  revalidateLecturerPaths(id.id);
   return { success: "Lecturer saved." };
 }

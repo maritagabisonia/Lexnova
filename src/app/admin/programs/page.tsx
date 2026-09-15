@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getAdminPrograms } from "@/lib/admin-programs";
+import { requireAdmin } from "@/lib/require-auth";
 import { ArchiveProgramButton } from "./program-actions";
 
 export const metadata: Metadata = {
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminProgramsPage() {
+  await requireAdmin();
   const programs = await getAdminPrograms();
 
   return (
