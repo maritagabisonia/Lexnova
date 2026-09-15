@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { isProfileRole, roleLabel } from "@/lib/admin-users";
+import { isProfileRole, roleLabel } from "@/lib/user-roles";
 import { requireAdmin } from "@/lib/require-auth";
 import { createServiceClient } from "@/lib/supabase/service";
 

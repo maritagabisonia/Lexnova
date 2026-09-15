@@ -7,7 +7,7 @@ import {
   profileRoles,
   roleLabel,
   type AdminUserRow,
-} from "@/lib/admin-users";
+} from "@/lib/user-roles";
 import { updateUserRole, type UserRoleActionState } from "./actions";
 
 const inputClass =

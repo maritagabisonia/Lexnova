@@ -2,22 +2,14 @@ import { cache } from "react";
 import { formatRegisteredAt } from "@/lib/admin-registrations";
 import { statusLabel, typeLabel } from "@/lib/program-display";
 import { createClient } from "@/lib/supabase/server";
+import {
+  isProfileRole,
+  roleLabel,
+  type AdminUserRow,
+} from "@/lib/user-roles";
 
-export const profileRoles = ["student", "teacher", "admin"] as const;
-export type ProfileRole = (typeof profileRoles)[number];
-
-export type AdminUserRow = {
-  id: string;
-  name: string;
-  email: string;
-  role: ProfileRole;
-  roleLabel: string;
-  joinedAt: string;
-};
-
-export type AdminUserDetail = AdminUserRow & {
-  registrations: AdminUserRegistration[];
-};
+export type { AdminUserRow, ProfileRole } from "@/lib/user-roles";
+export { isProfileRole, profileRoles, roleLabel } from "@/lib/user-roles";
 
 export type AdminUserRegistration = {
   id: string;
@@ -30,22 +22,9 @@ export type AdminUserRegistration = {
   registeredAt: string;
 };
 
-const roleLabels: Record<ProfileRole, string> = {
-  student: "Student",
-  teacher: "Teacher",
-  admin: "Admin",
+export type AdminUserDetail = AdminUserRow & {
+  registrations: AdminUserRegistration[];
 };
-
-export function roleLabel(role: string) {
-  if (isProfileRole(role)) {
-    return roleLabels[role];
-  }
-  return role;
-}
-
-export function isProfileRole(value: string): value is ProfileRole {
-  return (profileRoles as readonly string[]).includes(value);
-}
 
 function formatJoinDate(value: string | null) {
   if (!value) {
