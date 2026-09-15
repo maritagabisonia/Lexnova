@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAdminArticle, getAdminRelatedPrograms } from "@/lib/admin-news";
+import { requireAdmin } from "@/lib/require-auth";
 import { ArticleForm } from "../../article-form";
 
 type Props = {
@@ -15,6 +16,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function EditArticlePage({ params }: Props) {
+  await requireAdmin();
   const { id } = await params;
   const [article, programs] = await Promise.all([
     getAdminArticle(id),

@@ -1,3 +1,4 @@
+import { FIELD_MAX, isIsoDate, isUuid, tooLong } from "@/lib/form-input";
 import { slugify } from "@/lib/slug";
 
 export const programStatusOptions = [
@@ -108,6 +109,10 @@ export function parseProgramForm(
   if (!title) {
     return { error: "Please enter a title." };
   }
+  const titleLength = tooLong(title, FIELD_MAX.title, "Title");
+  if (titleLength) {
+    return { error: titleLength };
+  }
   if (!slug) {
     return { error: "Please enter a slug." };
   }
@@ -120,8 +125,46 @@ export function parseProgramForm(
   if (!programStatusOptions.some((option) => option.value === status)) {
     return { error: "Please choose a status." };
   }
-  if (!lecturerId) {
+  if (!isUuid(lecturerId)) {
     return { error: "Please choose a lecturer." };
+  }
+
+  const startDate = emptyToNull(String(formData.get("start_date") ?? ""));
+  const endDate = emptyToNull(String(formData.get("end_date") ?? ""));
+  const deadline = emptyToNull(String(formData.get("registration_deadline") ?? ""));
+  for (const [value, label] of [
+    [startDate, "Start date"],
+    [endDate, "End date"],
+    [deadline, "Registration deadline"],
+  ] as const) {
+    if (value && !isIsoDate(value)) {
+      return { error: `Please enter a valid ${label.toLowerCase()}.` };
+    }
+  }
+
+  const shortDescription = emptyToNull(String(formData.get("short_description") ?? ""));
+  const fullDescription = emptyToNull(String(formData.get("full_description") ?? ""));
+  const targetAudience = emptyToNull(String(formData.get("target_audience") ?? ""));
+  const objectives = emptyToNull(String(formData.get("objectives") ?? ""));
+  const learningOutcomes = emptyToNull(String(formData.get("learning_outcomes") ?? ""));
+  const durationText = emptyToNull(String(formData.get("duration_text") ?? ""));
+  const location = emptyToNull(String(formData.get("location") ?? ""));
+
+  for (const [value, label, max] of [
+    [shortDescription, "Short description", FIELD_MAX.shortText],
+    [fullDescription, "Full description", FIELD_MAX.longText],
+    [targetAudience, "Target audience", FIELD_MAX.longText],
+    [objectives, "Objectives", FIELD_MAX.longText],
+    [learningOutcomes, "Learning outcomes", FIELD_MAX.longText],
+    [durationText, "Duration", FIELD_MAX.shortText],
+    [location, "Location", FIELD_MAX.shortText],
+  ] as const) {
+    if (value) {
+      const lengthError = tooLong(value, max, label);
+      if (lengthError) {
+        return { error: lengthError };
+      }
+    }
   }
 
   const maxRaw = emptyToNull(String(formData.get("max_participants") ?? ""));
@@ -149,19 +192,17 @@ export function parseProgramForm(
       type,
       title,
       slug,
-      short_description: emptyToNull(String(formData.get("short_description") ?? "")),
-      full_description: emptyToNull(String(formData.get("full_description") ?? "")),
-      target_audience: emptyToNull(String(formData.get("target_audience") ?? "")),
-      objectives: emptyToNull(String(formData.get("objectives") ?? "")),
-      learning_outcomes: emptyToNull(String(formData.get("learning_outcomes") ?? "")),
-      duration_text: emptyToNull(String(formData.get("duration_text") ?? "")),
-      start_date: emptyToNull(String(formData.get("start_date") ?? "")),
-      end_date: emptyToNull(String(formData.get("end_date") ?? "")),
-      registration_deadline: emptyToNull(
-        String(formData.get("registration_deadline") ?? ""),
-      ),
+      short_description: shortDescription,
+      full_description: fullDescription,
+      target_audience: targetAudience,
+      objectives: objectives,
+      learning_outcomes: learningOutcomes,
+      duration_text: durationText,
+      start_date: startDate,
+      end_date: endDate,
+      registration_deadline: deadline,
       format,
-      location: emptyToNull(String(formData.get("location") ?? "")),
+      location,
       lecturer_id: lecturerId,
       max_participants: maxParticipants,
       status,

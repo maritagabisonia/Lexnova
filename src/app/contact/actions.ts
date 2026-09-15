@@ -1,5 +1,6 @@
 "use server";
 
+import { FIELD_MAX, tooLong } from "@/lib/form-input";
 import { createClient } from "@/lib/supabase/server";
 
 export type ContactActionState = {
@@ -23,6 +24,18 @@ export async function sendContactMessage(
   }
   if (!message) {
     return { error: "Please enter a message." };
+  }
+  const nameLength = tooLong(name, FIELD_MAX.name, "Name");
+  if (nameLength) {
+    return { error: nameLength };
+  }
+  const emailLength = tooLong(email, FIELD_MAX.email, "Email");
+  if (emailLength) {
+    return { error: emailLength };
+  }
+  const messageLength = tooLong(message, FIELD_MAX.message, "Message");
+  if (messageLength) {
+    return { error: messageLength };
   }
 
   const supabase = await createClient();

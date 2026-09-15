@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getAdminNews } from "@/lib/admin-news";
+import { requireAdmin } from "@/lib/require-auth";
 import { ArchiveArticleButton } from "./article-actions";
 
 export const metadata: Metadata = {
@@ -8,6 +9,7 @@ export const metadata: Metadata = {
 };
 
 export default async function AdminNewsPage() {
+  await requireAdmin();
   const articles = await getAdminNews();
 
   return (

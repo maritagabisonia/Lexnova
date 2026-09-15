@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { parseUuid } from "@/lib/form-input";
 import { parseSessionForm, sessionWriteErrorMessage } from "@/lib/session-fields";
 import { requireAdmin } from "@/lib/require-auth";
 import { createServiceClient } from "@/lib/supabase/service";
@@ -54,8 +55,8 @@ export async function updateSession(
   formData: FormData,
 ): Promise<SessionActionState> {
   await requireAdmin();
-  const id = String(formData.get("id") ?? "").trim();
-  if (!id) {
+  const id = parseUuid(String(formData.get("id") ?? ""));
+  if ("error" in id) {
     return { error: "We could not find that session." };
   }
 
@@ -76,7 +77,7 @@ export async function updateSession(
       format: parsed.data.format,
       lecturer_id: parsed.data.lecturer_id,
     })
-    .eq("id", id)
+    .eq("id", id.id)
     .eq("program_id", parsed.data.program_id)
     .select("id")
     .maybeSingle();
@@ -95,10 +96,10 @@ export async function deleteSession(
   formData: FormData,
 ): Promise<SessionActionState> {
   await requireAdmin();
-  const id = String(formData.get("id") ?? "").trim();
-  const programId = String(formData.get("program_id") ?? "").trim();
+  const id = parseUuid(String(formData.get("id") ?? ""));
+  const programId = parseUuid(String(formData.get("program_id") ?? ""));
   const slug = String(formData.get("program_slug") ?? "").trim();
-  if (!id || !programId) {
+  if ("error" in id || "error" in programId) {
     return { error: "We could not find that session." };
   }
 
@@ -106,14 +107,14 @@ export async function deleteSession(
   const { error } = await supabase
     .from("program_sessions")
     .delete()
-    .eq("id", id)
-    .eq("program_id", programId);
+    .eq("id", id.id)
+    .eq("program_id", programId.id);
 
   if (error) {
     console.error("Delete session failed:", error);
     return { error: "We could not delete this session. Please try again." };
   }
 
-  revalidateSessionPaths(slug, programId);
-  redirect(editPath(programId, "deleted"));
+  revalidateSessionPaths(slug, programId.id);
+  redirect(editPath(programId.id, "deleted"));
 }

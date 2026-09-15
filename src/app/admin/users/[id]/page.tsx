@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getAdminUser } from "@/lib/admin-users";
+import { requireAdmin } from "@/lib/require-auth";
 
 type Props = {
   params: Promise<{ id: string }>;
@@ -14,6 +15,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function AdminUserDetailPage({ params }: Props) {
+  await requireAdmin();
   const { id } = await params;
   const user = await getAdminUser(id);
   if (!user) {

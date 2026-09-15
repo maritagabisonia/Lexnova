@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getAdminOverview } from "@/lib/admin-overview";
+import { requireAdmin } from "@/lib/require-auth";
 
 export const metadata: Metadata = {
   title: "Overview",
 };
 
 export default async function AdminOverviewPage() {
+  await requireAdmin();
   const { stats, recent } = await getAdminOverview();
 
   return (

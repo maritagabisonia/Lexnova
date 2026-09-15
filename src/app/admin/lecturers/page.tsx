@@ -1,12 +1,14 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getAdminLecturerRows } from "@/lib/admin-lecturers";
+import { requireAdmin } from "@/lib/require-auth";
 
 export const metadata: Metadata = {
   title: "Lecturers",
 };
 
 export default async function AdminLecturersPage() {
+  await requireAdmin();
   const lecturers = await getAdminLecturerRows();
 
   return (

@@ -1,3 +1,4 @@
+import { FIELD_MAX, isHttpUrl, isUuid, tooLong } from "@/lib/form-input";
 import { slugify } from "@/lib/slug";
 
 export type RelatedProgramOption = {
@@ -76,11 +77,44 @@ export function parseNewsForm(
   if (!title) {
     return { error: "Please enter a title." };
   }
+  const titleLength = tooLong(title, FIELD_MAX.title, "Title");
+  if (titleLength) {
+    return { error: titleLength };
+  }
   if (!slug) {
     return { error: "Please enter a slug." };
   }
-  if (coverUrl && !/^https?:\/\//i.test(coverUrl)) {
+  if (coverUrl && !isHttpUrl(coverUrl)) {
     return { error: "Cover image URL must start with http:// or https://." };
+  }
+  const coverLength = coverUrl
+    ? tooLong(coverUrl, FIELD_MAX.url, "Cover image URL")
+    : null;
+  if (coverLength) {
+    return { error: coverLength };
+  }
+  if (relatedProgramId && !isUuid(relatedProgramId)) {
+    return { error: "Please choose a valid related program." };
+  }
+
+  const shortDescription = emptyToNull(String(formData.get("short_description") ?? ""));
+  const content = emptyToNull(String(formData.get("content") ?? ""));
+  const author = emptyToNull(String(formData.get("author") ?? ""));
+  const shortLength = shortDescription
+    ? tooLong(shortDescription, FIELD_MAX.shortText, "Short description")
+    : null;
+  if (shortLength) {
+    return { error: shortLength };
+  }
+  const contentLength = content
+    ? tooLong(content, FIELD_MAX.longText, "Content")
+    : null;
+  if (contentLength) {
+    return { error: contentLength };
+  }
+  const authorLength = author ? tooLong(author, FIELD_MAX.name, "Author") : null;
+  if (authorLength) {
+    return { error: authorLength };
   }
 
   let publishedAt: string | null = null;
@@ -99,9 +133,9 @@ export function parseNewsForm(
       title,
       slug,
       cover_image_url: coverUrl,
-      short_description: emptyToNull(String(formData.get("short_description") ?? "")),
-      content: emptyToNull(String(formData.get("content") ?? "")),
-      author: emptyToNull(String(formData.get("author") ?? "")),
+      short_description: shortDescription,
+      content,
+      author,
       related_program_id: relatedProgramId,
       published,
       published_at: publishedAt,

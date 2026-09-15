@@ -3,6 +3,7 @@
 import { revalidatePath } from "next/cache";
 import type { AuthActionState } from "@/app/auth/actions";
 import { authErrorMessage } from "@/lib/auth-errors";
+import { FIELD_MAX, tooLong } from "@/lib/form-input";
 import { requireUser } from "@/lib/require-auth";
 
 export async function updateFullName(
@@ -13,6 +14,10 @@ export async function updateFullName(
 
   if (!fullName) {
     return { error: "Please enter your full name." };
+  }
+  const nameLength = tooLong(fullName, FIELD_MAX.name, "Name");
+  if (nameLength) {
+    return { error: nameLength };
   }
 
   const { supabase, user } = await requireUser();
@@ -46,6 +51,9 @@ export async function updateAccountPassword(
 
   if (password.length < 6) {
     return { error: "Please choose a stronger password (at least 6 characters)." };
+  }
+  if (password.length > FIELD_MAX.password) {
+    return { error: "Please choose a shorter password." };
   }
   if (password !== confirm) {
     return { error: "Those passwords do not match." };

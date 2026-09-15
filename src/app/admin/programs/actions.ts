@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { parseUuid } from "@/lib/form-input";
 import {
   parseProgramForm,
   programWriteErrorMessage,
@@ -53,8 +54,8 @@ export async function updateProgram(
   formData: FormData,
 ): Promise<ProgramActionState> {
   await requireAdmin();
-  const id = String(formData.get("id") ?? "").trim();
-  if (!id) {
+  const id = parseUuid(String(formData.get("id") ?? ""));
+  if ("error" in id) {
     return { error: "We could not find that program." };
   }
 
@@ -67,13 +68,13 @@ export async function updateProgram(
   const { error } = await supabase
     .from("programs")
     .update(parsed.data)
-    .eq("id", id);
+    .eq("id", id.id);
   if (error) {
     console.error("Update program failed:", error);
     return { error: programWriteErrorMessage(error) };
   }
 
-  revalidateProgramPaths(parsed.data.slug, id);
+  revalidateProgramPaths(parsed.data.slug, id.id);
   return { success: "Program saved." };
 }
 
@@ -82,8 +83,8 @@ export async function archiveProgram(
   formData: FormData,
 ): Promise<ProgramActionState> {
   await requireAdmin();
-  const id = String(formData.get("id") ?? "").trim();
-  if (!id) {
+  const id = parseUuid(String(formData.get("id") ?? ""));
+  if ("error" in id) {
     return { error: "We could not find that program." };
   }
 
@@ -91,7 +92,7 @@ export async function archiveProgram(
   const { data, error } = await supabase
     .from("programs")
     .update({ status: "archived" })
-    .eq("id", id)
+    .eq("id", id.id)
     .select("slug")
     .maybeSingle();
 
@@ -100,7 +101,7 @@ export async function archiveProgram(
     return { error: "We could not archive this program. Please try again." };
   }
 
-  revalidateProgramPaths(data.slug, id);
+  revalidateProgramPaths(data.slug, id.id);
   redirect("/admin/programs");
 }
 
@@ -109,8 +110,8 @@ export async function deleteProgram(
   formData: FormData,
 ): Promise<ProgramActionState> {
   await requireAdmin();
-  const id = String(formData.get("id") ?? "").trim();
-  if (!id) {
+  const id = parseUuid(String(formData.get("id") ?? ""));
+  if ("error" in id) {
     return { error: "We could not find that program." };
   }
 
@@ -118,10 +119,10 @@ export async function deleteProgram(
   const { data: existing } = await supabase
     .from("programs")
     .select("slug")
-    .eq("id", id)
+    .eq("id", id.id)
     .maybeSingle();
 
-  const { error } = await supabase.from("programs").delete().eq("id", id);
+  const { error } = await supabase.from("programs").delete().eq("id", id.id);
   if (error) {
     console.error("Delete program failed:", error);
     return {
@@ -129,6 +130,6 @@ export async function deleteProgram(
     };
   }
 
-  revalidateProgramPaths(existing?.slug, id);
+  revalidateProgramPaths(existing?.slug, id.id);
   redirect("/admin/programs");
 }

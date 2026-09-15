@@ -1,13 +1,15 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { emptyLecturerFormValues } from "@/lib/admin-lecturers";
+import { requireAdmin } from "@/lib/require-auth";
 import { LecturerForm } from "../lecturer-form";
 
 export const metadata: Metadata = {
   title: "New Lecturer",
 };
 
-export default function NewLecturerPage() {
+export default async function NewLecturerPage() {
+  await requireAdmin();
   return (
     <section>
       <p className="text-sm">

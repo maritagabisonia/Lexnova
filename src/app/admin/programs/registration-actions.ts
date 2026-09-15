@@ -6,6 +6,7 @@ import {
   sanitizeStudentSearch,
   type StudentSearchResult,
 } from "@/lib/admin-registrations";
+import { parseUuid } from "@/lib/form-input";
 import { requireAdmin } from "@/lib/require-auth";
 import { createServiceClient } from "@/lib/supabase/service";
 
@@ -37,31 +38,42 @@ export async function searchStudentsForProgram(
   query: string,
 ): Promise<StudentSearchResult[]> {
   await requireAdmin();
+  const program = parseUuid(programId, "");
   const needle = sanitizeStudentSearch(query);
-  if (!programId || needle.length < 2) {
+  if (!("id" in program) || needle.length < 2) {
     return [];
   }
 
   const supabase = createServiceClient();
   const pattern = `%${needle}%`;
-  const [{ data: matches, error: searchError }, { data: registered, error: regError }] =
-    await Promise.all([
-      supabase
-        .from("profiles")
-        .select("id, full_name, email")
-        .eq("role", "student")
-        .or(`full_name.ilike."${pattern}",email.ilike."${pattern}"`)
-        .order("full_name", { ascending: true })
-        .limit(8),
-      supabase
-        .from("registrations")
-        .select("student_id")
-        .eq("program_id", programId)
-        .eq("status", "confirmed"),
-    ]);
+  const [
+    { data: byName, error: nameError },
+    { data: byEmail, error: emailError },
+    { data: registered, error: regError },
+  ] = await Promise.all([
+    supabase
+      .from("profiles")
+      .select("id, full_name, email")
+      .eq("role", "student")
+      .ilike("full_name", pattern)
+      .order("full_name", { ascending: true })
+      .limit(8),
+    supabase
+      .from("profiles")
+      .select("id, full_name, email")
+      .eq("role", "student")
+      .ilike("email", pattern)
+      .order("full_name", { ascending: true })
+      .limit(8),
+    supabase
+      .from("registrations")
+      .select("student_id")
+      .eq("program_id", program.id)
+      .eq("status", "confirmed"),
+  ]);
 
-  if (searchError) {
-    console.error("Admin student search failed:", searchError);
+  if (nameError || emailError) {
+    console.error("Admin student search failed:", nameError ?? emailError);
     return [];
   }
   if (regError) {
@@ -69,13 +81,20 @@ export async function searchStudentsForProgram(
   }
 
   const taken = new Set((registered ?? []).map((row) => row.student_id));
-  return (matches ?? [])
-    .filter((row) => !taken.has(row.id))
-    .map((row) => ({
-      id: row.id,
-      name: row.full_name?.trim() || "Student",
-      email: row.email?.trim() || "—",
-    }));
+  const seen = new Set<string>();
+  const matches = [...(byName ?? []), ...(byEmail ?? [])].filter((row) => {
+    if (taken.has(row.id) || seen.has(row.id)) {
+      return false;
+    }
+    seen.add(row.id);
+    return true;
+  });
+
+  return matches.slice(0, 8).map((row) => ({
+    id: row.id,
+    name: row.full_name?.trim() || "Student",
+    email: row.email?.trim() || "—",
+  }));
 }
 
 export async function addStudentRegistration(
@@ -83,10 +102,10 @@ export async function addStudentRegistration(
   formData: FormData,
 ): Promise<RegistrationActionState> {
   await requireAdmin();
-  const programId = String(formData.get("program_id") ?? "").trim();
-  const studentId = String(formData.get("student_id") ?? "").trim();
+  const programId = parseUuid(String(formData.get("program_id") ?? ""));
+  const studentId = parseUuid(String(formData.get("student_id") ?? ""));
   const slug = String(formData.get("program_slug") ?? "").trim();
-  if (!programId || !studentId) {
+  if ("error" in programId || "error" in studentId) {
     return { error: "Please choose a student." };
   }
 
@@ -94,7 +113,7 @@ export async function addStudentRegistration(
   const { data: student, error: studentError } = await supabase
     .from("profiles")
     .select("id, role")
-    .eq("id", studentId)
+    .eq("id", studentId.id)
     .maybeSingle();
 
   if (studentError || !student || student.role !== "student") {
@@ -104,8 +123,8 @@ export async function addStudentRegistration(
   const { data: existing, error: existingError } = await supabase
     .from("registrations")
     .select("id, status")
-    .eq("program_id", programId)
-    .eq("student_id", studentId)
+    .eq("program_id", programId.id)
+    .eq("student_id", studentId.id)
     .maybeSingle();
 
   if (existingError) {
@@ -125,15 +144,15 @@ export async function addStudentRegistration(
         registered_at: new Date().toISOString(),
       })
       .eq("id", existing.id)
-      .eq("program_id", programId);
+      .eq("program_id", programId.id);
     if (error) {
       console.error("Admin reconfirm registration failed:", error);
       return { error: "We could not add this student. Please try again." };
     }
   } else {
     const { error } = await supabase.from("registrations").insert({
-      program_id: programId,
-      student_id: studentId,
+      program_id: programId.id,
+      student_id: studentId.id,
       status: "confirmed",
     });
     if (error) {
@@ -145,8 +164,8 @@ export async function addStudentRegistration(
     }
   }
 
-  revalidateRegistrationPaths(slug, programId);
-  redirect(studentsPath(programId, "added"));
+  revalidateRegistrationPaths(slug, programId.id);
+  redirect(studentsPath(programId.id, "added"));
 }
 
 export async function removeStudentRegistration(
@@ -154,10 +173,10 @@ export async function removeStudentRegistration(
   formData: FormData,
 ): Promise<RegistrationActionState> {
   await requireAdmin();
-  const id = String(formData.get("id") ?? "").trim();
-  const programId = String(formData.get("program_id") ?? "").trim();
+  const id = parseUuid(String(formData.get("id") ?? ""));
+  const programId = parseUuid(String(formData.get("program_id") ?? ""));
   const slug = String(formData.get("program_slug") ?? "").trim();
-  if (!id || !programId) {
+  if ("error" in id || "error" in programId) {
     return { error: "We could not find that registration." };
   }
 
@@ -165,8 +184,8 @@ export async function removeStudentRegistration(
   const { data, error } = await supabase
     .from("registrations")
     .update({ status: "cancelled" })
-    .eq("id", id)
-    .eq("program_id", programId)
+    .eq("id", id.id)
+    .eq("program_id", programId.id)
     .select("id")
     .maybeSingle();
 
@@ -175,6 +194,6 @@ export async function removeStudentRegistration(
     return { error: "We could not remove this student. Please try again." };
   }
 
-  revalidateRegistrationPaths(slug, programId);
-  redirect(studentsPath(programId, "removed"));
+  revalidateRegistrationPaths(slug, programId.id);
+  redirect(studentsPath(programId.id, "removed"));
 }

@@ -4,6 +4,7 @@ import {
   emptyNewsFormValues,
   getAdminRelatedPrograms,
 } from "@/lib/admin-news";
+import { requireAdmin } from "@/lib/require-auth";
 import { ArticleForm } from "../article-form";
 
 export const metadata: Metadata = {
@@ -11,6 +12,7 @@ export const metadata: Metadata = {
 };
 
 export default async function NewArticlePage() {
+  await requireAdmin();
   const programs = await getAdminRelatedPrograms();
 
   return (

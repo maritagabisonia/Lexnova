@@ -83,5 +83,9 @@ export const getAdminProgramRegistrations = cache(
 );
 
 export function sanitizeStudentSearch(query: string) {
-  return query.replace(/[%_,.()]/g, " ").replace(/\s+/g, " ").trim();
+  return query
+    .replace(/[%_*,.()"'\\:;]/g, " ")
+    .replace(/\s+/g, " ")
+    .trim()
+    .slice(0, 80);
 }

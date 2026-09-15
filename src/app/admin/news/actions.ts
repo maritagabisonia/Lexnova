@@ -2,6 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { parseUuid } from "@/lib/form-input";
 import { newsWriteErrorMessage, parseNewsForm } from "@/lib/news-fields";
 import { requireAdmin } from "@/lib/require-auth";
 import { createServiceClient } from "@/lib/supabase/service";
@@ -49,8 +50,8 @@ export async function updateArticle(
   formData: FormData,
 ): Promise<NewsActionState> {
   await requireAdmin();
-  const id = String(formData.get("id") ?? "").trim();
-  if (!id) {
+  const id = parseUuid(String(formData.get("id") ?? ""));
+  if ("error" in id) {
     return { error: "We could not find that article." };
   }
 
@@ -63,13 +64,13 @@ export async function updateArticle(
   const { error } = await supabase
     .from("news_articles")
     .update(parsed.data)
-    .eq("id", id);
+    .eq("id", id.id);
   if (error) {
     console.error("Update article failed:", error);
     return { error: newsWriteErrorMessage(error) };
   }
 
-  revalidateNewsPaths(parsed.data.slug, id);
+  revalidateNewsPaths(parsed.data.slug, id.id);
   return { success: "Article saved." };
 }
 
@@ -78,8 +79,8 @@ export async function archiveArticle(
   formData: FormData,
 ): Promise<NewsActionState> {
   await requireAdmin();
-  const id = String(formData.get("id") ?? "").trim();
-  if (!id) {
+  const id = parseUuid(String(formData.get("id") ?? ""));
+  if ("error" in id) {
     return { error: "We could not find that article." };
   }
 
@@ -87,7 +88,7 @@ export async function archiveArticle(
   const { data, error } = await supabase
     .from("news_articles")
     .update({ published: false })
-    .eq("id", id)
+    .eq("id", id.id)
     .select("slug")
     .maybeSingle();
 
@@ -96,6 +97,6 @@ export async function archiveArticle(
     return { error: "We could not archive this article. Please try again." };
   }
 
-  revalidateNewsPaths(data.slug, id);
+  revalidateNewsPaths(data.slug, id.id);
   redirect("/admin/news");
 }
