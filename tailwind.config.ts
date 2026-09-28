@@ -5,7 +5,8 @@ import type { Config } from "tailwindcss";
  *
  * Tailwind v4 also reads these via `@config` in `src/app/globals.css`.
  * Use these names on every page: `bg-paper`, `text-ink`, `text-accent`,
- * `font-serif` (headings), `font-sans` (body). Do not introduce ad-hoc palettes.
+ * `font-serif` (headings), `font-sans` (body). Georgian pages keep Source for
+ * Latin and fall back to Noto Georgian for Mkhedruli. Do not introduce ad-hoc palettes.
  */
 const config: Config = {
   theme: {

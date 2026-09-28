@@ -6,6 +6,38 @@
   --font-serif: var(--font-source-serif), var(--font-noto-serif-georgian);
 }
 
+/*
+  Mkhedruli is served by Noto Serif/Sans Georgian (Source has no Georgian
+  glyphs). Noto occupies more of the em square than Source at the same CSS
+  size, so /ka pages look larger and heavier unless the type scale is reduced.
+  Overrides win over :root because html[lang="ka"] is more specific. Rem-based
+  spacing is unchanged.
+*/
+html[lang="ka"] {
+  --text-xs: 0.6875rem;
+  --text-xs--line-height: 1.45;
+  --text-sm: 0.8125rem;
+  --text-sm--line-height: 1.5;
+  --text-base: 0.9375rem;
+  --text-base--line-height: 1.6;
+  --text-lg: 1.0625rem;
+  --text-lg--line-height: 1.65;
+  --text-xl: 1.125rem;
+  --text-xl--line-height: 1.45;
+  --text-2xl: 1.3125rem;
+  --text-2xl--line-height: 1.35;
+  --text-3xl: 1.625rem;
+  --text-3xl--line-height: 1.25;
+  --text-4xl: 1.875rem;
+  --text-4xl--line-height: 1.2;
+  --text-5xl: 2.5rem;
+  --text-5xl--line-height: 1.15;
+  --text-6xl: 3rem;
+  --text-6xl--line-height: 1.18;
+  --leading-relaxed: 1.7;
+  --tracking-tight: 0em;
+}
+
 @layer base {
   html {
     @apply overflow-x-clip bg-paper text-ink;
@@ -13,6 +45,11 @@
 
   body {
     @apply min-h-full overflow-x-clip bg-paper font-sans text-ink antialiased break-words;
+  }
+
+  html[lang="ka"] body {
+    font-size: 0.9375rem;
+    line-height: 1.6;
   }
 
   h1,
