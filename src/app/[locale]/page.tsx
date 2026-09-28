@@ -11,6 +11,14 @@ import {
 import { seoMetadata } from "@/lib/page-metadata";
 import { site } from "@/lib/site";
 
+const aboutTagKeys = [
+  "aboutTag1",
+  "aboutTag2",
+  "aboutTag3",
+  "aboutTag4",
+  "aboutTag5",
+] as const;
+
 export async function generateMetadata() {
   const t = await getTranslations("seo.home");
   return {
@@ -123,6 +131,34 @@ export default async function Home() {
         ) : (
           <p className="mt-8 text-sm text-ink-muted">{t("noUpcoming")}</p>
         )}
+      </section>
+
+      <section className="border-t border-ink/10 bg-paper-muted/50">
+        <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
+          <p className="text-sm tracking-wide text-accent">{t("aboutEyebrow")}</p>
+          <h2 className="mt-3 max-w-4xl text-3xl sm:text-4xl">
+            {t("aboutHeading")}
+          </h2>
+          <p className="mt-6 max-w-2xl text-base leading-relaxed text-ink-muted">
+            {t("aboutBody")}
+          </p>
+          <ul className="mt-8 flex flex-wrap gap-2">
+            {aboutTagKeys.map((key) => (
+              <li
+                key={key}
+                className="rounded-full border border-ink/15 bg-paper px-3 py-1.5 text-xs tracking-wide text-ink"
+              >
+                {t(key)}
+              </li>
+            ))}
+          </ul>
+          <Link
+            href="/about"
+            className="mt-8 inline-flex min-h-11 items-center justify-center rounded-sm bg-ink px-5 text-sm text-paper transition-colors hover:bg-ink-muted"
+          >
+            {t("aboutCta")}
+          </Link>
+        </div>
       </section>
 
       <section className="border-t border-ink/10">
