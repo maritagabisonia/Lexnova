@@ -136,7 +136,7 @@ export default async function Home() {
       <section className="border-t border-ink/10 bg-paper-muted/50">
         <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
           <p className="text-sm tracking-wide text-accent">{t("aboutEyebrow")}</p>
-          <h2 className="mt-3 max-w-3xl text-3xl sm:text-4xl">
+          <h2 className="mt-3 max-w-4xl text-3xl sm:text-4xl">
             {t("aboutHeading")}
           </h2>
           <p className="mt-6 max-w-2xl text-base leading-relaxed text-ink-muted">
