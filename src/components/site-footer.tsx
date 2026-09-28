@@ -1,8 +1,16 @@
-import Link from "next/link";
-import { legalNav } from "@/lib/legal";
+import { getTranslations } from "next-intl/server";
+import { Link } from "@/i18n/navigation";
 import { site } from "@/lib/site";
 
-export function SiteFooter() {
+const legalNav = [
+  { href: "/privacy-policy", key: "privacyPolicy" },
+  { href: "/terms", key: "terms" },
+  { href: "/cookie-policy", key: "cookiePolicy" },
+] as const;
+
+export async function SiteFooter() {
+  const t = await getTranslations("footer");
+  const brand = await getTranslations("brand");
   const year = new Date().getFullYear();
 
   return (
@@ -11,12 +19,12 @@ export function SiteFooter() {
         <div className="space-y-3">
           <p className="font-serif text-2xl tracking-tight">{site.name}</p>
           <p className="max-w-xs text-sm leading-relaxed text-paper/80">
-            {site.tagline}
+            {brand("tagline")}
           </p>
         </div>
 
         <div className="space-y-2 text-sm text-paper/80">
-          <p className="font-medium text-paper">Contact</p>
+          <p className="font-medium text-paper">{t("contact")}</p>
           <p>{site.address}</p>
           <p>
             <a
@@ -38,7 +46,7 @@ export function SiteFooter() {
 
         <div className="space-y-2 text-sm text-paper/80">
           {/* PLACEHOLDER: Legal links — copy on these pages needs a lawyer before launch. */}
-          <p className="font-medium text-paper">Legal</p>
+          <p className="font-medium text-paper">{t("legal")}</p>
           <ul>
             {legalNav.map((item) => (
               <li key={item.href}>
@@ -46,7 +54,7 @@ export function SiteFooter() {
                   href={item.href}
                   className="inline-flex min-h-11 items-center hover:text-accent md:min-h-0"
                 >
-                  {item.label}
+                  {t(item.key)}
                 </Link>
               </li>
             ))}
@@ -54,7 +62,7 @@ export function SiteFooter() {
         </div>
       </div>
       <p className="mx-auto max-w-6xl px-4 pb-10 text-sm text-paper/70 sm:px-6 md:text-right">
-        © {year} {site.name}. All rights reserved.
+        {t("copyright", { year, name: site.name })}
       </p>
     </footer>
   );

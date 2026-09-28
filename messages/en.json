@@ -1,0 +1,722 @@
+{
+  "brand": {
+    "name": "LexNova",
+    "tagline": "Legal education for a more informed public."
+  },
+  "locale": {
+    "switcherLabel": "Language",
+    "ka": "ქართული",
+    "en": "English"
+  },
+  "nav": {
+    "home": "Home",
+    "about": "About",
+    "programs": "Programs",
+    "news": "News",
+    "contact": "Contact",
+    "login": "Log In",
+    "register": "Register",
+    "admin": "Admin",
+    "dashboard": "Dashboard",
+    "logOut": "Log Out",
+    "primary": "Primary",
+    "mobile": "Mobile",
+    "openMenu": "Open menu",
+    "closeMenu": "Close menu"
+  },
+  "footer": {
+    "contact": "Contact",
+    "legal": "Legal",
+    "privacyPolicy": "Privacy policy",
+    "terms": "Terms",
+    "cookiePolicy": "Cookie policy",
+    "copyright": "© {year} {name}. All rights reserved."
+  },
+  "cookie": {
+    "regionLabel": "Cookie notice",
+    "body": "We use essential cookies to keep you signed in, and a small preference cookie if you dismiss this notice. We do not currently use advertising or analytics cookies.",
+    "policyLink": "Cookie policy",
+    "placeholder": "Placeholder notice — review with a lawyer before launch.",
+    "ok": "OK"
+  },
+  "seo": {
+    "home": {
+      "title": "LexNova",
+      "description": "LexNova offers courses and training for lawyers, civic advocates, and anyone who needs a clearer map of the law — taught by practitioners."
+    },
+    "about": {
+      "title": "About",
+      "description": "LexNova is a center for legal education. We teach lawyers, civic advocates, and members of the public who need a clearer map of the law."
+    },
+    "programs": {
+      "title": "Programs",
+      "description": "Browse LexNova courses and training — filter by type, format, and registration status."
+    },
+    "news": {
+      "title": "News",
+      "description": "Notes from LexNova on programs, teaching, and public legal education."
+    },
+    "contact": {
+      "title": "Contact",
+      "description": "Write to LexNova about programs, group bookings, or a question about your registration."
+    },
+    "login": {
+      "title": "Log in",
+      "description": "Log in to your LexNova account to register for programs and manage your profile."
+    },
+    "register": {
+      "title": "Register",
+      "description": "Create a LexNova student account to register for courses and training."
+    },
+    "forgotPassword": {
+      "title": "Forgot password",
+      "description": "Request a password reset link for your LexNova account."
+    },
+    "resetPassword": {
+      "title": "Reset password",
+      "description": "Choose a new password for your LexNova account."
+    },
+    "notAuthorized": {
+      "title": "Not authorized",
+      "description": "You do not have permission to view that page."
+    },
+    "privacyPolicy": {
+      "title": "Privacy policy",
+      "description": "How LexNova handles names, email addresses, and course registrations. Placeholder text pending legal review."
+    },
+    "terms": {
+      "title": "Terms",
+      "description": "Placeholder terms of use for the LexNova website, accounts, and program registrations."
+    },
+    "cookiePolicy": {
+      "title": "Cookie policy",
+      "description": "Cookies LexNova uses for sign-in and the cookie-notice preference. Placeholder text pending legal review."
+    },
+    "notFound": {
+      "title": "Page not found",
+      "description": "That page is not in this site."
+    },
+    "programFallback": {
+      "title": "Program",
+      "description": "A LexNova {type}."
+    },
+    "programNotFound": {
+      "title": "Program not found",
+      "description": "That program is not in the catalog."
+    },
+    "articleNotFound": {
+      "title": "Article not found",
+      "description": "That article is not published, or it is not in the catalog."
+    },
+    "myCourses": {
+      "title": "My Courses"
+    },
+    "calendar": {
+      "title": "Calendar"
+    },
+    "profile": {
+      "title": "Profile"
+    },
+    "adminOverview": {
+      "title": "Overview"
+    }
+  },
+  "home": {
+    "headline": "Legal education for a more informed public.",
+    "intro": "LexNova offers courses and training for lawyers, civic advocates, and anyone who needs a clearer map of the law — taught by practitioners, and grounded in professional judgment rather than product demos.",
+    "explorePrograms": "Explore Programs",
+    "viewTraining": "View Training",
+    "featured": "Featured Programs",
+    "featuredLead": "Programs currently open for registration.",
+    "allPrograms": "All programs",
+    "noFeatured": "No programs are open for registration right now.",
+    "browseAll": "Browse all programs",
+    "upcoming": "Upcoming",
+    "upcomingLead": "Programs with a start date still ahead.",
+    "starts": "Starts {date}",
+    "details": "Details",
+    "noUpcoming": "No upcoming programs are scheduled yet.",
+    "latestNews": "Latest News",
+    "allNews": "All news",
+    "readArticle": "Read article",
+    "noNews": "No news has been published yet.",
+    "getInTouch": "Get in touch",
+    "contactUs": "Contact Us"
+  },
+  "about": {
+    "eyebrow": "About",
+    "headline": "A legal education center, in public.",
+    "intro": "LexNova is a center for legal education. We teach lawyers, civic advocates, and members of the public who need a clearer map of the law — in courses, short trainings, and open lectures.",
+    "missionTitle": "Mission",
+    "mission": "Our mission is to make sound legal education available beyond the usual professional circuits: careful teaching of doctrine, procedure, and professional ethics, offered to people who will use that knowledge in practice, in civic work, or in ordinary encounters with the state.",
+    "visionTitle": "Vision",
+    "vision": "We want a public that can read a statute, follow a hearing, and ask a precise question of a lawyer — and a profession that treats teaching as part of its duty, not as a sideline. LexNova should be a place where those two audiences meet.",
+    "objectivesTitle": "Objectives",
+    "objective1": "Offer a small, serious catalog of courses and trainings each year, taught by practitioners who still do the work they describe.",
+    "objective2": "Keep public lectures and written explainers in the open, so legal literacy is not reserved for paying cohorts.",
+    "objective3": "Hold a clear line on professional judgment: tools and methods are in scope; shortcuts that replace that judgment are not.",
+    "objective4": "Build a teaching bench — lawyers, researchers, and civic educators — who can return, year after year, to the same students.",
+    "areasTitle": "Main Areas of Activity",
+    "coursesTitle": "Courses",
+    "coursesBody": "Multi-week programs on core subjects — administrative law, legal technology, procedure — for people who want more than a single afternoon.",
+    "trainingTitle": "Professional training",
+    "trainingBody": "Short, intensive sessions for practicing lawyers and staff: ethics, investigations, and the use of new tools without abandoning professional duties.",
+    "literacyTitle": "Public legal literacy",
+    "literacyBody": "Open lectures, explainers, and news notes for journalists, advocates, and anyone who has to deal with a public office and wants to understand the process first.",
+    "curriculumTitle": "Teaching and curriculum",
+    "curriculumBody": "Design of syllabi, case materials, and in-house workshops for organizations that need a shared legal language rather than a one-off speaker.",
+    "teamTitle": "Team",
+    "team": {
+      "amelia": {
+        "name": "Amelia Hart",
+        "role": "Director",
+        "initials": "AH",
+        "bio": "Amelia founded LexNova after a decade in public-interest litigation and continuing legal education. She teaches procedure and the ethics of advice."
+      },
+      "julian": {
+        "name": "Julian Reeve",
+        "role": "Head of Programs",
+        "initials": "JR",
+        "bio": "Julian designs the course calendar and works with lecturers on syllabus and assessment. He previously ran professional training at a regional bar association."
+      },
+      "noor": {
+        "name": "Noor El-Sayed",
+        "role": "Training Lead",
+        "initials": "NE",
+        "bio": "Noor leads short trainings for practicing lawyers and staff, with a focus on investigations, administrative process, and legal technology in daily work."
+      }
+    }
+  },
+  "programs": {
+    "title": "Programs",
+    "intro": "Courses and trainings currently offered by LexNova.",
+    "searchTitle": "Search title",
+    "searchPlaceholder": "Search by title",
+    "type": "Type",
+    "format": "Format",
+    "status": "Status",
+    "allTypes": "All types",
+    "allFormats": "All formats",
+    "allStatuses": "All statuses",
+    "showing": "Showing {filtered} of {total} programs",
+    "clearFilters": "Clear filters",
+    "empty": "No programs are listed yet.",
+    "noMatch": "No programs match these filters.",
+    "detailsSoon": "Details coming soon.",
+    "starts": "Starts {date}",
+    "datesTba": "Dates to be announced",
+    "viewProgram": "View program",
+    "breadcrumb": "Programs",
+    "dates": "Dates",
+    "duration": "Duration",
+    "deadline": "Registration deadline",
+    "location": "Location",
+    "places": "Places",
+    "dateRange": "{start} – {end}",
+    "startsOn": "Starts {date}",
+    "endsOn": "Ends {date}",
+    "upToPlaces": "Up to {count} participants",
+    "placesFilled": "{filled} of {total} places filled",
+    "fullyBooked": "Fully Booked",
+    "registrationClosed": "Registration closed",
+    "detailsFallback": "Details for this program will be published soon.",
+    "targetAudience": "Target audience",
+    "objectives": "Objectives",
+    "learningOutcomes": "Learning outcomes",
+    "lecturer": "Lecturer",
+    "schedule": "Schedule",
+    "noSessions": "No sessions are listed yet.",
+    "date": "Date",
+    "time": "Time",
+    "online": "Online",
+    "emDash": "—",
+    "register": "Register",
+    "registering": "Registering…",
+    "alreadyRegistered": "You're already registered",
+    "notFoundTitle": "Program not found",
+    "notFoundBody": "That program is not in the catalog.",
+    "backToPrograms": "Back to programs",
+    "typeCourse": "Course",
+    "typeTraining": "Training",
+    "formatOnline": "Online",
+    "formatInPerson": "In person",
+    "formatHybrid": "Hybrid",
+    "statusRegistrationOpen": "Registration open",
+    "statusComingSoon": "Coming soon",
+    "statusFullyBooked": "Fully booked",
+    "statusInProgress": "In progress",
+    "statusCompleted": "Completed",
+    "statusArchived": "Archived",
+    "errors": {
+      "notFound": "We could not find that program. Please try again.",
+      "notInCatalog": "That program is not in the catalog.",
+      "notOpen": "Registration is not open for this program.",
+      "closed": "Registration for this program has closed.",
+      "generic": "We could not complete your registration. Please try again.",
+      "success": "Your registration for {title} has been successfully completed."
+    }
+  },
+  "news": {
+    "title": "News",
+    "intro": "Notes from LexNova on programs, teaching, and public legal education.",
+    "empty": "No news has been published yet.",
+    "readArticle": "Read article",
+    "breadcrumb": "News",
+    "relatedProgram": "Related program",
+    "placeholder": "News",
+    "notFoundTitle": "Article not found",
+    "notFoundBody": "That article is not published, or it is not in the catalog.",
+    "backToNews": "Back to news"
+  },
+  "contact": {
+    "title": "Contact",
+    "intro": "Write to us about programs, group bookings, or a question about your registration.",
+    "details": "Details",
+    "follow": "Follow",
+    "faqTitle": "FAQ",
+    "faqLead": "Short answers while we write the full handbook.",
+    "name": "Name",
+    "email": "Email",
+    "message": "Message",
+    "send": "Send message",
+    "sending": "Sending…",
+    "success": "Thanks, we'll be in touch",
+    "errors": {
+      "name": "Please enter your name.",
+      "email": "Please enter a valid email address.",
+      "message": "Please enter a message.",
+      "generic": "We could not send your message. Please email us directly and try again later."
+    },
+    "faq": {
+      "q1": "How do I register for a course or training?",
+      "a1": "Open the program page and use Register while registration is open. If you are not signed in, you will be asked to log in (or create a student account) and then returned to the program to complete enrollment.",
+      "q2": "Will I receive a certificate?",
+      "a2": "Participants who complete a course or training receive a LexNova certificate of completion by email. Workshops that have already closed can request a reissue from {email}.",
+      "q3": "How does payment work?",
+      "a3": "Fees are listed on each program page. We will send payment instructions after you register. Group bookings for a workplace cohort can be invoiced; write to us with the program name and headcount.",
+      "q4": "Is attendance required? Can I join online?",
+      "a4": "Check the format on the program page. Hybrid sessions can be joined in the Civic Classroom or live online. Online-only programs have no in-person seat. We expect attendance at the sessions you book.",
+      "q5": "What is the cancellation policy?",
+      "a5": "Cancellations more than fourteen days before the start date are refunded in full. After that, we can transfer your place to a later edition of the same program where one exists. Write to {email} with your name and the program title."
+    }
+  },
+  "auth": {
+    "loginTitle": "Log in",
+    "loginForProgram": "Sign in to complete your registration.",
+    "loginManage": "Sign in to manage your registrations.",
+    "email": "Email",
+    "password": "Password",
+    "logIn": "Log in",
+    "signingIn": "Signing in…",
+    "forgotPassword": "Forgot your password?",
+    "newHere": "New to LexNova?",
+    "register": "Register",
+    "registerTitle": "Register",
+    "registerLead": "Create a student account to register for programs.",
+    "fullName": "Full name",
+    "createAccount": "Create account",
+    "creatingAccount": "Creating account…",
+    "haveAccount": "Already have an account?",
+    "forgotTitle": "Forgot password",
+    "forgotLead": "Enter the email for your LexNova account and we will send a reset link.",
+    "sendReset": "Send reset link",
+    "sending": "Sending…",
+    "backToLogin": "Back to log in",
+    "resetTitle": "Reset password",
+    "resetLead": "Choose a new password for your LexNova account.",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "savePassword": "Save new password",
+    "saving": "Saving…",
+    "requestNewLink": "Request a new reset link",
+    "errors": {
+      "generic": "Something went wrong. Please try again.",
+      "alreadyRegistered": "That email is already registered.",
+      "incorrectPassword": "Incorrect password.",
+      "emailNotConfirmed": "Please confirm your email before logging in.",
+      "weakPassword": "Please choose a stronger password (at least 6 characters).",
+      "shortPassword": "Please choose a shorter password.",
+      "rateLimited": "Too many attempts. Please wait a minute and try again.",
+      "invalidEmail": "Please enter a valid email address.",
+      "samePassword": "Please choose a password you have not used before.",
+      "expiredLink": "This reset link has expired. Please request a new one.",
+      "fullName": "Please enter your full name.",
+      "emailPassword": "Please enter your email and password.",
+      "mismatch": "Those passwords do not match."
+    },
+    "success": {
+      "confirmEmail": "Account created. Please check your email to confirm your address, then log in.",
+      "resetSent": "If that email is registered, we sent a link to reset your password."
+    }
+  },
+  "dashboard": {
+    "account": "Account",
+    "fallbackName": "Account",
+    "navAria": "Dashboard",
+    "courses": "My Courses",
+    "calendar": "Calendar",
+    "profile": "Profile",
+    "coursesLead": "Courses and trainings you are registered for.",
+    "emptyCourses": "You have not registered for a program yet.",
+    "browsePrograms": "Browse programs",
+    "current": "Current",
+    "upcoming": "Upcoming",
+    "completed": "Completed",
+    "calendarLead": "Upcoming sessions for the programs you are registered for.",
+    "noUpcomingSessions": "No upcoming sessions to show.",
+    "noSessions": "No sessions to show yet.",
+    "viewCourses": "View your courses",
+    "profileLead": "Update your name or choose a new password.",
+    "yourDetails": "Your details",
+    "email": "Email",
+    "notSet": "Not set",
+    "fullName": "Full name",
+    "saveName": "Save name",
+    "saving": "Saving…",
+    "password": "Password",
+    "newPassword": "New password",
+    "confirmPassword": "Confirm new password",
+    "updatePassword": "Update password",
+    "nameSaved": "Your name has been saved.",
+    "passwordUpdated": "Your password has been updated.",
+    "nameSaveFailed": "We could not save your name. Please try again."
+  },
+  "admin": {
+    "label": "Admin",
+    "navAria": "Admin",
+    "overview": "Overview",
+    "programs": "Programs",
+    "news": "News",
+    "lecturers": "Lecturers",
+    "students": "Students",
+    "users": "Users",
+    "overviewLead": "A snapshot of programs and registrations.",
+    "activePrograms": "Active programs",
+    "startingSoon": "Starting in the next 30 days",
+    "registeredStudents": "Registered students",
+    "recentRegistrations": "Recent registrations",
+    "noRegistrations": "No registrations yet.",
+    "student": "Student",
+    "program": "Program",
+    "date": "Date",
+    "studentsLead": "Review student accounts and their registrations.",
+    "programsLead": "Create and edit courses and trainings. Archive hides a program from the public catalog without deleting it.",
+    "newProgram": "New Program",
+    "noPrograms": "No programs yet.",
+    "noStartDate": "No start date",
+    "registeredCount": "{count} registered",
+    "edit": "Edit",
+    "actions": "Actions",
+    "title": "Title",
+    "type": "Type",
+    "status": "Status",
+    "startDate": "Start date",
+    "newsLead": "Publish and update articles. Archive unpublishes an article without deleting it.",
+    "newArticle": "New Article",
+    "noArticles": "No articles yet.",
+    "published": "Published",
+    "publishedAt": "Published at",
+    "draft": "Draft",
+    "lecturersLead": "Profiles shown on public program pages. These names appear in the lecturer dropdown when you create or edit a program.",
+    "newLecturer": "New Lecturer",
+    "noLecturers": "No lecturers yet.",
+    "name": "Name",
+    "usersLead": "Every profile on LexNova. Search by name or email, change roles, and open a student to see their registration history.",
+    "search": "Search",
+    "searchPlaceholder": "Search by name or email",
+    "noUsers": "No users yet.",
+    "noUsersMatch": "No users match that search.",
+    "joined": "Joined {date}",
+    "role": "Role",
+    "joinDate": "Join date",
+    "yourRole": "Your role",
+    "roleFor": "Role for {name}",
+    "email": "Email",
+    "registrationHistory": "Registration history",
+    "noUserRegistrations": "No program registrations for this student.",
+    "programStatus": "Program status",
+    "registration": "Registration",
+    "registered": "Registered",
+    "confirmed": "Confirmed",
+    "cancelled": "Cancelled",
+    "fallbackUser": "User",
+    "newProgramLead": "Add a course or training to the catalog. The slug is generated from the title and can be edited.",
+    "editProgram": "Edit program",
+    "editProgramLead": "Update this course or training. Change status to Archived to hide it from the public catalog without deleting the row.",
+    "editNamed": "Edit {name}",
+    "newArticleLead": "Drafts stay off the public news page until you publish.",
+    "editArticle": "Edit article",
+    "editArticleLead": "Update this article. Unpublish or archive it to hide it from the public news page without deleting the row.",
+    "newLecturerLead": "Add a lecturer profile. They will appear in the program lecturer dropdown.",
+    "editLecturer": "Edit lecturer",
+    "editLecturerLead": "Update this profile. Changes appear on public program pages and in the program lecturer dropdown.",
+    "tabProgram": "Program",
+    "tabSessions": "Sessions",
+    "tabStudents": "Registered Students ({count})",
+    "tabAria": "Program",
+    "sessionAdded": "Session added.",
+    "sessionSaved": "Session saved.",
+    "sessionDeleted": "Session deleted.",
+    "studentAdded": "Student added.",
+    "studentRemoved": "Student removed.",
+    "roleUpdated": "Role updated to {role}.",
+    "form": {
+      "type": "Type",
+      "typeAria": "Program type",
+      "title": "Title",
+      "slug": "Slug",
+      "slugHint": "Auto-generated from the title. You can edit it.",
+      "status": "Status",
+      "format": "Format",
+      "lecturer": "Lecturer",
+      "selectLecturer": "Select a lecturer",
+      "shortDescription": "Short description",
+      "fullDescription": "Full description",
+      "targetAudience": "Target audience",
+      "objectives": "Objectives",
+      "learningOutcomes": "Learning outcomes",
+      "duration": "Duration",
+      "startDate": "Start date",
+      "endDate": "End date",
+      "registrationDeadline": "Registration deadline",
+      "location": "Location",
+      "maxParticipants": "Max participants",
+      "price": "Price",
+      "id": "ID",
+      "created": "Created",
+      "updated": "Updated",
+      "saving": "Saving…",
+      "createProgram": "Create program",
+      "createArticle": "Create article",
+      "createLecturer": "Create lecturer",
+      "saveChanges": "Save changes",
+      "needLecturer": "Add a lecturer before you can save a program.",
+      "fullName": "Full name",
+      "photoUrl": "Photo URL",
+      "bio": "Bio",
+      "visibility": "Visibility",
+      "publishState": "Publish state",
+      "publish": "Publish",
+      "unpublish": "Unpublish",
+      "author": "Author",
+      "relatedProgram": "Related program",
+      "none": "None",
+      "coverImageUrl": "Cover image URL",
+      "content": "Content",
+      "publishedAt": "Published at",
+      "sessions": "Sessions",
+      "sessionsLead": "Meeting dates for this program, in date order. Leave lecturer blank to use the program lecturer.",
+      "addSession": "Add Session",
+      "noSessions": "No sessions yet.",
+      "editSession": "Edit session",
+      "saveSession": "Save session",
+      "startTime": "Start time",
+      "endTime": "End time",
+      "lecturerOverride": "Lecturer override",
+      "programLecturer": "Program lecturer",
+      "deleteSessionTitle": "Delete this session?",
+      "deleteSessionBody": "Delete the session on {date} from {start} to {end}? This cannot be undone.",
+      "registeredStudentsLead": "Confirmed registrations only. Remove cancels the row; it does not delete it.",
+      "noStudentsRegistered": "No students registered.",
+      "addStudent": "Add Student",
+      "addStudentLead": "Search by name or email, then select a student.",
+      "searchStudents": "Search students",
+      "nameOrEmail": "Name or email",
+      "searching": "Searching…",
+      "noMatchingStudents": "No matching students.",
+      "select": "Select",
+      "adding": "Adding…",
+      "removeStudentTitle": "Remove this student?",
+      "removeStudentBody": "Remove {name} from this program? Their registration will be cancelled, not deleted.",
+      "removing": "Removing…",
+      "remove": "Remove",
+      "deletePermanentlyTitle": "Delete permanently",
+      "deletePermanentlyLead": "This removes the program and its sessions. Registrations for this program are also deleted. This cannot be undone.",
+      "deletePermanently": "Delete Permanently",
+      "deleteProgramTitle": "Delete this program?",
+      "deleteProgramBody": "Delete “{title}” permanently? This cannot be undone.",
+      "deleting": "Deleting…",
+      "archive": "Archive",
+      "archiving": "Archiving…",
+      "cancel": "Cancel",
+      "delete": "Delete"
+    },
+    "errors": {
+      "tooLong": "{field} is too long.",
+      "enterTitle": "Please enter a title.",
+      "enterSlug": "Please enter a slug.",
+      "chooseType": "Please choose Course or Training.",
+      "chooseFormat": "Please choose a format.",
+      "chooseStatus": "Please choose a status.",
+      "chooseLecturer": "Please choose a lecturer.",
+      "validStartDate": "Please enter a valid start date.",
+      "validEndDate": "Please enter a valid end date.",
+      "validDeadline": "Please enter a valid registration deadline.",
+      "maxParticipants": "Max participants must be a positive whole number.",
+      "price": "Price must be zero or a positive amount.",
+      "slugTaken": "That slug is already in use. Please choose another.",
+      "validLecturer": "Please choose a valid lecturer.",
+      "checkProgram": "Please check the program details and try again.",
+      "saveProgram": "We could not save this program. Please try again.",
+      "notFoundProgram": "We could not find that program.",
+      "archiveProgram": "We could not archive this program. Please try again.",
+      "deleteProgram": "We could not delete this program. Please try again.",
+      "programSaved": "Program saved.",
+      "enterName": "Please enter a name.",
+      "photoUrl": "Photo URL must start with http:// or https://.",
+      "checkLecturer": "Please check the lecturer details and try again.",
+      "saveLecturer": "We could not save this lecturer. Please try again.",
+      "notFoundLecturer": "We could not find that lecturer.",
+      "lecturerSaved": "Lecturer saved.",
+      "coverUrl": "Cover image URL must start with http:// or https://.",
+      "validRelatedProgram": "Please choose a valid related program.",
+      "validPublishedDate": "Please enter a valid published date.",
+      "saveArticle": "We could not save this article. Please try again.",
+      "notFoundArticle": "We could not find that article.",
+      "archiveArticle": "We could not archive this article. Please try again.",
+      "articleSaved": "Article saved.",
+      "chooseDate": "Please choose a date.",
+      "validDate": "Please enter a valid date.",
+      "enterTimes": "Please enter a start and end time.",
+      "validTimes": "Please enter valid start and end times.",
+      "endAfterStart": "End time must be after start time.",
+      "saveSession": "We could not save this session. Please try again.",
+      "notFoundSession": "We could not find that session.",
+      "deleteSession": "We could not delete this session. Please try again.",
+      "chooseStudent": "Please choose a student.",
+      "validStudent": "Please choose a valid student.",
+      "addStudent": "We could not add this student. Please try again.",
+      "alreadyRegistered": "That student is already registered.",
+      "notFoundRegistration": "We could not find that registration.",
+      "removeStudent": "We could not remove this student. Please try again.",
+      "notFoundUser": "We could not find that user.",
+      "chooseRole": "Choose student, teacher, or admin.",
+      "ownRole": "You cannot change your own role.",
+      "updateRole": "We could not update that role. Try again.",
+      "notFoundRecord": "We could not find that record."
+    }
+  },
+  "roles": {
+    "student": "Student",
+    "teacher": "Teacher",
+    "admin": "Admin"
+  },
+  "errors": {
+    "notFoundTitle": "Page not found",
+    "notFoundBody": "That page is not in this site.",
+    "backHome": "Back to home",
+    "notAuthorizedTitle": "Not authorized",
+    "notAuthorizedBody": "You do not have permission to view that page.",
+    "tooLong": "{field} is too long.",
+    "fields": {
+      "name": "Name",
+      "email": "Email",
+      "message": "Message",
+      "title": "Title"
+    }
+  },
+  "legalPage": {
+    "placeholder": "Placeholder",
+    "disclaimer": "This page is placeholder legal text for a site that collects names, emails, and course registrations. It is not legal advice and must be reviewed by a lawyer before LexNova launches.",
+    "lastUpdated": "Last updated {date}",
+    "comment": "PLACEHOLDER: {name} — review with a lawyer before real launch"
+  },
+  "legal": {
+    "privacy": {
+      "title": "Privacy policy",
+      "lastUpdated": "15 September 2026",
+      "intro": "This placeholder policy explains, in plain language, how LexNova expects to handle personal information on this site: names, email addresses, account details, and course registrations. It is a draft for development, not a finished legal document.",
+      "whoWeAre": {
+        "heading": "Who we are",
+        "p1": "{name} is a legal-education site. For this draft, the contact point for privacy questions is {email}. The postal address on the site is {address}. Replace these details with the real controller name, registration, and address before launch."
+      },
+      "whatWeCollect": {
+        "heading": "What we collect",
+        "p1": "When you create an account we store your full name, email address, and a hashed password held by our authentication provider. We also store the role of your account (student, teacher, or admin).",
+        "p2": "When you register for a course or training we store which program you joined, when you registered, and whether that registration is confirmed or cancelled.",
+        "p3": "When you send the contact form we store your name, email address, and message so we can reply.",
+        "p4": "We do not ask for payment card numbers on this site in the current build. If payments are added later, this policy must be updated."
+      },
+      "whyWeUse": {
+        "heading": "Why we use it",
+        "p1": "We use this information to create and secure your account, to enroll you in programs, to show you your courses and calendar, to answer messages, and to let administrators manage the catalog and registrations.",
+        "p2": "We rely on steps you take (creating an account, submitting a form, or registering for a program) and on our interest in running the school. A lawyer should name the correct legal bases for the jurisdiction where LexNova launches."
+      },
+      "whoSees": {
+        "heading": "Who else sees it",
+        "p1": "Site administrators can see profiles and registration history in order to run programs. Lecturers listed on public pages are a separate directory; linking a lecturer record to a login is optional.",
+        "p2": "The site is hosted with a cloud provider and uses a database and authentication service. Those processors see the data needed to keep the site running. Name the actual processors in this section before launch.",
+        "p3": "We do not sell your name or email. We do not currently share registrations with advertisers."
+      },
+      "howLong": {
+        "heading": "How long we keep it",
+        "p1": "Account and registration records stay for as long as the account exists and for a period afterwards that a lawyer should set (for example, to show who attended a course). Contact messages are kept so we can follow up, then deleted or archived on a schedule you choose before launch."
+      },
+      "choices": {
+        "heading": "Your choices",
+        "p1": "You can update your name and password from your dashboard profile. To correct other details, close an account, or ask what we hold, email us. Depending on where you live you may have rights to access, correct, delete, or restrict processing, and to complain to a supervisory authority. Those rights need jurisdiction-specific wording before launch."
+      },
+      "children": {
+        "heading": "Children",
+        "p1": "This site is aimed at adults taking professional or civic education. It is not intended for children. If you believe we have collected information from a child, contact us so we can delete it."
+      },
+      "changes": {
+        "heading": "Changes",
+        "p1": "When this draft is replaced by a reviewed policy, we will update the date on this page. Material changes should be announced in a way a lawyer recommends."
+      }
+    },
+    "terms": {
+      "title": "Terms of use",
+      "lastUpdated": "15 September 2026",
+      "intro": "These placeholder terms describe how you may use the LexNova website, create an account, and register for courses or trainings. They are a draft for development, not a contract you can rely on, and they are not legal advice.",
+      "theSite": {
+        "heading": "The site",
+        "p1": "{name} publishes information about legal-education programs and lets signed-in users register for those programs. Teaching materials, schedules, and fees shown on the site may change. Nothing on the site is legal advice for your own matter."
+      },
+      "accounts": {
+        "heading": "Accounts",
+        "p1": "You must provide a real name and a working email address when you register. You are responsible for keeping your password confidential and for activity on your account. We may suspend an account that is used to harm the site, other students, or the integrity of a program."
+      },
+      "registrations": {
+        "heading": "Course registrations",
+        "p1": "Submitting a registration request records your name and email against that program. Registration may close when a course is full, when a deadline passes, or when an administrator cancels a place. Completing a registration on this site does not, by itself, create a right to a certificate, a refund, or a particular timetable — those rules belong in a reviewed student agreement before launch."
+      },
+      "acceptableUse": {
+        "heading": "Acceptable use",
+        "p1": "Do not misuse the site: no scraping that overloads our systems, no attempts to access other people's accounts or admin tools, and no posting of content you do not have the right to share. Program descriptions and news articles on the site remain our (or our licensors') materials."
+      },
+      "disclaimers": {
+        "heading": "Disclaimers",
+        "p1": "The site is provided as a working draft. We do not warrant that it is uninterrupted or error-free. To the extent a lawyer later permits, liability for use of this development site should be limited. Do not use these placeholder terms as a cap on liability in production."
+      },
+      "governingLaw": {
+        "heading": "Governing law",
+        "p1": "Name the country or state whose law applies, and the courts that would hear a dispute, before launch. This draft does not choose a jurisdiction."
+      },
+      "contact": {
+        "heading": "Contact",
+        "p1": "Questions about these terms can be sent to {email}."
+      }
+    },
+    "cookies": {
+      "title": "Cookie policy",
+      "lastUpdated": "15 September 2026",
+      "intro": "This placeholder policy describes the cookies this site sets today. LexNova does not currently run advertising or analytics cookies. A lawyer should confirm whether this notice is enough for the place you launch.",
+      "whatWeUse": {
+        "heading": "What cookies we use",
+        "p1": "Essential cookies keep you signed in. They are set by our authentication provider when you log in, register, or reset a password, and they are needed for the dashboard, course registration, and admin tools to work.",
+        "p2": "If you dismiss the cookie notice on this site, we store a first-party preference cookie (lexnova_cookie_notice) so we do not show that banner again on this browser. That cookie is not used for advertising.",
+        "p3": "We do not currently set cookies for advertising, social-media pixels, or third-party analytics. If those are added later, this policy and the banner must be updated — and consent may be required before they run."
+      },
+      "howLong": {
+        "heading": "How long they last",
+        "p1": "Sign-in cookies last for the session length our authentication provider uses, including “remember this browser” behaviour if you stay logged in. The cookie-notice preference cookie is stored for up to one year."
+      },
+      "control": {
+        "heading": "How to control cookies",
+        "p1": "You can delete cookies in your browser settings. Clearing essential cookies will sign you out. Blocking all cookies may stop login and registration from working.",
+        "p2": "You can read this policy again from the footer at any time. The privacy policy explains the personal data we store in our database, which is separate from these cookies."
+      }
+    }
+  }
+}

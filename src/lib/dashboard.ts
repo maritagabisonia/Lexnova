@@ -15,10 +15,12 @@ export function dashboardDisplayName({
   fullName,
   metadataName,
   email,
+  fallback = "Account",
 }: {
   fullName?: string | null;
   metadataName?: unknown;
   email?: string | null;
+  fallback?: string;
 }) {
   const fromProfile = fullName?.trim();
   if (fromProfile) {
@@ -30,5 +32,5 @@ export function dashboardDisplayName({
   if (email?.trim()) {
     return email.trim();
   }
-  return "Account";
+  return fallback;
 }

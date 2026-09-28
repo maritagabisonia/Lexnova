@@ -1,4 +1,6 @@
 import { cache } from "react";
+import { getLocale } from "next-intl/server";
+import { formatAdminDateTime } from "@/lib/admin-format";
 import {
   type LecturerFormValues,
 } from "@/lib/lecturer-fields";
@@ -14,22 +16,11 @@ export type AdminLecturerRow = {
   photoUrl: string | null;
 };
 
-function formatTimestamp(value: string | null) {
+function formatTimestamp(value: string | null, locale: string) {
   if (!value) {
     return null;
   }
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "UTC",
-  }).format(date);
+  return formatAdminDateTime(value, locale);
 }
 
 export const getAdminLecturerRows = cache(async function getAdminLecturerRows(): Promise<
@@ -63,6 +54,7 @@ export const getAdminLecturer = cache(async function getAdminLecturer(
   id: string,
 ): Promise<LecturerFormValues | null> {
   try {
+    const locale = await getLocale();
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("lecturers")
@@ -78,7 +70,7 @@ export const getAdminLecturer = cache(async function getAdminLecturer(
       title: data.title ?? "",
       photo_url: data.photo_url ?? "",
       bio: data.bio ?? "",
-      created_at: formatTimestamp(data.created_at ?? null),
+      created_at: formatTimestamp(data.created_at ?? null, locale),
     };
   } catch {
     return null;

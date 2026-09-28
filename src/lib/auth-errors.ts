@@ -1,10 +1,13 @@
-export function authErrorMessage(error: {
+import { getTranslations } from "next-intl/server";
+
+export async function authErrorMessage(error: {
   message?: string;
   code?: string;
   status?: number;
-} | null): string {
+} | null): Promise<string> {
+  const t = await getTranslations("auth.errors");
   if (!error) {
-    return "Something went wrong. Please try again.";
+    return t("generic");
   }
 
   const code = (error.code ?? "").toLowerCase();
@@ -17,7 +20,7 @@ export function authErrorMessage(error: {
     message.includes("already been registered") ||
     message.includes("user already registered")
   ) {
-    return "That email is already registered.";
+    return t("alreadyRegistered");
   }
 
   if (
@@ -25,11 +28,11 @@ export function authErrorMessage(error: {
     message.includes("invalid login credentials") ||
     message.includes("invalid_credentials")
   ) {
-    return "Incorrect password.";
+    return t("incorrectPassword");
   }
 
   if (code === "email_not_confirmed" || message.includes("email not confirmed")) {
-    return "Please confirm your email before logging in.";
+    return t("emailNotConfirmed");
   }
 
   if (
@@ -37,7 +40,7 @@ export function authErrorMessage(error: {
     message.includes("password should be") ||
     message.includes("password is too short")
   ) {
-    return "Please choose a stronger password (at least 6 characters).";
+    return t("weakPassword");
   }
 
   if (
@@ -47,15 +50,15 @@ export function authErrorMessage(error: {
     message.includes("too many requests") ||
     message.includes("too many attempts")
   ) {
-    return "Too many attempts. Please wait a minute and try again.";
+    return t("rateLimited");
   }
 
   if (message.includes("invalid email") || code === "validation_failed") {
-    return "Please enter a valid email address.";
+    return t("invalidEmail");
   }
 
   if (message.includes("same password") || code === "same_password") {
-    return "Please choose a password you have not used before.";
+    return t("samePassword");
   }
 
   if (
@@ -63,10 +66,10 @@ export function authErrorMessage(error: {
     message.includes("invalid or missing") ||
     code === "otp_expired"
   ) {
-    return "This reset link has expired. Please request a new one.";
+    return t("expiredLink");
   }
 
-  return "Something went wrong. Please try again.";
+  return t("generic");
 }
 
 export function originFromHeaders(headersList: Headers) {

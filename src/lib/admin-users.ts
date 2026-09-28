@@ -1,6 +1,11 @@
 import { cache } from "react";
+import { getLocale, getTranslations } from "next-intl/server";
+import { formatAdminDate } from "@/lib/admin-format";
 import { formatRegisteredAt } from "@/lib/admin-registrations";
-import { statusLabel, typeLabel } from "@/lib/program-display";
+import {
+  translatedStatusLabel,
+  translatedTypeLabel,
+} from "@/lib/program-display";
 import { createClient } from "@/lib/supabase/server";
 import {
   isProfileRole,
@@ -26,30 +31,8 @@ export type AdminUserDetail = AdminUserRow & {
   registrations: AdminUserRegistration[];
 };
 
-function formatJoinDate(value: string | null) {
-  if (!value) {
-    return "—";
-  }
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    timeZone: "UTC",
-  }).format(date);
-}
-
-function registrationStatusLabel(status: string) {
-  if (status === "confirmed") {
-    return "Confirmed";
-  }
-  if (status === "cancelled") {
-    return "Cancelled";
-  }
-  return status.replaceAll("_", " ");
+function formatJoinDate(value: string | null, locale: string) {
+  return formatAdminDate(value, locale);
 }
 
 function asOne<T>(value: T | T[] | null | undefined): T | null {
@@ -59,21 +42,25 @@ function asOne<T>(value: T | T[] | null | undefined): T | null {
   return Array.isArray(value) ? (value[0] ?? null) : value;
 }
 
-function toUserRow(row: {
-  id: string;
-  full_name: string | null;
-  email: string | null;
-  role: string;
-  created_at: string;
-}): AdminUserRow {
+function toUserRow(
+  row: {
+    id: string;
+    full_name: string | null;
+    email: string | null;
+    role: string;
+    created_at: string;
+  },
+  locale: string,
+  fallbackName: string,
+): AdminUserRow {
   const role = isProfileRole(row.role) ? row.role : "student";
   return {
     id: row.id,
-    name: row.full_name?.trim() || "User",
+    name: row.full_name?.trim() || fallbackName,
     email: row.email?.trim() || "—",
     role,
     roleLabel: roleLabel(role),
-    joinedAt: formatJoinDate(row.created_at),
+    joinedAt: formatJoinDate(row.created_at, locale),
   };
 }
 
@@ -81,6 +68,8 @@ export const getAdminUsers = cache(async function getAdminUsers(): Promise<
   AdminUserRow[]
 > {
   try {
+    const locale = await getLocale();
+    const t = await getTranslations("admin");
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("profiles")
@@ -92,7 +81,7 @@ export const getAdminUsers = cache(async function getAdminUsers(): Promise<
       }
       return [];
     }
-    return data.map(toUserRow);
+    return data.map((row) => toUserRow(row, locale, t("fallbackUser")));
   } catch (error) {
     console.error("Admin users list failed:", error);
     return [];
@@ -103,6 +92,8 @@ export const getAdminUser = cache(async function getAdminUser(
   id: string,
 ): Promise<AdminUserDetail | null> {
   try {
+    const locale = await getLocale();
+    const t = await getTranslations("admin");
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("profiles")
@@ -117,7 +108,7 @@ export const getAdminUser = cache(async function getAdminUser(
     }
 
     const registrations = await getAdminUserRegistrations(id);
-    return { ...toUserRow(data), registrations };
+    return { ...toUserRow(data, locale, t("fallbackUser")), registrations };
   } catch (error) {
     console.error("Admin user lookup failed:", error);
     return null;
@@ -129,6 +120,9 @@ export const getAdminUserRegistrations = cache(
     studentId: string,
   ): Promise<AdminUserRegistration[]> {
     try {
+      const locale = await getLocale();
+      const t = await getTranslations("admin");
+      const programsT = await getTranslations("programs");
       const supabase = await createClient();
       const { data, error } = await supabase
         .from("registrations")
@@ -165,12 +159,17 @@ export const getAdminUserRegistrations = cache(
         return {
           id: row.id,
           programId: program?.id ?? row.program_id,
-          programTitle: program?.title?.trim() || "Program",
-          typeLabel: typeLabel(program?.type ?? ""),
-          programStatusLabel: statusLabel(program?.status ?? ""),
+          programTitle: program?.title?.trim() || t("program"),
+          typeLabel: translatedTypeLabel(program?.type ?? "", programsT),
+          programStatusLabel: translatedStatusLabel(program?.status ?? "", programsT),
           status: row.status,
-          statusLabel: registrationStatusLabel(row.status),
-          registeredAt: formatRegisteredAt(row.registered_at),
+          statusLabel:
+            row.status === "confirmed"
+              ? t("confirmed")
+              : row.status === "cancelled"
+                ? t("cancelled")
+                : row.status.replaceAll("_", " "),
+          registeredAt: formatRegisteredAt(row.registered_at, locale),
         };
       });
     } catch (error) {

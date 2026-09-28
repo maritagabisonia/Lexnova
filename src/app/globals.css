@@ -2,8 +2,8 @@
 @config "../../tailwind.config.ts";
 
 @theme inline {
-  --font-sans: var(--font-source-sans);
-  --font-serif: var(--font-source-serif);
+  --font-sans: var(--font-source-sans), var(--font-noto-sans-georgian);
+  --font-serif: var(--font-source-serif), var(--font-noto-serif-georgian);
 }
 
 @layer base {

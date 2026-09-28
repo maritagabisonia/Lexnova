@@ -1,4 +1,5 @@
-import { FIELD_MAX, isIsoDate, isUuid, tooLong } from "@/lib/form-input";
+import { getTranslations } from "next-intl/server";
+import { FIELD_MAX, isIsoDate, isUuid } from "@/lib/form-input";
 import { slugify } from "@/lib/slug";
 
 export const programStatusOptions = [
@@ -95,9 +96,11 @@ export type ProgramWritePayload = {
   price: number | null;
 };
 
-export function parseProgramForm(
+export async function parseProgramForm(
   formData: FormData,
-): { data: ProgramWritePayload } | { error: string } {
+): Promise<{ data: ProgramWritePayload } | { error: string }> {
+  const t = await getTranslations("admin.errors");
+  const fields = await getTranslations("admin.form");
   const title = String(formData.get("title") ?? "").trim();
   const slugInput = String(formData.get("slug") ?? "").trim();
   const slug = slugify(slugInput || title);
@@ -107,39 +110,38 @@ export function parseProgramForm(
   const lecturerId = String(formData.get("lecturer_id") ?? "").trim();
 
   if (!title) {
-    return { error: "Please enter a title." };
+    return { error: t("enterTitle") };
   }
-  const titleLength = tooLong(title, FIELD_MAX.title, "Title");
-  if (titleLength) {
-    return { error: titleLength };
+  if (title.length > FIELD_MAX.title) {
+    return { error: t("tooLong", { field: fields("title") }) };
   }
   if (!slug) {
-    return { error: "Please enter a slug." };
+    return { error: t("enterSlug") };
   }
   if (type !== "course" && type !== "training") {
-    return { error: "Please choose Course or Training." };
+    return { error: t("chooseType") };
   }
   if (format !== "online" && format !== "in_person" && format !== "hybrid") {
-    return { error: "Please choose a format." };
+    return { error: t("chooseFormat") };
   }
   if (!programStatusOptions.some((option) => option.value === status)) {
-    return { error: "Please choose a status." };
+    return { error: t("chooseStatus") };
   }
   if (!isUuid(lecturerId)) {
-    return { error: "Please choose a lecturer." };
+    return { error: t("chooseLecturer") };
   }
 
   const startDate = emptyToNull(String(formData.get("start_date") ?? ""));
   const endDate = emptyToNull(String(formData.get("end_date") ?? ""));
   const deadline = emptyToNull(String(formData.get("registration_deadline") ?? ""));
-  for (const [value, label] of [
-    [startDate, "Start date"],
-    [endDate, "End date"],
-    [deadline, "Registration deadline"],
-  ] as const) {
-    if (value && !isIsoDate(value)) {
-      return { error: `Please enter a valid ${label.toLowerCase()}.` };
-    }
+  if (startDate && !isIsoDate(startDate)) {
+    return { error: t("validStartDate") };
+  }
+  if (endDate && !isIsoDate(endDate)) {
+    return { error: t("validEndDate") };
+  }
+  if (deadline && !isIsoDate(deadline)) {
+    return { error: t("validDeadline") };
   }
 
   const shortDescription = emptyToNull(String(formData.get("short_description") ?? ""));
@@ -150,20 +152,17 @@ export function parseProgramForm(
   const durationText = emptyToNull(String(formData.get("duration_text") ?? ""));
   const location = emptyToNull(String(formData.get("location") ?? ""));
 
-  for (const [value, label, max] of [
-    [shortDescription, "Short description", FIELD_MAX.shortText],
-    [fullDescription, "Full description", FIELD_MAX.longText],
-    [targetAudience, "Target audience", FIELD_MAX.longText],
-    [objectives, "Objectives", FIELD_MAX.longText],
-    [learningOutcomes, "Learning outcomes", FIELD_MAX.longText],
-    [durationText, "Duration", FIELD_MAX.shortText],
-    [location, "Location", FIELD_MAX.shortText],
+  for (const [value, field, max] of [
+    [shortDescription, "shortDescription", FIELD_MAX.shortText],
+    [fullDescription, "fullDescription", FIELD_MAX.longText],
+    [targetAudience, "targetAudience", FIELD_MAX.longText],
+    [objectives, "objectives", FIELD_MAX.longText],
+    [learningOutcomes, "learningOutcomes", FIELD_MAX.longText],
+    [durationText, "duration", FIELD_MAX.shortText],
+    [location, "location", FIELD_MAX.shortText],
   ] as const) {
-    if (value) {
-      const lengthError = tooLong(value, max, label);
-      if (lengthError) {
-        return { error: lengthError };
-      }
+    if (value && value.length > max) {
+      return { error: t("tooLong", { field: fields(field) }) };
     }
   }
 
@@ -172,7 +171,7 @@ export function parseProgramForm(
   if (maxRaw) {
     const parsed = Number.parseInt(maxRaw, 10);
     if (!Number.isFinite(parsed) || parsed <= 0) {
-      return { error: "Max participants must be a positive whole number." };
+      return { error: t("maxParticipants") };
     }
     maxParticipants = parsed;
   }
@@ -182,7 +181,7 @@ export function parseProgramForm(
   if (priceRaw) {
     const parsed = Number.parseFloat(priceRaw);
     if (!Number.isFinite(parsed) || parsed < 0) {
-      return { error: "Price must be zero or a positive amount." };
+      return { error: t("price") };
     }
     price = parsed;
   }
@@ -211,17 +210,20 @@ export function parseProgramForm(
   };
 }
 
-export function programWriteErrorMessage(error: { code?: string; message?: string } | null) {
+export async function programWriteErrorMessage(
+  error: { code?: string; message?: string } | null,
+) {
+  const t = await getTranslations("admin.errors");
   const code = error?.code ?? "";
   const message = (error?.message ?? "").toLowerCase();
   if (code === "23505" || message.includes("programs_slug")) {
-    return "That slug is already in use. Please choose another.";
+    return t("slugTaken");
   }
   if (code === "23503" || message.includes("lecturer")) {
-    return "Please choose a valid lecturer.";
+    return t("validLecturer");
   }
   if (code === "23514" || message.includes("check constraint")) {
-    return "Please check the program details and try again.";
+    return t("checkProgram");
   }
-  return "We could not save this program. Please try again.";
+  return t("saveProgram");
 }

@@ -1,3 +1,7 @@
+"use client";
+
+import { useTranslations } from "next-intl";
+
 export function CoverImage({
   src,
   alt,
@@ -7,13 +11,15 @@ export function CoverImage({
   alt: string;
   className?: string;
 }) {
+  const t = useTranslations("news");
+
   if (!src) {
     return (
       <div
         className={`flex max-w-full items-center justify-center bg-paper-muted font-serif text-ink-muted ${className}`}
         aria-hidden="true"
       >
-        News
+        {t("placeholder")}
       </div>
     );
   }

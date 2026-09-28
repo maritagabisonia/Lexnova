@@ -1,4 +1,6 @@
 import { cache } from "react";
+import { getLocale } from "next-intl/server";
+import { formatAdminDateTime } from "@/lib/admin-format";
 import { createClient } from "@/lib/supabase/server";
 
 export type AdminRegistrationRow = {
@@ -22,22 +24,11 @@ function asOne<T>(value: T | T[] | null | undefined): T | null {
   return Array.isArray(value) ? (value[0] ?? null) : value;
 }
 
-export function formatRegisteredAt(value: string | null) {
+export function formatRegisteredAt(value: string | null, locale = "en") {
   if (!value) {
     return "—";
   }
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "UTC",
-  }).format(date);
+  return formatAdminDateTime(value, locale);
 }
 
 export const getAdminProgramRegistrations = cache(
@@ -45,6 +36,7 @@ export const getAdminProgramRegistrations = cache(
     programId: string,
   ): Promise<AdminRegistrationRow[]> {
     try {
+      const locale = await getLocale();
       const supabase = await createClient();
       const { data, error } = await supabase
         .from("registrations")
@@ -72,7 +64,7 @@ export const getAdminProgramRegistrations = cache(
           studentId: row.student_id,
           name: profile?.full_name?.trim() || "Student",
           email: profile?.email?.trim() || "—",
-          registeredAt: formatRegisteredAt(row.registered_at),
+          registeredAt: formatRegisteredAt(row.registered_at, locale),
         };
       });
     } catch (error) {

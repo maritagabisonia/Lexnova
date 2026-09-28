@@ -1,4 +1,5 @@
-import { FIELD_MAX, isHttpUrl, tooLong } from "@/lib/form-input";
+import { getTranslations } from "next-intl/server";
+import { FIELD_MAX, isHttpUrl } from "@/lib/form-input";
 
 export type LecturerFormValues = {
   id?: string;
@@ -29,35 +30,33 @@ export type LecturerWritePayload = {
   bio: string | null;
 };
 
-export function parseLecturerForm(
+export async function parseLecturerForm(
   formData: FormData,
-): { data: LecturerWritePayload } | { error: string } {
+): Promise<{ data: LecturerWritePayload } | { error: string }> {
+  const t = await getTranslations("admin.errors");
+  const fields = await getTranslations("admin.form");
   const fullName = String(formData.get("full_name") ?? "").trim();
   const title = emptyToNull(String(formData.get("title") ?? ""));
   const photoUrl = emptyToNull(String(formData.get("photo_url") ?? ""));
   const bio = emptyToNull(String(formData.get("bio") ?? ""));
 
   if (!fullName) {
-    return { error: "Please enter a name." };
+    return { error: t("enterName") };
   }
-  const nameLength = tooLong(fullName, FIELD_MAX.name, "Name");
-  if (nameLength) {
-    return { error: nameLength };
+  if (fullName.length > FIELD_MAX.name) {
+    return { error: t("tooLong", { field: fields("fullName") }) };
   }
-  const titleLength = title ? tooLong(title, FIELD_MAX.title, "Title") : null;
-  if (titleLength) {
-    return { error: titleLength };
+  if (title && title.length > FIELD_MAX.title) {
+    return { error: t("tooLong", { field: fields("title") }) };
   }
   if (photoUrl && !isHttpUrl(photoUrl)) {
-    return { error: "Photo URL must start with http:// or https://." };
+    return { error: t("photoUrl") };
   }
-  const photoLength = photoUrl ? tooLong(photoUrl, FIELD_MAX.url, "Photo URL") : null;
-  if (photoLength) {
-    return { error: photoLength };
+  if (photoUrl && photoUrl.length > FIELD_MAX.url) {
+    return { error: t("tooLong", { field: fields("photoUrl") }) };
   }
-  const bioLength = bio ? tooLong(bio, FIELD_MAX.longText, "Bio") : null;
-  if (bioLength) {
-    return { error: bioLength };
+  if (bio && bio.length > FIELD_MAX.longText) {
+    return { error: t("tooLong", { field: fields("bio") }) };
   }
 
   return {
@@ -70,11 +69,14 @@ export function parseLecturerForm(
   };
 }
 
-export function lecturerWriteErrorMessage(error: { code?: string; message?: string } | null) {
+export async function lecturerWriteErrorMessage(
+  error: { code?: string; message?: string } | null,
+) {
+  const t = await getTranslations("admin.errors");
   const code = error?.code ?? "";
   const message = (error?.message ?? "").toLowerCase();
   if (code === "23514" || message.includes("check constraint")) {
-    return "Please check the lecturer details and try again.";
+    return t("checkLecturer");
   }
-  return "We could not save this lecturer. Please try again.";
+  return t("saveLecturer");
 }

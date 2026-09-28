@@ -1,11 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import { useTranslations } from "next-intl";
 import { ProgramCard } from "@/components/program-card";
 import {
   programFormatFilters,
   programStatusFilters,
   programTypeFilters,
+  translatedFormatLabel,
+  translatedStatusLabel,
+  translatedTypeLabel,
   type ProgramSummary,
 } from "@/lib/program-display";
 
@@ -19,6 +23,7 @@ export function ProgramsCatalog({
   programs: ProgramSummary[];
   initialType?: string;
 }) {
+  const t = useTranslations("programs");
   const [query, setQuery] = useState("");
   const [type, setType] = useState(
     initialType === "course" || initialType === "training" ? initialType : "",
@@ -61,56 +66,56 @@ export function ProgramsCatalog({
         onSubmit={(event) => event.preventDefault()}
       >
         <label className="flex flex-col gap-1.5 text-xs tracking-wide text-ink-muted">
-          Search title
+          {t("searchTitle")}
           <input
             type="search"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            placeholder="Search by title"
+            placeholder={t("searchPlaceholder")}
             className={selectClass}
           />
         </label>
         <label className="flex flex-col gap-1.5 text-xs tracking-wide text-ink-muted">
-          Type
+          {t("type")}
           <select
             value={type}
             onChange={(event) => setType(event.target.value)}
             className={selectClass}
           >
-            <option value="">All types</option>
+            <option value="">{t("allTypes")}</option>
             {programTypeFilters.map((option) => (
               <option key={option.value} value={option.value}>
-                {option.label}
+                {translatedTypeLabel(option.value, t)}
               </option>
             ))}
           </select>
         </label>
         <label className="flex flex-col gap-1.5 text-xs tracking-wide text-ink-muted">
-          Format
+          {t("format")}
           <select
             value={format}
             onChange={(event) => setFormat(event.target.value)}
             className={selectClass}
           >
-            <option value="">All formats</option>
+            <option value="">{t("allFormats")}</option>
             {programFormatFilters.map((option) => (
               <option key={option.value} value={option.value}>
-                {option.label}
+                {translatedFormatLabel(option.value, t)}
               </option>
             ))}
           </select>
         </label>
         <label className="flex flex-col gap-1.5 text-xs tracking-wide text-ink-muted">
-          Status
+          {t("status")}
           <select
             value={status}
             onChange={(event) => setStatus(event.target.value)}
             className={selectClass}
           >
-            <option value="">All statuses</option>
+            <option value="">{t("allStatuses")}</option>
             {programStatusFilters.map((option) => (
               <option key={option.value} value={option.value}>
-                {option.label}
+                {translatedStatusLabel(option.value, t)}
               </option>
             ))}
           </select>
@@ -121,7 +126,10 @@ export function ProgramsCatalog({
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-ink-muted">
           {programs.length > 0 ? (
             <p>
-              Showing {filtered.length} of {programs.length} programs
+              {t("showing", {
+                filtered: filtered.length,
+                total: programs.length,
+              })}
             </p>
           ) : (
             <p />
@@ -132,7 +140,7 @@ export function ProgramsCatalog({
               onClick={clearFilters}
               className="inline-flex min-h-11 items-center text-ink hover:text-accent"
             >
-              Clear filters
+              {t("clearFilters")}
             </button>
           ) : null}
         </div>
@@ -146,9 +154,7 @@ export function ProgramsCatalog({
         </div>
       ) : (
         <p className="mt-6 text-sm text-ink-muted">
-          {programs.length === 0
-            ? "No programs are listed yet."
-            : "No programs match these filters."}
+          {programs.length === 0 ? t("empty") : t("noMatch")}
         </p>
       )}
     </div>

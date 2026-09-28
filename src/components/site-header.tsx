@@ -1,11 +1,20 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
+import { useTranslations } from "next-intl";
 import { logout } from "@/app/auth/actions";
+import { LocaleSwitcher } from "@/components/locale-switcher";
+import { Link, usePathname } from "@/i18n/navigation";
 import { isAdminPath, isDashboardPath } from "@/lib/auth-paths";
-import { authNav, primaryNav, site } from "@/lib/site";
+import { site } from "@/lib/site";
+
+const primaryNav = [
+  { href: "/", key: "home" },
+  { href: "/about", key: "about" },
+  { href: "/programs", key: "programs" },
+  { href: "/news", key: "news" },
+  { href: "/contact", key: "contact" },
+] as const;
 
 export function SiteHeader({
   isLoggedIn,
@@ -14,6 +23,7 @@ export function SiteHeader({
   isLoggedIn: boolean;
   isAdmin?: boolean;
 }) {
+  const t = useTranslations("nav");
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
@@ -31,7 +41,7 @@ export function SiteHeader({
 
         <nav
           className="hidden items-center gap-8 md:flex"
-          aria-label="Primary"
+          aria-label={t("primary")}
         >
           {primaryNav.map((item) => {
             const current = pathname === item.href;
@@ -46,13 +56,16 @@ export function SiteHeader({
                 }`}
                 aria-current={current ? "page" : undefined}
               >
-                {item.label}
+                {t(item.key)}
               </Link>
             );
           })}
         </nav>
 
         <div className="hidden items-center gap-4 md:flex">
+          <Suspense>
+            <LocaleSwitcher />
+          </Suspense>
           <AuthControls isLoggedIn={isLoggedIn} isAdmin={isAdmin} />
         </div>
 
@@ -63,7 +76,7 @@ export function SiteHeader({
           aria-controls="mobile-nav"
           onClick={() => setOpen((value) => !value)}
         >
-          <span className="sr-only">{open ? "Close menu" : "Open menu"}</span>
+          <span className="sr-only">{open ? t("closeMenu") : t("openMenu")}</span>
           {open ? (
             <svg viewBox="0 0 24 24" className="h-5 w-5" aria-hidden="true">
               <path
@@ -92,7 +105,7 @@ export function SiteHeader({
         <nav
           id="mobile-nav"
           className="border-t border-ink/10 px-4 py-3 sm:px-6 md:hidden"
-          aria-label="Mobile"
+          aria-label={t("mobile")}
         >
           <div className="flex flex-col">
             {primaryNav.map((item) => {
@@ -107,11 +120,14 @@ export function SiteHeader({
                   aria-current={current ? "page" : undefined}
                   onClick={() => setOpen(false)}
                 >
-                  {item.label}
+                  {t(item.key)}
                 </Link>
               );
             })}
-            <div className="mt-2 flex flex-col gap-2 border-t border-ink/10 pt-4">
+            <div className="mt-2 flex flex-col gap-3 border-t border-ink/10 pt-4">
+              <Suspense>
+                <LocaleSwitcher />
+              </Suspense>
               <AuthControls isLoggedIn={isLoggedIn} isAdmin={isAdmin} stacked />
             </div>
           </div>
@@ -130,6 +146,7 @@ function AuthControls({
   isAdmin?: boolean;
   stacked?: boolean;
 }) {
+  const t = useTranslations("nav");
   const pathname = usePathname();
   const onDashboard = isDashboardPath(pathname);
   const onAdmin = isAdminPath(pathname);
@@ -151,7 +168,7 @@ function AuthControls({
             }
             aria-current={onAdmin ? "page" : undefined}
           >
-            Admin
+            {t("admin")}
           </Link>
         ) : null}
         <Link
@@ -167,7 +184,7 @@ function AuthControls({
           }
           aria-current={onDashboard ? "page" : undefined}
         >
-          Dashboard
+          {t("dashboard")}
         </Link>
         <form action={logout}>
           <button
@@ -178,7 +195,7 @@ function AuthControls({
                 : "text-sm text-ink-muted transition-colors hover:text-accent"
             }
           >
-            Log Out
+            {t("logOut")}
           </button>
         </form>
       </>
@@ -188,24 +205,24 @@ function AuthControls({
   return (
     <>
       <Link
-        href={authNav[0].href}
+        href="/login"
         className={
           stacked
             ? "flex min-h-11 items-center text-base text-ink-muted transition-colors hover:text-accent"
             : "text-sm text-ink-muted transition-colors hover:text-accent"
         }
       >
-        {authNav[0].label}
+        {t("login")}
       </Link>
       <Link
-        href={authNav[1].href}
+        href="/register"
         className={
           stacked
             ? "inline-flex min-h-11 items-center justify-center rounded-sm bg-ink px-4 text-sm text-paper transition-colors hover:bg-ink-muted"
             : "rounded-sm bg-ink px-4 py-2 text-sm text-paper transition-colors hover:bg-ink-muted"
         }
       >
-        {authNav[1].label}
+        {t("register")}
       </Link>
     </>
   );

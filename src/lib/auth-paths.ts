@@ -1,3 +1,5 @@
+import { stripLocalePrefix } from "@/i18n/path";
+
 export function isDashboardPath(pathname: string) {
   return pathname === "/dashboard" || pathname.startsWith("/dashboard/");
 }
@@ -14,8 +16,7 @@ export function safeNextPath(next: string | null | undefined, fallback = "/") {
     !next.startsWith("//") &&
     !next.includes("\\")
   ) {
-    return next;
+    return stripLocalePrefix(next);
   }
   return fallback;
 }
-

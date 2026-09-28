@@ -1,4 +1,6 @@
 import { cache } from "react";
+import { getLocale } from "next-intl/server";
+import { formatAdminDateTime } from "@/lib/admin-format";
 import { formatDate, typeLabel, statusLabel } from "@/lib/program-display";
 import {
   type AdminLecturerOption,
@@ -23,28 +25,15 @@ export type AdminProgramRow = {
   registeredCount: number;
 };
 
-function formatTimestamp(value: string | null) {
-  if (!value) {
-    return null;
-  }
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "UTC",
-  }).format(date);
+function formatTimestamp(value: string | null, locale: string) {
+  return formatAdminDateTime(value, locale);
 }
 
 export const getAdminPrograms = cache(async function getAdminPrograms(): Promise<
   AdminProgramRow[]
 > {
   try {
+    const locale = await getLocale();
     const supabase = await createClient();
     const [{ data: programs, error: programError }, { data: regs, error: regError }] =
       await Promise.all([
@@ -76,7 +65,7 @@ export const getAdminPrograms = cache(async function getAdminPrograms(): Promise
       typeLabel: typeLabel(program.type),
       status: program.status,
       statusLabel: statusLabel(program.status),
-      startDate: formatDate(program.start_date),
+      startDate: formatDate(program.start_date, locale),
       registeredCount: counts.get(program.id) ?? 0,
     }));
   } catch (error) {
@@ -115,6 +104,7 @@ export const getAdminProgram = cache(async function getAdminProgram(
   id: string,
 ): Promise<ProgramFormValues | null> {
   try {
+    const locale = await getLocale();
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("programs")
@@ -155,8 +145,8 @@ export const getAdminProgram = cache(async function getAdminProgram(
         data.max_participants == null ? "" : String(data.max_participants),
       status: data.status ?? "coming_soon",
       price: data.price == null ? "" : String(data.price),
-      created_at: formatTimestamp(data.created_at ?? null),
-      updated_at: formatTimestamp(data.updated_at ?? null),
+      created_at: formatTimestamp(data.created_at ?? null, locale),
+      updated_at: formatTimestamp(data.updated_at ?? null, locale),
     };
   } catch {
     return null;

@@ -1,3 +1,5 @@
+import { calendarIntlLocale, intlLocale } from "@/i18n/dates";
+
 export type ProgramSummary = {
   id: string;
   title: string;
@@ -76,7 +78,7 @@ export function typeBadgeClass(type: string) {
     : "border-ink/20 bg-transparent text-ink";
 }
 
-export function formatDate(value: string | null) {
+export function formatDate(value: string | null, locale = "en") {
   if (!value) {
     return null;
   }
@@ -86,7 +88,7 @@ export function formatDate(value: string | null) {
     return value;
   }
 
-  return new Intl.DateTimeFormat("en-GB", {
+  return new Intl.DateTimeFormat(intlLocale(locale), {
     day: "numeric",
     month: "long",
     year: "numeric",
@@ -95,7 +97,7 @@ export function formatDate(value: string | null) {
 }
 
 /** Month and day only, e.g. "September 15". */
-export function formatCalendarDate(value: string | null) {
+export function formatCalendarDate(value: string | null, locale = "en") {
   if (!value) {
     return null;
   }
@@ -105,11 +107,62 @@ export function formatCalendarDate(value: string | null) {
     return value;
   }
 
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat(calendarIntlLocale(locale), {
     month: "long",
     day: "numeric",
     timeZone: "UTC",
   }).format(new Date(Date.UTC(year, month - 1, day)));
+}
+
+export function translatedTypeLabel(
+  type: string,
+  t: (key: "typeCourse" | "typeTraining") => string,
+) {
+  if (type === "course") return t("typeCourse");
+  if (type === "training") return t("typeTraining");
+  return typeLabel(type);
+}
+
+export function translatedFormatLabel(
+  format: string,
+  t: (key: "formatOnline" | "formatInPerson" | "formatHybrid") => string,
+) {
+  if (format === "online") return t("formatOnline");
+  if (format === "in_person") return t("formatInPerson");
+  if (format === "hybrid") return t("formatHybrid");
+  return formatLabel(format);
+}
+
+export function translatedStatusLabel(
+  status: string,
+  t: (
+    key:
+      | "statusRegistrationOpen"
+      | "statusComingSoon"
+      | "statusFullyBooked"
+      | "statusInProgress"
+      | "statusCompleted"
+      | "statusArchived",
+  ) => string,
+) {
+  const keys: Record<
+    string,
+    | "statusRegistrationOpen"
+    | "statusComingSoon"
+    | "statusFullyBooked"
+    | "statusInProgress"
+    | "statusCompleted"
+    | "statusArchived"
+  > = {
+    registration_open: "statusRegistrationOpen",
+    coming_soon: "statusComingSoon",
+    fully_booked: "statusFullyBooked",
+    in_progress: "statusInProgress",
+    completed: "statusCompleted",
+    archived: "statusArchived",
+  };
+  const key = keys[status];
+  return key ? t(key) : statusLabel(status);
 }
 
 export function formatTime(value: string | null) {
