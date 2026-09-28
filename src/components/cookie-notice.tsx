@@ -1,14 +1,15 @@
 "use client";
 
-import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useTranslations } from "next-intl";
 import { useState } from "react";
+import { Link, useRouter } from "@/i18n/navigation";
 import {
   COOKIE_NOTICE_MAX_AGE,
   COOKIE_NOTICE_NAME,
 } from "@/lib/cookie-notice";
 
 export function CookieNotice({ dismissed }: { dismissed: boolean }) {
+  const t = useTranslations("cookie");
   const router = useRouter();
   const [open, setOpen] = useState(!dismissed);
 
@@ -30,19 +31,17 @@ export function CookieNotice({ dismissed }: { dismissed: boolean }) {
     <div
       className="fixed inset-x-0 bottom-0 z-40 border-t border-accent/40 bg-ink text-paper"
       role="region"
-      aria-label="Cookie notice"
+      aria-label={t("regionLabel")}
     >
       {/* PLACEHOLDER: This cookie notice should be reviewed by a lawyer before real launch. */}
       <div className="mx-auto flex max-w-6xl flex-col gap-4 px-4 py-4 sm:flex-row sm:items-center sm:justify-between sm:px-6">
         <p className="text-sm leading-relaxed text-paper/90">
-          We use essential cookies to keep you signed in, and a small
-          preference cookie if you dismiss this notice. We do not currently
-          use advertising or analytics cookies.{" "}
+          {t("body")}{" "}
           <Link href="/cookie-policy" className="underline hover:text-accent">
-            Cookie policy
+            {t("policyLink")}
           </Link>
           <span className="mt-1 block text-xs text-paper/70">
-            Placeholder notice — review with a lawyer before launch.
+            {t("placeholder")}
           </span>
         </p>
         <button
@@ -50,7 +49,7 @@ export function CookieNotice({ dismissed }: { dismissed: boolean }) {
           onClick={dismiss}
           className="inline-flex min-h-11 shrink-0 items-center justify-center rounded-sm bg-paper px-5 text-sm text-ink hover:bg-paper-muted"
         >
-          OK
+          {t("ok")}
         </button>
       </div>
     </div>

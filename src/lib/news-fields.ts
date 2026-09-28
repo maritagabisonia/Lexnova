@@ -1,4 +1,5 @@
-import { FIELD_MAX, isHttpUrl, isUuid, tooLong } from "@/lib/form-input";
+import { getTranslations } from "next-intl/server";
+import { FIELD_MAX, isHttpUrl, isUuid } from "@/lib/form-input";
 import { slugify } from "@/lib/slug";
 
 export type RelatedProgramOption = {
@@ -61,9 +62,11 @@ export type NewsWritePayload = {
   published_at: string | null;
 };
 
-export function parseNewsForm(
+export async function parseNewsForm(
   formData: FormData,
-): { data: NewsWritePayload } | { error: string } {
+): Promise<{ data: NewsWritePayload } | { error: string }> {
+  const t = await getTranslations("admin.errors");
+  const fields = await getTranslations("admin.form");
   const title = String(formData.get("title") ?? "").trim();
   const slugInput = String(formData.get("slug") ?? "").trim();
   const slug = slugify(slugInput || title);
@@ -75,53 +78,42 @@ export function parseNewsForm(
   const publishedAtRaw = emptyToNull(String(formData.get("published_at") ?? ""));
 
   if (!title) {
-    return { error: "Please enter a title." };
+    return { error: t("enterTitle") };
   }
-  const titleLength = tooLong(title, FIELD_MAX.title, "Title");
-  if (titleLength) {
-    return { error: titleLength };
+  if (title.length > FIELD_MAX.title) {
+    return { error: t("tooLong", { field: fields("title") }) };
   }
   if (!slug) {
-    return { error: "Please enter a slug." };
+    return { error: t("enterSlug") };
   }
   if (coverUrl && !isHttpUrl(coverUrl)) {
-    return { error: "Cover image URL must start with http:// or https://." };
+    return { error: t("coverUrl") };
   }
-  const coverLength = coverUrl
-    ? tooLong(coverUrl, FIELD_MAX.url, "Cover image URL")
-    : null;
-  if (coverLength) {
-    return { error: coverLength };
+  if (coverUrl && coverUrl.length > FIELD_MAX.url) {
+    return { error: t("tooLong", { field: fields("coverImageUrl") }) };
   }
   if (relatedProgramId && !isUuid(relatedProgramId)) {
-    return { error: "Please choose a valid related program." };
+    return { error: t("validRelatedProgram") };
   }
 
   const shortDescription = emptyToNull(String(formData.get("short_description") ?? ""));
   const content = emptyToNull(String(formData.get("content") ?? ""));
   const author = emptyToNull(String(formData.get("author") ?? ""));
-  const shortLength = shortDescription
-    ? tooLong(shortDescription, FIELD_MAX.shortText, "Short description")
-    : null;
-  if (shortLength) {
-    return { error: shortLength };
+  if (shortDescription && shortDescription.length > FIELD_MAX.shortText) {
+    return { error: t("tooLong", { field: fields("shortDescription") }) };
   }
-  const contentLength = content
-    ? tooLong(content, FIELD_MAX.longText, "Content")
-    : null;
-  if (contentLength) {
-    return { error: contentLength };
+  if (content && content.length > FIELD_MAX.longText) {
+    return { error: t("tooLong", { field: fields("content") }) };
   }
-  const authorLength = author ? tooLong(author, FIELD_MAX.name, "Author") : null;
-  if (authorLength) {
-    return { error: authorLength };
+  if (author && author.length > FIELD_MAX.name) {
+    return { error: t("tooLong", { field: fields("author") }) };
   }
 
   let publishedAt: string | null = null;
   if (publishedAtRaw) {
     const parsed = new Date(publishedAtRaw);
     if (Number.isNaN(parsed.getTime())) {
-      return { error: "Please enter a valid published date." };
+      return { error: t("validPublishedDate") };
     }
     publishedAt = parsed.toISOString();
   } else if (published) {
@@ -143,14 +135,17 @@ export function parseNewsForm(
   };
 }
 
-export function newsWriteErrorMessage(error: { code?: string; message?: string } | null) {
+export async function newsWriteErrorMessage(
+  error: { code?: string; message?: string } | null,
+) {
+  const t = await getTranslations("admin.errors");
   const code = error?.code ?? "";
   const message = (error?.message ?? "").toLowerCase();
   if (code === "23505" || message.includes("news_articles_slug")) {
-    return "That slug is already in use. Please choose another.";
+    return t("slugTaken");
   }
   if (code === "23503" || message.includes("related_program")) {
-    return "Please choose a valid related program.";
+    return t("validRelatedProgram");
   }
-  return "We could not save this article. Please try again.";
+  return t("saveArticle");
 }

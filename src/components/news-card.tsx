@@ -1,11 +1,16 @@
-import Link from "next/link";
+"use client";
+
+import { useLocale, useTranslations } from "next-intl";
 import { CoverImage } from "@/components/cover-image";
+import { Link } from "@/i18n/navigation";
 import { formatDate } from "@/lib/program-display";
 import type { NewsSummary } from "@/lib/catalog";
 
 export function NewsCard({ article }: { article: NewsSummary }) {
+  const t = useTranslations("news");
+  const locale = useLocale();
   const published = article.published_at
-    ? formatDate(article.published_at.slice(0, 10))
+    ? formatDate(article.published_at.slice(0, 10), locale)
     : null;
 
   return (
@@ -35,7 +40,7 @@ export function NewsCard({ article }: { article: NewsSummary }) {
           href={`/news/${article.slug}`}
           className="mt-5 inline-flex min-h-11 items-center text-sm text-ink hover:text-accent"
         >
-          Read article
+          {t("readArticle")}
         </Link>
       </div>
     </article>

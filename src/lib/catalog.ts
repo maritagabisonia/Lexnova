@@ -13,6 +13,9 @@ export {
   programTypeFilters,
   statusBadgeClass,
   statusLabel,
+  translatedFormatLabel,
+  translatedStatusLabel,
+  translatedTypeLabel,
   typeBadgeClass,
   typeLabel,
 } from "@/lib/program-display";

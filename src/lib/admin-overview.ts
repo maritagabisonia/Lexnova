@@ -1,4 +1,5 @@
 import { cache } from "react";
+import { getLocale, getTranslations } from "next-intl/server";
 import { formatDate, todayIsoDate } from "@/lib/program-display";
 import { createClient } from "@/lib/supabase/server";
 
@@ -97,6 +98,8 @@ export const getAdminOverview = cache(async function getAdminOverview(): Promise
       (studentsResult.data ?? []).map((row) => row.student_id),
     );
 
+    const locale = await getLocale();
+    const t = await getTranslations("admin");
     const recent: AdminRecentRegistration[] = [];
     for (const row of recentResult.data ?? []) {
       const profile = asOne(
@@ -110,10 +113,10 @@ export const getAdminOverview = cache(async function getAdminOverview(): Promise
       );
       recent.push({
         id: row.id,
-        studentName: profile?.full_name?.trim() || "Student",
-        programTitle: program?.title?.trim() || "Program",
+        studentName: profile?.full_name?.trim() || t("student"),
+        programTitle: program?.title?.trim() || t("program"),
         programSlug: program?.slug ?? null,
-        registeredOn: formatDate(row.registered_at?.slice(0, 10) ?? null),
+        registeredOn: formatDate(row.registered_at?.slice(0, 10) ?? null, locale),
       });
     }
 

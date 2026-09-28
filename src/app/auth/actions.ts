@@ -1,7 +1,8 @@
 "use server";
 
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { getTranslations } from "next-intl/server";
+import { redirect } from "@/i18n/redirect";
 import { authErrorMessage, originFromHeaders } from "@/lib/auth-errors";
 import { safeNextPath } from "@/lib/auth-paths";
 import { FIELD_MAX, tooLong } from "@/lib/form-input";
@@ -16,29 +17,30 @@ export async function register(
   _prev: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
+  const t = await getTranslations("auth.errors");
+  const fields = await getTranslations("errors.fields");
+  const tooLongT = await getTranslations("errors");
   const fullName = String(formData.get("fullName") ?? "").trim();
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const password = String(formData.get("password") ?? "");
 
   if (!fullName) {
-    return { error: "Please enter your full name." };
+    return { error: t("fullName") };
   }
-  const nameLength = tooLong(fullName, FIELD_MAX.name, "Name");
-  if (nameLength) {
-    return { error: nameLength };
+  if (tooLong(fullName, FIELD_MAX.name, "Name")) {
+    return { error: tooLongT("tooLong", { field: fields("name") }) };
   }
   if (!email || !email.includes("@")) {
-    return { error: "Please enter a valid email address." };
+    return { error: t("invalidEmail") };
   }
-  const emailLength = tooLong(email, FIELD_MAX.email, "Email");
-  if (emailLength) {
-    return { error: emailLength };
+  if (tooLong(email, FIELD_MAX.email, "Email")) {
+    return { error: tooLongT("tooLong", { field: fields("email") }) };
   }
   if (password.length < 6) {
-    return { error: "Please choose a stronger password (at least 6 characters)." };
+    return { error: t("weakPassword") };
   }
   if (password.length > FIELD_MAX.password) {
-    return { error: "Please choose a shorter password." };
+    return { error: t("shortPassword") };
   }
 
   const supabase = await createClient();
@@ -55,61 +57,61 @@ export async function register(
   });
 
   if (error) {
-    return { error: authErrorMessage(error) };
+    return { error: await authErrorMessage(error) };
   }
 
   if (data.user?.identities && data.user.identities.length === 0) {
-    return { error: "That email is already registered." };
+    return { error: t("alreadyRegistered") };
   }
 
   if (!data.session) {
-    return {
-      success:
-        "Account created. Please check your email to confirm your address, then log in.",
-    };
+    const successT = await getTranslations("auth.success");
+    return { success: successT("confirmEmail") };
   }
 
-  redirect(next);
+  return redirect(next);
 }
 
 export async function login(
   _prev: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
+  const t = await getTranslations("auth.errors");
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
   const password = String(formData.get("password") ?? "");
 
   if (!email || !password) {
-    return { error: "Please enter your email and password." };
+    return { error: t("emailPassword") };
   }
   if (tooLong(email, FIELD_MAX.email, "Email")) {
-    return { error: "Please enter a valid email address." };
+    return { error: t("invalidEmail") };
   }
 
   const supabase = await createClient();
   const { error } = await supabase.auth.signInWithPassword({ email, password });
 
   if (error) {
-    return { error: authErrorMessage(error) };
+    return { error: await authErrorMessage(error) };
   }
 
-  redirect(safeNextPath(String(formData.get("next") ?? ""), "/dashboard"));
+  return redirect(safeNextPath(String(formData.get("next") ?? ""), "/dashboard"));
 }
 
 export async function logout() {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  redirect("/");
+  return redirect("/");
 }
 
 export async function requestPasswordReset(
   _prev: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
+  const t = await getTranslations("auth.errors");
   const email = String(formData.get("email") ?? "").trim().toLowerCase();
 
   if (!email || !email.includes("@") || tooLong(email, FIELD_MAX.email, "Email")) {
-    return { error: "Please enter a valid email address." };
+    return { error: t("invalidEmail") };
   }
 
   const supabase = await createClient();
@@ -120,30 +122,29 @@ export async function requestPasswordReset(
   });
 
   if (error) {
-    return { error: authErrorMessage(error) };
+    return { error: await authErrorMessage(error) };
   }
 
-  return {
-    success:
-      "If that email is registered, we sent a link to reset your password.",
-  };
+  const successT = await getTranslations("auth.success");
+  return { success: successT("resetSent") };
 }
 
 export async function updatePassword(
   _prev: AuthActionState,
   formData: FormData,
 ): Promise<AuthActionState> {
+  const t = await getTranslations("auth.errors");
   const password = String(formData.get("password") ?? "");
   const confirm = String(formData.get("confirmPassword") ?? "");
 
   if (password.length < 6) {
-    return { error: "Please choose a stronger password (at least 6 characters)." };
+    return { error: t("weakPassword") };
   }
   if (password.length > FIELD_MAX.password) {
-    return { error: "Please choose a shorter password." };
+    return { error: t("shortPassword") };
   }
   if (password !== confirm) {
-    return { error: "Those passwords do not match." };
+    return { error: t("mismatch") };
   }
 
   const supabase = await createClient();
@@ -152,16 +153,14 @@ export async function updatePassword(
   } = await supabase.auth.getUser();
 
   if (!user) {
-    return {
-      error: "This reset link has expired. Please request a new one.",
-    };
+    return { error: t("expiredLink") };
   }
 
   const { error } = await supabase.auth.updateUser({ password });
 
   if (error) {
-    return { error: authErrorMessage(error) };
+    return { error: await authErrorMessage(error) };
   }
 
-  redirect("/login");
+  return redirect("/login");
 }

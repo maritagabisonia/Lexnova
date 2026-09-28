@@ -1,5 +1,10 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import {
+  localeFromPathname,
+  stripLocalePrefix,
+  withLocalePrefix,
+} from "@/i18n/path";
 import { isAdminPath, isDashboardPath } from "@/lib/auth-paths";
 
 function copyCookies(from: NextResponse, to: NextResponse) {
@@ -9,10 +14,15 @@ function copyCookies(from: NextResponse, to: NextResponse) {
   return to;
 }
 
-export async function updateSession(request: NextRequest) {
-  let supabaseResponse = NextResponse.next({
-    request,
-  });
+export async function updateSession(
+  request: NextRequest,
+  response?: NextResponse,
+) {
+  let supabaseResponse =
+    response ??
+    NextResponse.next({
+      request,
+    });
 
   const supabase = createServerClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
@@ -26,9 +36,11 @@ export async function updateSession(request: NextRequest) {
           cookiesToSet.forEach(({ name, value }) =>
             request.cookies.set(name, value),
           );
-          supabaseResponse = NextResponse.next({
-            request,
-          });
+          if (!response) {
+            supabaseResponse = NextResponse.next({
+              request,
+            });
+          }
           cookiesToSet.forEach(({ name, value, options }) =>
             supabaseResponse.cookies.set(name, value, options),
           );
@@ -45,16 +57,19 @@ export async function updateSession(request: NextRequest) {
   } = await supabase.auth.getUser();
 
   const pathname = request.nextUrl.pathname;
-  const needsAuth = isDashboardPath(pathname) || isAdminPath(pathname);
+  const locale = localeFromPathname(pathname);
+  const pathWithoutLocale = stripLocalePrefix(pathname);
+  const needsAuth =
+    isDashboardPath(pathWithoutLocale) || isAdminPath(pathWithoutLocale);
 
   if (needsAuth && !user) {
     const url = request.nextUrl.clone();
-    url.pathname = "/login";
+    url.pathname = withLocalePrefix("/login", locale);
     url.search = "";
     return copyCookies(supabaseResponse, NextResponse.redirect(url));
   }
 
-  if (isAdminPath(pathname) && user) {
+  if (isAdminPath(pathWithoutLocale) && user) {
     const { data: profile } = await supabase
       .from("profiles")
       .select("role")
@@ -63,7 +78,7 @@ export async function updateSession(request: NextRequest) {
 
     if (profile?.role !== "admin") {
       const url = request.nextUrl.clone();
-      url.pathname = "/not-authorized";
+      url.pathname = withLocalePrefix("/not-authorized", locale);
       url.search = "";
       return copyCookies(supabaseResponse, NextResponse.redirect(url));
     }

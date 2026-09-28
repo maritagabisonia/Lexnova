@@ -1,13 +1,32 @@
-import type { NextRequest } from "next/server";
+import createMiddleware from "next-intl/middleware";
+import { NextResponse, type NextRequest } from "next/server";
+import { isAppLocale } from "./i18n/path";
+import { routing } from "./i18n/routing";
 import { updateSession } from "@/lib/supabase/proxy";
 
-// Next.js 16 runs `src/proxy.ts` on every matched request (this replaced
-// `middleware.ts`). Session refresh and /dashboard + /admin redirects live here.
-// Layouts under those routes repeat the same checks so a missed matcher
-// still cannot render the page.
+const handleI18nRouting = createMiddleware(routing);
 
 export async function proxy(request: NextRequest) {
-  return updateSession(request);
+  const { pathname } = request.nextUrl;
+
+  // Auth callback stays unprefixed so Supabase redirect URLs keep working.
+  if (pathname.startsWith("/auth/")) {
+    return updateSession(request);
+  }
+
+  // next-intl with localeDetection: false always sends `/` to the default
+  // locale. Restore a previously chosen language from the cookie instead.
+  if (pathname === "/") {
+    const saved = request.cookies.get("NEXT_LOCALE")?.value;
+    if (isAppLocale(saved) && saved !== routing.defaultLocale) {
+      const url = request.nextUrl.clone();
+      url.pathname = `/${saved}`;
+      return updateSession(request, NextResponse.redirect(url));
+    }
+  }
+
+  const i18nResponse = handleI18nRouting(request);
+  return updateSession(request, i18nResponse);
 }
 
 export const config = {

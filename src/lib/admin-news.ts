@@ -1,4 +1,6 @@
 import { cache } from "react";
+import { getLocale, getTranslations } from "next-intl/server";
+import { formatAdminDateTime } from "@/lib/admin-format";
 import {
   toDateTimeLocal,
   type NewsFormValues,
@@ -18,28 +20,19 @@ export type AdminNewsRow = {
   publishedAt: string | null;
 };
 
-function formatTimestamp(value: string | null) {
+function formatTimestamp(value: string | null, locale: string) {
   if (!value) {
     return null;
   }
-  const date = new Date(value);
-  if (Number.isNaN(date.getTime())) {
-    return value;
-  }
-  return new Intl.DateTimeFormat("en-GB", {
-    day: "numeric",
-    month: "short",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
-    timeZone: "UTC",
-  }).format(date);
+  return formatAdminDateTime(value, locale);
 }
 
 export const getAdminNews = cache(async function getAdminNews(): Promise<
   AdminNewsRow[]
 > {
   try {
+    const locale = await getLocale();
+    const t = await getTranslations("admin");
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("news_articles")
@@ -56,8 +49,8 @@ export const getAdminNews = cache(async function getAdminNews(): Promise<
       title: row.title,
       slug: row.slug,
       published: row.published,
-      publishedLabel: row.published ? "Published" : "Draft",
-      publishedAt: formatTimestamp(row.published_at),
+      publishedLabel: row.published ? t("published") : t("draft"),
+      publishedAt: formatTimestamp(row.published_at, locale),
     }));
   } catch (error) {
     console.error("Admin news list failed:", error);
@@ -91,6 +84,7 @@ export const getAdminArticle = cache(async function getAdminArticle(
   id: string,
 ): Promise<NewsFormValues | null> {
   try {
+    const locale = await getLocale();
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("news_articles")
@@ -113,7 +107,7 @@ export const getAdminArticle = cache(async function getAdminArticle(
       related_program_id: data.related_program_id ?? "",
       published: Boolean(data.published),
       published_at: toDateTimeLocal(data.published_at),
-      created_at: formatTimestamp(data.created_at ?? null),
+      created_at: formatTimestamp(data.created_at ?? null, locale),
     };
   } catch {
     return null;

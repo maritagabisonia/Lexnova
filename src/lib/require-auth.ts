@@ -1,4 +1,4 @@
-import { redirect } from "next/navigation";
+import { redirect } from "@/i18n/redirect";
 import { createClient } from "@/lib/supabase/server";
 
 export async function requireUser() {
@@ -8,7 +8,7 @@ export async function requireUser() {
   } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/login");
+    return redirect("/login");
   }
 
   return { supabase, user };
@@ -23,7 +23,7 @@ export async function requireAdmin() {
     .maybeSingle();
 
   if (profile?.role !== "admin") {
-    redirect("/not-authorized");
+    return redirect("/not-authorized");
   }
 
   return { supabase, user };
