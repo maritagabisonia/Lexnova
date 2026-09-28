@@ -30,6 +30,7 @@ const sourceSerif = Source_Serif_4({
   display: "swap",
 });
 
+// Source has no Mkhedruli glyphs; Noto is the Georgian fallback in the stack.
 const notoSansGeorgian = Noto_Sans_Georgian({
   subsets: ["georgian"],
   variable: "--font-noto-sans-georgian",
