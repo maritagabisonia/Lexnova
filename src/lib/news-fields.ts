@@ -10,10 +10,13 @@ export type RelatedProgramOption = {
 export type NewsFormValues = {
   id?: string;
   title: string;
+  title_ka: string;
   slug: string;
   cover_image_url: string;
   short_description: string;
+  short_description_ka: string;
   content: string;
+  content_ka: string;
   author: string;
   related_program_id: string;
   published: boolean;
@@ -23,10 +26,13 @@ export type NewsFormValues = {
 
 export const emptyNewsFormValues: NewsFormValues = {
   title: "",
+  title_ka: "",
   slug: "",
   cover_image_url: "",
   short_description: "",
+  short_description_ka: "",
   content: "",
+  content_ka: "",
   author: "",
   related_program_id: "",
   published: false,
@@ -51,11 +57,14 @@ function emptyToNull(value: string) {
 }
 
 export type NewsWritePayload = {
-  title: string;
+  title: string | null;
+  title_ka: string | null;
   slug: string;
   cover_image_url: string | null;
   short_description: string | null;
+  short_description_ka: string | null;
   content: string | null;
+  content_ka: string | null;
   author: string | null;
   related_program_id: string | null;
   published: boolean;
@@ -67,9 +76,10 @@ export async function parseNewsForm(
 ): Promise<{ data: NewsWritePayload } | { error: string }> {
   const t = await getTranslations("admin.errors");
   const fields = await getTranslations("admin.form");
-  const title = String(formData.get("title") ?? "").trim();
+  const title = emptyToNull(String(formData.get("title") ?? ""));
+  const titleKa = emptyToNull(String(formData.get("title_ka") ?? ""));
   const slugInput = String(formData.get("slug") ?? "").trim();
-  const slug = slugify(slugInput || title);
+  const slug = slugify(slugInput || title || "");
   const published = String(formData.get("published") ?? "") === "true";
   const coverUrl = emptyToNull(String(formData.get("cover_image_url") ?? ""));
   const relatedProgramId = emptyToNull(
@@ -77,10 +87,13 @@ export async function parseNewsForm(
   );
   const publishedAtRaw = emptyToNull(String(formData.get("published_at") ?? ""));
 
-  if (!title) {
+  if (!title && !titleKa) {
     return { error: t("enterTitle") };
   }
-  if (title.length > FIELD_MAX.title) {
+  if (title && title.length > FIELD_MAX.title) {
+    return { error: t("tooLong", { field: fields("title") }) };
+  }
+  if (titleKa && titleKa.length > FIELD_MAX.title) {
     return { error: t("tooLong", { field: fields("title") }) };
   }
   if (!slug) {
@@ -97,12 +110,22 @@ export async function parseNewsForm(
   }
 
   const shortDescription = emptyToNull(String(formData.get("short_description") ?? ""));
+  const shortDescriptionKa = emptyToNull(
+    String(formData.get("short_description_ka") ?? ""),
+  );
   const content = emptyToNull(String(formData.get("content") ?? ""));
+  const contentKa = emptyToNull(String(formData.get("content_ka") ?? ""));
   const author = emptyToNull(String(formData.get("author") ?? ""));
   if (shortDescription && shortDescription.length > FIELD_MAX.shortText) {
     return { error: t("tooLong", { field: fields("shortDescription") }) };
   }
+  if (shortDescriptionKa && shortDescriptionKa.length > FIELD_MAX.shortText) {
+    return { error: t("tooLong", { field: fields("shortDescription") }) };
+  }
   if (content && content.length > FIELD_MAX.longText) {
+    return { error: t("tooLong", { field: fields("content") }) };
+  }
+  if (contentKa && contentKa.length > FIELD_MAX.longText) {
     return { error: t("tooLong", { field: fields("content") }) };
   }
   if (author && author.length > FIELD_MAX.name) {
@@ -123,10 +146,13 @@ export async function parseNewsForm(
   return {
     data: {
       title,
+      title_ka: titleKa,
       slug,
       cover_image_url: coverUrl,
       short_description: shortDescription,
+      short_description_ka: shortDescriptionKa,
       content,
+      content_ka: contentKa,
       author,
       related_program_id: relatedProgramId,
       published,

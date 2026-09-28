@@ -27,12 +27,18 @@ export type ProgramFormValues = {
   id?: string;
   type: "course" | "training";
   title: string;
+  title_ka: string;
   slug: string;
   short_description: string;
+  short_description_ka: string;
   full_description: string;
+  full_description_ka: string;
   target_audience: string;
+  target_audience_ka: string;
   objectives: string;
+  objectives_ka: string;
   learning_outcomes: string;
+  learning_outcomes_ka: string;
   duration_text: string;
   start_date: string;
   end_date: string;
@@ -50,12 +56,18 @@ export type ProgramFormValues = {
 export const emptyProgramFormValues: ProgramFormValues = {
   type: "course",
   title: "",
+  title_ka: "",
   slug: "",
   short_description: "",
+  short_description_ka: "",
   full_description: "",
+  full_description_ka: "",
   target_audience: "",
+  target_audience_ka: "",
   objectives: "",
+  objectives_ka: "",
   learning_outcomes: "",
+  learning_outcomes_ka: "",
   duration_text: "",
   start_date: "",
   end_date: "",
@@ -77,13 +89,19 @@ function emptyToNull(value: string) {
 
 export type ProgramWritePayload = {
   type: "course" | "training";
-  title: string;
+  title: string | null;
+  title_ka: string | null;
   slug: string;
   short_description: string | null;
+  short_description_ka: string | null;
   full_description: string | null;
+  full_description_ka: string | null;
   target_audience: string | null;
+  target_audience_ka: string | null;
   objectives: string | null;
+  objectives_ka: string | null;
   learning_outcomes: string | null;
+  learning_outcomes_ka: string | null;
   duration_text: string | null;
   start_date: string | null;
   end_date: string | null;
@@ -101,18 +119,22 @@ export async function parseProgramForm(
 ): Promise<{ data: ProgramWritePayload } | { error: string }> {
   const t = await getTranslations("admin.errors");
   const fields = await getTranslations("admin.form");
-  const title = String(formData.get("title") ?? "").trim();
+  const title = emptyToNull(String(formData.get("title") ?? ""));
+  const titleKa = emptyToNull(String(formData.get("title_ka") ?? ""));
   const slugInput = String(formData.get("slug") ?? "").trim();
-  const slug = slugify(slugInput || title);
+  const slug = slugify(slugInput || title || "");
   const type = String(formData.get("type") ?? "");
   const format = String(formData.get("format") ?? "");
   const status = String(formData.get("status") ?? "");
   const lecturerId = String(formData.get("lecturer_id") ?? "").trim();
 
-  if (!title) {
+  if (!title && !titleKa) {
     return { error: t("enterTitle") };
   }
-  if (title.length > FIELD_MAX.title) {
+  if (title && title.length > FIELD_MAX.title) {
+    return { error: t("tooLong", { field: fields("title") }) };
+  }
+  if (titleKa && titleKa.length > FIELD_MAX.title) {
     return { error: t("tooLong", { field: fields("title") }) };
   }
   if (!slug) {
@@ -145,19 +167,37 @@ export async function parseProgramForm(
   }
 
   const shortDescription = emptyToNull(String(formData.get("short_description") ?? ""));
+  const shortDescriptionKa = emptyToNull(
+    String(formData.get("short_description_ka") ?? ""),
+  );
   const fullDescription = emptyToNull(String(formData.get("full_description") ?? ""));
+  const fullDescriptionKa = emptyToNull(
+    String(formData.get("full_description_ka") ?? ""),
+  );
   const targetAudience = emptyToNull(String(formData.get("target_audience") ?? ""));
+  const targetAudienceKa = emptyToNull(
+    String(formData.get("target_audience_ka") ?? ""),
+  );
   const objectives = emptyToNull(String(formData.get("objectives") ?? ""));
+  const objectivesKa = emptyToNull(String(formData.get("objectives_ka") ?? ""));
   const learningOutcomes = emptyToNull(String(formData.get("learning_outcomes") ?? ""));
+  const learningOutcomesKa = emptyToNull(
+    String(formData.get("learning_outcomes_ka") ?? ""),
+  );
   const durationText = emptyToNull(String(formData.get("duration_text") ?? ""));
   const location = emptyToNull(String(formData.get("location") ?? ""));
 
   for (const [value, field, max] of [
     [shortDescription, "shortDescription", FIELD_MAX.shortText],
+    [shortDescriptionKa, "shortDescription", FIELD_MAX.shortText],
     [fullDescription, "fullDescription", FIELD_MAX.longText],
+    [fullDescriptionKa, "fullDescription", FIELD_MAX.longText],
     [targetAudience, "targetAudience", FIELD_MAX.longText],
+    [targetAudienceKa, "targetAudience", FIELD_MAX.longText],
     [objectives, "objectives", FIELD_MAX.longText],
+    [objectivesKa, "objectives", FIELD_MAX.longText],
     [learningOutcomes, "learningOutcomes", FIELD_MAX.longText],
+    [learningOutcomesKa, "learningOutcomes", FIELD_MAX.longText],
     [durationText, "duration", FIELD_MAX.shortText],
     [location, "location", FIELD_MAX.shortText],
   ] as const) {
@@ -190,12 +230,18 @@ export async function parseProgramForm(
     data: {
       type,
       title,
+      title_ka: titleKa,
       slug,
       short_description: shortDescription,
+      short_description_ka: shortDescriptionKa,
       full_description: fullDescription,
+      full_description_ka: fullDescriptionKa,
       target_audience: targetAudience,
+      target_audience_ka: targetAudienceKa,
       objectives: objectives,
+      objectives_ka: objectivesKa,
       learning_outcomes: learningOutcomes,
+      learning_outcomes_ka: learningOutcomesKa,
       duration_text: durationText,
       start_date: startDate,
       end_date: endDate,

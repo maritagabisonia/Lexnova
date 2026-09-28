@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { getLocale } from "next-intl/server";
 import { formatAdminDateTime } from "@/lib/admin-format";
+import { localizedText } from "@/lib/localized-content";
 import { formatDate, typeLabel, statusLabel } from "@/lib/program-display";
 import {
   type AdminLecturerOption,
@@ -39,7 +40,7 @@ export const getAdminPrograms = cache(async function getAdminPrograms(): Promise
       await Promise.all([
         supabase
           .from("programs")
-          .select("id, title, slug, type, status, start_date, created_at")
+          .select("id, title, title_ka, slug, type, status, start_date, created_at")
           .order("created_at", { ascending: false }),
         supabase.from("registrations").select("program_id").eq("status", "confirmed"),
       ]);
@@ -59,7 +60,7 @@ export const getAdminPrograms = cache(async function getAdminPrograms(): Promise
 
     return (programs ?? []).map((program) => ({
       id: program.id,
-      title: program.title,
+      title: localizedText("en", program.title_ka, program.title) ?? "",
       slug: program.slug,
       type: program.type,
       typeLabel: typeLabel(program.type),
@@ -109,7 +110,7 @@ export const getAdminProgram = cache(async function getAdminProgram(
     const { data, error } = await supabase
       .from("programs")
       .select(
-        "id, type, title, slug, short_description, full_description, target_audience, objectives, learning_outcomes, duration_text, start_date, end_date, registration_deadline, format, location, lecturer_id, max_participants, status, price, created_at, updated_at",
+        "id, type, title, title_ka, slug, short_description, short_description_ka, full_description, full_description_ka, target_audience, target_audience_ka, objectives, objectives_ka, learning_outcomes, learning_outcomes_ka, duration_text, start_date, end_date, registration_deadline, format, location, lecturer_id, max_participants, status, price, created_at, updated_at",
       )
       .eq("id", id)
       .maybeSingle();
@@ -128,12 +129,18 @@ export const getAdminProgram = cache(async function getAdminProgram(
       id: data.id,
       type,
       title: data.title ?? "",
+      title_ka: data.title_ka ?? "",
       slug: data.slug ?? "",
       short_description: data.short_description ?? "",
+      short_description_ka: data.short_description_ka ?? "",
       full_description: data.full_description ?? "",
+      full_description_ka: data.full_description_ka ?? "",
       target_audience: data.target_audience ?? "",
+      target_audience_ka: data.target_audience_ka ?? "",
       objectives: data.objectives ?? "",
+      objectives_ka: data.objectives_ka ?? "",
       learning_outcomes: data.learning_outcomes ?? "",
+      learning_outcomes_ka: data.learning_outcomes_ka ?? "",
       duration_text: data.duration_text ?? "",
       start_date: data.start_date ?? "",
       end_date: data.end_date ?? "",
@@ -160,7 +167,7 @@ export const getAdminProgramSessions = cache(async function getAdminProgramSessi
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("program_sessions")
-      .select("id, session_date, start_time, end_time, location, format, lecturer_id")
+      .select("id, session_date, start_time, end_time, location, location_ka, format, lecturer_id")
       .eq("program_id", programId)
       .order("session_date", { ascending: true })
       .order("start_time", { ascending: true });
@@ -183,6 +190,7 @@ export const getAdminProgramSessions = cache(async function getAdminProgramSessi
         start_time: toTimeInput(row.start_time),
         end_time: toTimeInput(row.end_time),
         location: row.location ?? "",
+        location_ka: row.location_ka ?? "",
         format,
         lecturer_id: row.lecturer_id ?? "",
       };

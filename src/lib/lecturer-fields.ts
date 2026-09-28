@@ -7,6 +7,7 @@ export type LecturerFormValues = {
   title: string;
   photo_url: string;
   bio: string;
+  bio_ka: string;
   created_at: string | null;
 };
 
@@ -15,6 +16,7 @@ export const emptyLecturerFormValues: LecturerFormValues = {
   title: "",
   photo_url: "",
   bio: "",
+  bio_ka: "",
   created_at: null,
 };
 
@@ -28,6 +30,7 @@ export type LecturerWritePayload = {
   title: string | null;
   photo_url: string | null;
   bio: string | null;
+  bio_ka: string | null;
 };
 
 export async function parseLecturerForm(
@@ -39,6 +42,7 @@ export async function parseLecturerForm(
   const title = emptyToNull(String(formData.get("title") ?? ""));
   const photoUrl = emptyToNull(String(formData.get("photo_url") ?? ""));
   const bio = emptyToNull(String(formData.get("bio") ?? ""));
+  const bioKa = emptyToNull(String(formData.get("bio_ka") ?? ""));
 
   if (!fullName) {
     return { error: t("enterName") };
@@ -58,6 +62,9 @@ export async function parseLecturerForm(
   if (bio && bio.length > FIELD_MAX.longText) {
     return { error: t("tooLong", { field: fields("bio") }) };
   }
+  if (bioKa && bioKa.length > FIELD_MAX.longText) {
+    return { error: t("tooLong", { field: fields("bio") }) };
+  }
 
   return {
     data: {
@@ -65,6 +72,7 @@ export async function parseLecturerForm(
       title,
       photo_url: photoUrl,
       bio,
+      bio_ka: bioKa,
     },
   };
 }

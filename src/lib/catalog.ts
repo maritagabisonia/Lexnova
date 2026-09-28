@@ -1,6 +1,13 @@
 import { cache } from "react";
+import { getLocale } from "next-intl/server";
 import { createClient } from "@/lib/supabase/server";
-import { todayIsoDate, type ProgramSummary } from "@/lib/program-display";
+import { localizedText } from "@/lib/localized-content";
+import {
+  localizeProgramSummary,
+  todayIsoDate,
+  type ProgramContentRow,
+  type ProgramSummary,
+} from "@/lib/program-display";
 
 export type { ProgramSummary } from "@/lib/program-display";
 export {
@@ -30,11 +37,39 @@ export type NewsSummary = {
   cover_image_url: string | null;
 };
 
+type NewsSummaryRow = {
+  id: string;
+  title: string | null;
+  title_ka?: string | null;
+  slug: string;
+  short_description: string | null;
+  short_description_ka?: string | null;
+  published_at: string | null;
+  author: string | null;
+  cover_image_url: string | null;
+};
+
 const newsSummaryFields =
-  "id, title, slug, short_description, published_at, author, cover_image_url";
+  "id, title, title_ka, slug, short_description, short_description_ka, published_at, author, cover_image_url";
 
 const programFields =
-  "id, title, slug, short_description, status, format, type, start_date, created_at";
+  "id, title, title_ka, slug, short_description, short_description_ka, status, format, type, start_date, created_at";
+
+function localizeNewsSummary(row: NewsSummaryRow, locale: string): NewsSummary {
+  return {
+    id: row.id,
+    title: localizedText(locale, row.title_ka, row.title) ?? "",
+    slug: row.slug,
+    short_description: localizedText(
+      locale,
+      row.short_description_ka,
+      row.short_description,
+    ),
+    published_at: row.published_at,
+    author: row.author,
+    cover_image_url: row.cover_image_url,
+  };
+}
 
 async function rowsOrEmpty<T>(query: PromiseLike<{ data: T[] | null; error: unknown }>) {
   try {
@@ -52,9 +87,17 @@ async function rowsOrEmpty<T>(query: PromiseLike<{ data: T[] | null; error: unkn
   }
 }
 
+async function localizedProgramRows(
+  query: PromiseLike<{ data: ProgramContentRow[] | null; error: unknown }>,
+) {
+  const locale = await getLocale();
+  const rows = await rowsOrEmpty<ProgramContentRow>(query);
+  return rows.map((row) => localizeProgramSummary(row, locale));
+}
+
 export async function getFeaturedPrograms() {
   const supabase = await createClient();
-  return rowsOrEmpty<ProgramSummary>(
+  return localizedProgramRows(
     supabase
       .from("programs")
       .select(programFields)
@@ -66,7 +109,7 @@ export async function getFeaturedPrograms() {
 
 export async function getUpcomingPrograms() {
   const supabase = await createClient();
-  return rowsOrEmpty<ProgramSummary>(
+  return localizedProgramRows(
     supabase
       .from("programs")
       .select(programFields)
@@ -91,7 +134,10 @@ export async function getPublishedNews(limit?: number) {
     query = query.limit(limit);
   }
 
-  return rowsOrEmpty<NewsSummary>(query);
+  const locale = await getLocale();
+  return (await rowsOrEmpty<NewsSummaryRow>(query)).map((row) =>
+    localizeNewsSummary(row, locale),
+  );
 }
 
 export async function getLatestNews() {
@@ -100,7 +146,7 @@ export async function getLatestNews() {
 
 export async function getPrograms() {
   const supabase = await createClient();
-  return rowsOrEmpty<ProgramSummary>(
+  return localizedProgramRows(
     supabase
       .from("programs")
       .select(programFields)
@@ -149,12 +195,13 @@ export type ProgramDetail = {
 };
 
 const programDetailFields =
-  "id, type, title, slug, short_description, full_description, target_audience, objectives, learning_outcomes, duration_text, start_date, end_date, registration_deadline, format, location, lecturer_id, max_participants, status";
+  "id, type, title, title_ka, slug, short_description, short_description_ka, full_description, full_description_ka, target_audience, target_audience_ka, objectives, objectives_ka, learning_outcomes, learning_outcomes_ka, duration_text, start_date, end_date, registration_deadline, format, location, lecturer_id, max_participants, status";
 
 export const getProgramBySlug = cache(async function getProgramBySlug(
   slug: string,
 ): Promise<ProgramDetail | null> {
   try {
+    const locale = await getLocale();
     const supabase = await createClient();
     const { data: program, error } = await supabase
       .from("programs")
@@ -169,12 +216,12 @@ export const getProgramBySlug = cache(async function getProgramBySlug(
     const [lecturerResult, sessionsResult, countResult] = await Promise.all([
       supabase
         .from("lecturers")
-        .select("full_name, photo_url, bio, title")
+        .select("full_name, photo_url, bio, bio_ka, title")
         .eq("id", program.lecturer_id)
         .maybeSingle(),
       supabase
         .from("program_sessions")
-        .select("id, session_date, start_time, end_time, location, format")
+        .select("id, session_date, start_time, end_time, location, location_ka, format")
         .eq("program_id", program.id)
         .order("session_date", { ascending: true })
         .order("start_time", { ascending: true }),
@@ -194,16 +241,61 @@ export const getProgramBySlug = cache(async function getProgramBySlug(
       }
     }
 
+    const sessions = rowsOrEmptySync(
+      sessionsResult.data,
+      sessionsResult.error,
+    ).map((session) => ({
+      id: session.id,
+      session_date: session.session_date,
+      start_time: session.start_time,
+      end_time: session.end_time,
+      location: localizedText(locale, session.location_ka, session.location),
+      format: session.format,
+    }));
+
+    const lecturer = lecturerResult.data
+      ? {
+          full_name: lecturerResult.data.full_name,
+          photo_url: lecturerResult.data.photo_url,
+          title: lecturerResult.data.title,
+          bio: localizedText(
+            locale,
+            lecturerResult.data.bio_ka,
+            lecturerResult.data.bio,
+          ),
+        }
+      : null;
+
     return {
       id: program.id,
       type: program.type,
-      title: program.title,
+      title: localizedText(locale, program.title_ka, program.title) ?? "",
       slug: program.slug,
-      short_description: program.short_description,
-      full_description: program.full_description,
-      target_audience: program.target_audience,
-      objectives: program.objectives,
-      learning_outcomes: program.learning_outcomes,
+      short_description: localizedText(
+        locale,
+        program.short_description_ka,
+        program.short_description,
+      ),
+      full_description: localizedText(
+        locale,
+        program.full_description_ka,
+        program.full_description,
+      ),
+      target_audience: localizedText(
+        locale,
+        program.target_audience_ka,
+        program.target_audience,
+      ),
+      objectives: localizedText(
+        locale,
+        program.objectives_ka,
+        program.objectives,
+      ),
+      learning_outcomes: localizedText(
+        locale,
+        program.learning_outcomes_ka,
+        program.learning_outcomes,
+      ),
       duration_text: program.duration_text,
       start_date: program.start_date,
       end_date: program.end_date,
@@ -212,8 +304,8 @@ export const getProgramBySlug = cache(async function getProgramBySlug(
       location: program.location,
       max_participants: program.max_participants,
       status: program.status,
-      lecturer: lecturerResult.data ?? null,
-      sessions: rowsOrEmptySync(sessionsResult.data, sessionsResult.error),
+      lecturer,
+      sessions,
       registeredCount,
     };
   } catch {
@@ -268,11 +360,12 @@ export const getNewsBySlug = cache(async function getNewsBySlug(
   slug: string,
 ): Promise<NewsArticle | null> {
   try {
+    const locale = await getLocale();
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("news_articles")
       .select(
-        "id, title, slug, short_description, content, author, published_at, cover_image_url, related_program_id",
+        "id, title, title_ka, slug, short_description, short_description_ka, content, content_ka, author, published_at, cover_image_url, related_program_id",
       )
       .eq("slug", slug)
       .eq("published", true)
@@ -291,16 +384,20 @@ export const getNewsBySlug = cache(async function getNewsBySlug(
         .maybeSingle();
 
       if (!programError && program) {
-        relatedProgram = program;
+        relatedProgram = localizeProgramSummary(program, locale);
       }
     }
 
     return {
       id: data.id,
-      title: data.title,
+      title: localizedText(locale, data.title_ka, data.title) ?? "",
       slug: data.slug,
-      short_description: data.short_description,
-      content: data.content,
+      short_description: localizedText(
+        locale,
+        data.short_description_ka,
+        data.short_description,
+      ),
+      content: localizedText(locale, data.content_ka, data.content),
       author: data.author,
       published_at: data.published_at,
       cover_image_url: data.cover_image_url,

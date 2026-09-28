@@ -14,7 +14,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const t = await getTranslations("admin");
   const article = await getAdminArticle(id);
-  return { title: article ? t("editNamed", { name: article.title }) : t("editArticle") };
+  return { title: article ? t("editNamed", { name: article.title || article.title_ka }) : t("editArticle") };
 }
 
 export default async function EditArticlePage({ params }: Props) {

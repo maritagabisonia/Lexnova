@@ -31,7 +31,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const t = await getTranslations("admin");
   const program = await getAdminProgram(id);
-  return { title: program ? t("editNamed", { name: program.title }) : t("editProgram") };
+  return { title: program ? t("editNamed", { name: program.title || program.title_ka }) : t("editProgram") };
 }
 
 export default async function EditProgramPage({ params, searchParams }: Props) {
@@ -86,7 +86,10 @@ export default async function EditProgramPage({ params, searchParams }: Props) {
       {tab === "program" ? (
         <>
           <ProgramForm mode="edit" lecturers={lecturers} program={program} />
-          <DeleteProgramButton programId={program.id} title={program.title} />
+          <DeleteProgramButton
+            programId={program.id}
+            title={program.title || program.title_ka}
+          />
         </>
       ) : null}
 

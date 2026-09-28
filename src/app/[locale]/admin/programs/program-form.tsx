@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { useTranslations } from "next-intl";
 import { AuthMessage } from "@/components/auth-form";
+import { TranslationPair } from "@/components/admin-translation-pair";
 import {
   programFormatOptions,
   programStatusOptions,
@@ -23,7 +24,6 @@ import {
 
 const inputClass =
   "min-h-11 w-full rounded-sm border border-ink/15 bg-paper px-3 py-2 text-ink outline-none focus:border-accent";
-const textareaClass = `${inputClass} min-h-32`;
 
 const initialState: ProgramActionState = {};
 
@@ -47,7 +47,7 @@ export function ProgramForm({
   const displayedSlug = slugLocked ? slug : slugify(title);
 
   return (
-    <form action={formAction} className="mt-8 max-w-3xl space-y-6">
+    <form action={formAction} className="mt-8 max-w-5xl space-y-6">
       {program.id ? <input type="hidden" name="id" value={program.id} /> : null}
       <input type="hidden" name="type" value={type} />
       <AuthMessage state={state} />
@@ -76,11 +76,12 @@ export function ProgramForm({
         </div>
       </fieldset>
 
-      <Field
-        id="title"
+      <TranslationPair
+        name="title"
         label={t("title")}
-        value={title}
-        onChange={(value) => setTitle(value)}
+        englishValue={title}
+        onEnglishChange={setTitle}
+        georgianDefault={program.title_ka}
       />
       <div className="space-y-1.5">
         <label htmlFor="slug" className="block text-sm text-ink">
@@ -136,30 +137,40 @@ export function ProgramForm({
         ]}
       />
 
-      <TextArea
-        id="short_description"
+      <TranslationPair
+        name="short_description"
         label={t("shortDescription")}
-        defaultValue={program.short_description}
+        englishDefault={program.short_description}
+        georgianDefault={program.short_description_ka}
+        multiline
       />
-      <TextArea
-        id="full_description"
+      <TranslationPair
+        name="full_description"
         label={t("fullDescription")}
-        defaultValue={program.full_description}
+        englishDefault={program.full_description}
+        georgianDefault={program.full_description_ka}
+        multiline
       />
-      <TextArea
-        id="target_audience"
+      <TranslationPair
+        name="target_audience"
         label={t("targetAudience")}
-        defaultValue={program.target_audience}
+        englishDefault={program.target_audience}
+        georgianDefault={program.target_audience_ka}
+        multiline
       />
-      <TextArea
-        id="objectives"
+      <TranslationPair
+        name="objectives"
         label={t("objectives")}
-        defaultValue={program.objectives}
+        englishDefault={program.objectives}
+        georgianDefault={program.objectives_ka}
+        multiline
       />
-      <TextArea
-        id="learning_outcomes"
+      <TranslationPair
+        name="learning_outcomes"
         label={t("learningOutcomes")}
-        defaultValue={program.learning_outcomes}
+        englishDefault={program.learning_outcomes}
+        georgianDefault={program.learning_outcomes_ka}
+        multiline
       />
 
       <Field
@@ -288,30 +299,6 @@ function Field({
         min={min}
         step={id === "price" ? "0.01" : type === "number" ? "1" : undefined}
         className={inputClass}
-      />
-    </div>
-  );
-}
-
-function TextArea({
-  id,
-  label,
-  defaultValue,
-}: {
-  id: string;
-  label: string;
-  defaultValue: string;
-}) {
-  return (
-    <div className="space-y-1.5">
-      <label htmlFor={id} className="block text-sm text-ink">
-        {label}
-      </label>
-      <textarea
-        id={id}
-        name={id}
-        defaultValue={defaultValue}
-        className={textareaClass}
       />
     </div>
   );

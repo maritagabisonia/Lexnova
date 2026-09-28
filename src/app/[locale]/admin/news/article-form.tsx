@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { useTranslations } from "next-intl";
 import { AuthMessage } from "@/components/auth-form";
+import { TranslationPair } from "@/components/admin-translation-pair";
 import {
   type NewsFormValues,
   type RelatedProgramOption,
@@ -16,7 +17,6 @@ import {
 
 const inputClass =
   "min-h-11 w-full rounded-sm border border-ink/15 bg-paper px-3 py-2 text-ink outline-none focus:border-accent";
-const textareaClass = `${inputClass} min-h-32`;
 
 const initialState: NewsActionState = {};
 
@@ -40,7 +40,7 @@ export function ArticleForm({
   const displayedSlug = slugLocked ? slug : slugify(title);
 
   return (
-    <form action={formAction} className="mt-8 max-w-3xl space-y-6">
+    <form action={formAction} className="mt-8 max-w-5xl space-y-6">
       {article.id ? <input type="hidden" name="id" value={article.id} /> : null}
       <input type="hidden" name="published" value={published ? "true" : "false"} />
       <AuthMessage state={state} />
@@ -74,7 +74,13 @@ export function ArticleForm({
         </div>
       </fieldset>
 
-      <Field id="title" label={t("title")} value={title} onChange={setTitle} />
+      <TranslationPair
+        name="title"
+        label={t("title")}
+        englishValue={title}
+        onEnglishChange={setTitle}
+        georgianDefault={article.title_ka}
+      />
       <div className="space-y-1.5">
         <label htmlFor="slug" className="block text-sm text-ink">
           {t("slug")}
@@ -132,15 +138,19 @@ export function ArticleForm({
         <img src={coverUrl} alt="" className="aspect-[16/9] w-full max-w-md object-cover" />
       ) : null}
 
-      <TextArea
-        id="short_description"
+      <TranslationPair
+        name="short_description"
         label={t("shortDescription")}
-        defaultValue={article.short_description}
+        englishDefault={article.short_description}
+        georgianDefault={article.short_description_ka}
+        multiline
       />
-      <TextArea
-        id="content"
+      <TranslationPair
+        name="content"
         label={t("content")}
-        defaultValue={article.content}
+        englishDefault={article.content}
+        georgianDefault={article.content_ka}
+        multiline
         tall
       />
       <Field
@@ -210,32 +220,6 @@ function Field({
         defaultValue={onChange ? undefined : defaultValue}
         onChange={onChange ? (event) => onChange(event.target.value) : undefined}
         className={inputClass}
-      />
-    </div>
-  );
-}
-
-function TextArea({
-  id,
-  label,
-  defaultValue,
-  tall = false,
-}: {
-  id: string;
-  label: string;
-  defaultValue: string;
-  tall?: boolean;
-}) {
-  return (
-    <div className="space-y-1.5">
-      <label htmlFor={id} className="block text-sm text-ink">
-        {label}
-      </label>
-      <textarea
-        id={id}
-        name={id}
-        defaultValue={defaultValue}
-        className={tall ? `${textareaClass} min-h-56` : textareaClass}
       />
     </div>
   );
