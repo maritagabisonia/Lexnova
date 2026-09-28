@@ -7,6 +7,7 @@ export type AdminSessionValues = {
   start_time: string;
   end_time: string;
   location: string;
+  location_ka: string;
   format: "online" | "in_person" | "hybrid";
   lecturer_id: string;
 };
@@ -41,6 +42,7 @@ export type SessionWritePayload = {
   start_time: string;
   end_time: string;
   location: string | null;
+  location_ka: string | null;
   format: "online" | "in_person" | "hybrid";
   lecturer_id: string | null;
 };
@@ -84,7 +86,11 @@ export async function parseSessionForm(
     return { error: t("validLecturer") };
   }
   const location = emptyToNull(String(formData.get("location") ?? ""));
+  const locationKa = emptyToNull(String(formData.get("location_ka") ?? ""));
   if (location && location.length > FIELD_MAX.shortText) {
+    return { error: t("tooLong", { field: fields("location") }) };
+  }
+  if (locationKa && locationKa.length > FIELD_MAX.shortText) {
     return { error: t("tooLong", { field: fields("location") }) };
   }
 
@@ -95,6 +101,7 @@ export async function parseSessionForm(
       start_time: startTime,
       end_time: endTime,
       location,
+      location_ka: locationKa,
       format,
       lecturer_id: lecturerId || null,
     },

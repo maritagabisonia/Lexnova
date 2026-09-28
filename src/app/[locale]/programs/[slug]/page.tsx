@@ -357,8 +357,8 @@ function ScheduleTable({
                 </td>
                 <td className="py-3 text-ink-muted">
                   {session.format === "online"
-                    ? "Online"
-                    : session.location || "—"}
+                    ? t("online")
+                    : session.location || t("emDash")}
                 </td>
               </tr>
             ))}

@@ -3,6 +3,7 @@
 import { useActionState, useState } from "react";
 import { useTranslations } from "next-intl";
 import { AuthMessage } from "@/components/auth-form";
+import { TranslationPair } from "@/components/admin-translation-pair";
 import type { LecturerFormValues } from "@/lib/lecturer-fields";
 import {
   createLecturer,
@@ -12,7 +13,6 @@ import {
 
 const inputClass =
   "min-h-11 w-full rounded-sm border border-ink/15 bg-paper px-3 py-2 text-ink outline-none focus:border-accent";
-const textareaClass = `${inputClass} min-h-32`;
 
 const initialState: LecturerActionState = {};
 
@@ -29,7 +29,7 @@ export function LecturerForm({
   const [photoUrl, setPhotoUrl] = useState(lecturer.photo_url);
 
   return (
-    <form action={formAction} className="mt-8 max-w-3xl space-y-6">
+    <form action={formAction} className="mt-8 max-w-5xl space-y-6">
       {lecturer.id ? <input type="hidden" name="id" value={lecturer.id} /> : null}
       <AuthMessage state={state} />
 
@@ -51,17 +51,13 @@ export function LecturerForm({
         // eslint-disable-next-line @next/next/no-img-element
         <img src={photoUrl} alt="" className="h-36 w-36 object-cover" />
       ) : null}
-      <div className="space-y-1.5">
-        <label htmlFor="bio" className="block text-sm text-ink">
-          {t("bio")}
-        </label>
-        <textarea
-          id="bio"
-          name="bio"
-          defaultValue={lecturer.bio}
-          className={textareaClass}
-        />
-      </div>
+      <TranslationPair
+        name="bio"
+        label={t("bio")}
+        englishDefault={lecturer.bio}
+        georgianDefault={lecturer.bio_ka}
+        multiline
+      />
 
       {mode === "edit" ? (
         <dl className="grid gap-3 text-sm text-ink-muted sm:grid-cols-2">

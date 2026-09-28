@@ -1,4 +1,6 @@
 import { cache } from "react";
+import { getLocale } from "next-intl/server";
+import { localizedText } from "@/lib/localized-content";
 import { formatLabel, todayIsoDate } from "@/lib/program-display";
 import { getStudentCourses } from "@/lib/student-courses";
 import { createClient } from "@/lib/supabase/server";
@@ -58,10 +60,11 @@ export const getStudentCalendarSessions = cache(async function getStudentCalenda
   const programById = new Map(programs.map((program) => [program.id, program]));
 
   try {
+    const locale = await getLocale();
     const supabase = await createClient();
     let query = supabase
       .from("program_sessions")
-      .select("id, program_id, session_date, start_time, end_time, location, format")
+      .select("id, program_id, session_date, start_time, end_time, location, location_ka, format")
       .in("program_id", programs.map((program) => program.id))
       .order("session_date", { ascending: true })
       .order("start_time", { ascending: true });
@@ -92,7 +95,7 @@ export const getStudentCalendarSessions = cache(async function getStudentCalenda
         sessionDate: row.session_date,
         startTime: row.start_time,
         endTime: row.end_time,
-        location: row.location,
+        location: localizedText(locale, row.location_ka, row.location),
         format: row.format,
       });
     }

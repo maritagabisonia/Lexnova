@@ -1,10 +1,26 @@
 import { calendarIntlLocale, intlLocale } from "@/i18n/dates";
+import { localizedText, searchHaystack } from "@/lib/localized-content";
 
 export type ProgramSummary = {
   id: string;
   title: string;
+  searchText: string;
   slug: string;
   short_description: string | null;
+  status: string;
+  format: string;
+  type: string;
+  start_date: string | null;
+  created_at: string;
+};
+
+export type ProgramContentRow = {
+  id: string;
+  title: string | null;
+  title_ka?: string | null;
+  slug: string;
+  short_description: string | null;
+  short_description_ka?: string | null;
   status: string;
   format: string;
   type: string;
@@ -180,6 +196,28 @@ export function formatTime(value: string | null) {
 
 export function todayIsoDate() {
   return new Date().toISOString().slice(0, 10);
+}
+
+export function localizeProgramSummary(
+  row: ProgramContentRow,
+  locale: string,
+): ProgramSummary {
+  return {
+    id: row.id,
+    title: localizedText(locale, row.title_ka, row.title) ?? "",
+    searchText: searchHaystack(row.title, row.title_ka),
+    slug: row.slug,
+    short_description: localizedText(
+      locale,
+      row.short_description_ka,
+      row.short_description,
+    ),
+    status: row.status,
+    format: row.format,
+    type: row.type,
+    start_date: row.start_date,
+    created_at: row.created_at,
+  };
 }
 
 /** Deadline day is still open. No deadline means registration is not time-limited. */

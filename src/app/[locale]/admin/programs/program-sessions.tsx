@@ -3,6 +3,7 @@
 import { useActionState, useEffect, useState } from "react";
 import { useLocale, useTranslations } from "next-intl";
 import { AuthMessage } from "@/components/auth-form";
+import { TranslationPair } from "@/components/admin-translation-pair";
 import {
   programFormatOptions,
   type AdminLecturerOption,
@@ -198,6 +199,7 @@ export function ProgramSessions({
                   start_time: "",
                   end_time: "",
                   location: programLocation,
+                  location_ka: "",
                   format: programFormat,
                   lecturer_id: "",
                 }
@@ -272,7 +274,7 @@ function SessionEditorDialog({
         role="dialog"
         aria-modal="true"
         aria-labelledby="session-editor-title"
-        className="max-h-[90vh] w-full max-w-lg overflow-y-auto border border-ink/10 bg-paper p-6"
+        className="max-h-[90vh] w-full max-w-2xl overflow-y-auto border border-ink/10 bg-paper p-6"
         onClick={(event) => event.stopPropagation()}
       >
         <h3 id="session-editor-title" className="text-xl">
@@ -321,11 +323,11 @@ function SessionEditorDialog({
               ))}
             </select>
           </div>
-          <Field
-            id="location"
+          <TranslationPair
+            name="location"
             label={t("location")}
-            defaultValue={session.location}
-            required={false}
+            englishDefault={session.location}
+            georgianDefault={session.location_ka}
           />
           <div className="space-y-1.5">
             <label htmlFor="session_lecturer" className="block text-sm text-ink">

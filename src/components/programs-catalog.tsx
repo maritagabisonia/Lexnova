@@ -43,8 +43,11 @@ export function ProgramsCatalog({
       if (status && program.status !== status) {
         return false;
       }
-      if (needle && !program.title.toLowerCase().includes(needle)) {
-        return false;
+      if (needle) {
+        const haystack = (program.searchText || program.title).toLowerCase();
+        if (!haystack.includes(needle)) {
+          return false;
+        }
       }
       return true;
     });
