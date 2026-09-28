@@ -16,8 +16,20 @@ export function RegisterForm({ next = "/dashboard" }: { next?: string }) {
     <form action={action} className="space-y-5">
       <input type="hidden" name="next" value={next} />
       <AuthMessage state={state} />
-      <Field id="fullName" label={t("fullName")} autoComplete="name" />
-      <Field id="email" label={t("email")} type="email" autoComplete="email" />
+      <Field
+        id="fullName"
+        label={t("fullName")}
+        autoComplete="name"
+        missingMessage={t("errors.fullName")}
+      />
+      <Field
+        id="email"
+        label={t("email")}
+        type="email"
+        autoComplete="email"
+        missingMessage={t("errors.invalidEmail")}
+        typeMismatchMessage={t("errors.invalidEmail")}
+      />
       <Field
         id="password"
         label={t("password")}

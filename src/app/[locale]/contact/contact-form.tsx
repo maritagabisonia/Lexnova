@@ -2,7 +2,7 @@
 
 import { useActionState } from "react";
 import { useTranslations } from "next-intl";
-import { AuthMessage, Field } from "@/components/auth-form";
+import { AuthMessage, Field, validityProps } from "@/components/auth-form";
 import {
   sendContactMessage,
   type ContactActionState,
@@ -31,8 +31,20 @@ export function ContactForm() {
   return (
     <form action={action} className="space-y-5">
       <AuthMessage state={state} />
-      <Field id="name" label={t("name")} autoComplete="name" />
-      <Field id="email" label={t("email")} type="email" autoComplete="email" />
+      <Field
+        id="name"
+        label={t("name")}
+        autoComplete="name"
+        missingMessage={t("errors.name")}
+      />
+      <Field
+        id="email"
+        label={t("email")}
+        type="email"
+        autoComplete="email"
+        missingMessage={t("errors.email")}
+        typeMismatchMessage={t("errors.email")}
+      />
       <div className="space-y-1.5">
         <label htmlFor="message" className="block text-sm text-ink">
           {t("message")}
@@ -43,6 +55,10 @@ export function ContactForm() {
           required
           rows={6}
           className="min-h-32 w-full rounded-sm border border-ink/15 bg-paper px-3 py-2 text-ink outline-none focus:border-accent"
+          {...validityProps({
+            missing: t("errors.message"),
+            typeMismatch: t("errors.message"),
+          })}
         />
       </div>
       <button

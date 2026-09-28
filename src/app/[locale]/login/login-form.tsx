@@ -16,12 +16,20 @@ export function LoginForm({ next = "/dashboard" }: { next?: string }) {
     <form action={action} className="space-y-5">
       <input type="hidden" name="next" value={next} />
       <AuthMessage state={state} />
-      <Field id="email" label={t("email")} type="email" autoComplete="email" />
+      <Field
+        id="email"
+        label={t("email")}
+        type="email"
+        autoComplete="email"
+        missingMessage={t("errors.emailPassword")}
+        typeMismatchMessage={t("errors.invalidEmail")}
+      />
       <Field
         id="password"
         label={t("password")}
         type="password"
         autoComplete="current-password"
+        missingMessage={t("errors.emailPassword")}
       />
       <button
         type="submit"

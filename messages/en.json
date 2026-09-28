@@ -608,6 +608,8 @@
     "notAuthorizedTitle": "Not authorized",
     "notAuthorizedBody": "You do not have permission to view that page.",
     "tooLong": "{field} is too long.",
+    "required": "Please fill in this field.",
+    "invalidEmail": "Please enter a valid email address.",
     "fields": {
       "name": "Name",
       "email": "Email",

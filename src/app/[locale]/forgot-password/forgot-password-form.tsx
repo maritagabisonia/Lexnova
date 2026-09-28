@@ -21,7 +21,14 @@ export function ForgotPasswordForm() {
   return (
     <form action={action} className="space-y-5">
       <AuthMessage state={state} />
-      <Field id="email" label={t("email")} type="email" autoComplete="email" />
+      <Field
+        id="email"
+        label={t("email")}
+        type="email"
+        autoComplete="email"
+        missingMessage={t("errors.invalidEmail")}
+        typeMismatchMessage={t("errors.invalidEmail")}
+      />
       <button
         type="submit"
         disabled={pending}
