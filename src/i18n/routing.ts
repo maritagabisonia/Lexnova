@@ -4,8 +4,8 @@ export const routing = defineRouting({
   locales: ["ka", "en"],
   defaultLocale: "ka",
   localePrefix: "always",
-  // First visit to `/` goes to Georgian. A language switch still sets a cookie
-  // so later visits to `/` restore the chosen locale.
+  // Do not sniff Accept-Language. First visit to `/` is Georgian; after a
+  // switch, `/` restores the NEXT_LOCALE cookie (see src/proxy.ts).
   localeDetection: false,
 });
 
