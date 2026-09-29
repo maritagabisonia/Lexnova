@@ -121,6 +121,7 @@ export default async function ProgramDetailPage({ params }: Props) {
         <RegisterCta
           slug={program.slug}
           status={program.status}
+          loggedIn={Boolean(user)}
           alreadyRegistered={alreadyRegistered}
           fullyBooked={fullyBooked}
           registrationOpen={registrationOpen}
@@ -174,6 +175,7 @@ export default async function ProgramDetailPage({ params }: Props) {
 function RegisterCta({
   slug,
   status,
+  loggedIn,
   alreadyRegistered,
   fullyBooked,
   registrationOpen,
@@ -181,6 +183,7 @@ function RegisterCta({
 }: {
   slug: string;
   status: string;
+  loggedIn: boolean;
   alreadyRegistered: boolean;
   fullyBooked: boolean;
   registrationOpen: boolean;
@@ -195,6 +198,17 @@ function RegisterCta({
   }
 
   if (registrationOpen) {
+    if (!loggedIn) {
+      return (
+        <Link
+          href={`/login?next=${encodeURIComponent(`/programs/${slug}`)}`}
+          className="inline-flex min-h-11 items-center justify-center rounded-sm bg-ink px-6 text-sm text-paper transition-colors hover:bg-ink-muted"
+        >
+          {t("register")}
+        </Link>
+      );
+    }
+
     return <ProgramRegisterForm slug={slug} />;
   }
 
