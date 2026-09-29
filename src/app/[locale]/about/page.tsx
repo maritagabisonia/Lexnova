@@ -11,6 +11,34 @@ function PlaceholderComment({ name }: { name: string }) {
   );
 }
 
+const coreAreaKeys = [
+  "tax",
+  "administrative",
+  "administrativeProcedure",
+  "administrativeOffenses",
+  "ai",
+  "criminal",
+  "criminalProcedure",
+  "transport",
+  "energy",
+  "civil",
+  "labor",
+  "business",
+] as const;
+
+const distinctiveAreaKeys = [
+  "anthropology",
+  "philosophy",
+  "sociology",
+  "legalCulture",
+  "education",
+  "childrensRights",
+  "sustainableDevelopment",
+  "media",
+  "medical",
+  "culturalHeritage",
+] as const;
+
 export async function generateMetadata() {
   return seoMetadata("about");
 }
@@ -24,19 +52,22 @@ export default async function AboutPage() {
       <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-20">
         <p className="text-sm tracking-wide text-accent">{t("eyebrow")}</p>
         <h1 className="mt-3 max-w-3xl text-4xl sm:text-6xl">{t("headline")}</h1>
-        {/* PLACEHOLDER: Intro */}
-        <PlaceholderComment name="Intro" />
         <p className="mt-6 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
-          {t("intro")}
+          {t("intro1")}
+        </p>
+        <p className="mt-6 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
+          {t("intro2")}
         </p>
       </section>
 
       <section className="border-t border-ink/10">
         <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
           <h2 className="text-3xl">{t("missionTitle")}</h2>
-          <PlaceholderComment name="Mission" />
           <p className="mt-4 max-w-3xl text-base leading-relaxed text-ink-muted">
-            {t("mission")}
+            {t("mission1")}
+          </p>
+          <p className="mt-4 max-w-3xl text-base leading-relaxed text-ink-muted">
+            {t("mission2")}
           </p>
         </div>
       </section>
@@ -44,9 +75,11 @@ export default async function AboutPage() {
       <section className="border-t border-ink/10 bg-paper-muted/50">
         <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
           <h2 className="text-3xl">{t("visionTitle")}</h2>
-          <PlaceholderComment name="Vision" />
           <p className="mt-4 max-w-3xl text-base leading-relaxed text-ink-muted">
-            {t("vision")}
+            {t("vision1")}
+          </p>
+          <p className="mt-4 max-w-3xl text-base leading-relaxed text-ink-muted">
+            {t("vision2")}
           </p>
         </div>
       </section>
@@ -54,45 +87,33 @@ export default async function AboutPage() {
       <section className="border-t border-ink/10">
         <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
           <h2 className="text-3xl">{t("objectivesTitle")}</h2>
-          <PlaceholderComment name="Objectives" />
           <ul className="mt-6 max-w-3xl list-disc space-y-3 pl-5 text-base leading-relaxed text-ink-muted">
             <li>{t("objective1")}</li>
             <li>{t("objective2")}</li>
             <li>{t("objective3")}</li>
             <li>{t("objective4")}</li>
+            <li>{t("objective5")}</li>
           </ul>
         </div>
       </section>
 
       <section className="border-t border-ink/10 bg-paper-muted/50">
         <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
-          <h2 className="text-3xl">{t("areasTitle")}</h2>
-          <PlaceholderComment name="Main Areas of Activity" />
+          <h2 className="text-3xl">{t("coreAreasTitle")}</h2>
           <div className="mt-8 grid gap-6 md:grid-cols-2">
-            <article className="border border-ink/10 bg-paper p-5">
-              <h3 className="text-xl">{t("coursesTitle")}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-ink-muted">
-                {t("coursesBody")}
-              </p>
-            </article>
-            <article className="border border-ink/10 bg-paper p-5">
-              <h3 className="text-xl">{t("trainingTitle")}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-ink-muted">
-                {t("trainingBody")}
-              </p>
-            </article>
-            <article className="border border-ink/10 bg-paper p-5">
-              <h3 className="text-xl">{t("literacyTitle")}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-ink-muted">
-                {t("literacyBody")}
-              </p>
-            </article>
-            <article className="border border-ink/10 bg-paper p-5">
-              <h3 className="text-xl">{t("curriculumTitle")}</h3>
-              <p className="mt-3 text-sm leading-relaxed text-ink-muted">
-                {t("curriculumBody")}
-              </p>
-            </article>
+            {coreAreaKeys.map((key) => (
+              <article key={key} className="border border-ink/10 bg-paper p-5">
+                <h3 className="text-xl">{t(`coreAreas.${key}`)}</h3>
+              </article>
+            ))}
+          </div>
+          <h2 className="mt-16 text-3xl">{t("distinctiveAreasTitle")}</h2>
+          <div className="mt-8 grid gap-6 md:grid-cols-2">
+            {distinctiveAreaKeys.map((key) => (
+              <article key={key} className="border border-ink/10 bg-paper p-5">
+                <h3 className="text-xl">{t(`distinctiveAreas.${key}`)}</h3>
+              </article>
+            ))}
           </div>
         </div>
       </section>
