@@ -124,7 +124,7 @@ export function ProgramForm({
         id="lecturer_id"
         label={t("lecturer")}
         defaultValue={program.lecturer_id}
-        required
+        required={false}
         options={[
           { value: "", label: t("selectLecturer") },
           ...lecturers.map((lecturer) => ({
@@ -235,7 +235,7 @@ export function ProgramForm({
 
       <button
         type="submit"
-        disabled={pending || lecturers.length === 0}
+        disabled={pending}
         className="inline-flex min-h-11 items-center justify-center rounded-sm bg-ink px-6 text-sm text-paper transition-colors hover:bg-ink-muted disabled:opacity-60"
       >
         {pending

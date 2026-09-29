@@ -37,7 +37,11 @@ export function ProgramsCatalog({
       if (type && program.type !== type) {
         return false;
       }
-      if (format && program.format !== format) {
+      if (
+        format &&
+        program.status !== "coming_soon" &&
+        program.format !== format
+      ) {
         return false;
       }
       if (status && program.status !== status) {

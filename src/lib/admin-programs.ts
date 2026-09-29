@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { getLocale } from "next-intl/server";
 import { formatAdminDateTime } from "@/lib/admin-format";
+import { localizedText } from "@/lib/localized-content";
 import { formatDate, typeLabel, statusLabel } from "@/lib/program-display";
 import {
   type AdminLecturerOption,
@@ -39,7 +40,7 @@ export const getAdminPrograms = cache(async function getAdminPrograms(): Promise
       await Promise.all([
         supabase
           .from("programs")
-          .select("id, title, slug, type, status, start_date, created_at")
+          .select("id, title, title_ka, slug, type, status, start_date, created_at")
           .order("created_at", { ascending: false }),
         supabase.from("registrations").select("program_id").eq("status", "confirmed"),
       ]);
@@ -59,7 +60,7 @@ export const getAdminPrograms = cache(async function getAdminPrograms(): Promise
 
     return (programs ?? []).map((program) => ({
       id: program.id,
-      title: program.title,
+      title: localizedText(locale, program.title_ka, program.title) ?? "",
       slug: program.slug,
       type: program.type,
       typeLabel: typeLabel(program.type),

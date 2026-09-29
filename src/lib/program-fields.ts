@@ -90,7 +90,7 @@ export type ProgramWritePayload = {
   registration_deadline: string | null;
   format: "online" | "in_person" | "hybrid";
   location: string | null;
-  lecturer_id: string;
+  lecturer_id: string | null;
   max_participants: number | null;
   status: string;
   price: number | null;
@@ -127,7 +127,7 @@ export async function parseProgramForm(
   if (!programStatusOptions.some((option) => option.value === status)) {
     return { error: t("chooseStatus") };
   }
-  if (!isUuid(lecturerId)) {
+  if (lecturerId && !isUuid(lecturerId)) {
     return { error: t("chooseLecturer") };
   }
 
@@ -202,7 +202,7 @@ export async function parseProgramForm(
       registration_deadline: deadline,
       format,
       location,
-      lecturer_id: lecturerId,
+      lecturer_id: lecturerId || null,
       max_participants: maxParticipants,
       status,
       price,

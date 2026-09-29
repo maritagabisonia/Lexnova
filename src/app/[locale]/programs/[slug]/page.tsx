@@ -68,15 +68,18 @@ export default async function ProgramDetailPage({ params }: Props) {
     alreadyRegistered = Boolean(existing);
   }
 
+  const comingSoon = program.status === "coming_soon";
   const deadlineOpen = isRegistrationDeadlineOpen(program.registration_deadline);
   const fullyBooked =
     program.max_participants != null &&
     program.registeredCount != null &&
     program.registeredCount >= program.max_participants;
-  const registrationOpen = program.status === "registration_open" && deadlineOpen;
-  const showLocation = program.format !== "online" && Boolean(program.location);
-  const dateLine = programDateLine(program, t, locale);
-  const capacityLine = programCapacityLine(program, t);
+  const registrationOpen =
+    !comingSoon && program.status === "registration_open" && deadlineOpen;
+  const showLocation =
+    !comingSoon && program.format !== "online" && Boolean(program.location);
+  const dateLine = comingSoon ? null : programDateLine(program, t, locale);
+  const capacityLine = comingSoon ? null : programCapacityLine(program, t);
 
   return (
     <article className="mx-auto w-full max-w-3xl flex-1 px-4 py-16 sm:px-6">
@@ -101,21 +104,25 @@ export default async function ProgramDetailPage({ params }: Props) {
 
       <h1 className="mt-4 text-3xl sm:text-5xl">{program.title}</h1>
 
-      <dl className="mt-6 space-y-2 text-sm text-ink-muted">
-        <Fact label={t("format")} value={translatedFormatLabel(program.format, t)} />
-        {dateLine ? <Fact label={t("dates")} value={dateLine} /> : null}
-        {program.duration_text ? (
-          <Fact label={t("duration")} value={program.duration_text} />
-        ) : null}
-        {program.registration_deadline ? (
-          <Fact
-            label={t("deadline")}
-            value={formatDate(program.registration_deadline, locale) ?? undefined}
-          />
-        ) : null}
-        {showLocation ? <Fact label={t("location")} value={program.location ?? undefined} /> : null}
-        {capacityLine ? <Fact label={t("places")} value={capacityLine} /> : null}
-      </dl>
+      {comingSoon ? null : (
+        <dl className="mt-6 space-y-2 text-sm text-ink-muted">
+          <Fact label={t("format")} value={translatedFormatLabel(program.format, t)} />
+          {dateLine ? <Fact label={t("dates")} value={dateLine} /> : null}
+          {program.duration_text ? (
+            <Fact label={t("duration")} value={program.duration_text} />
+          ) : null}
+          {program.registration_deadline ? (
+            <Fact
+              label={t("deadline")}
+              value={formatDate(program.registration_deadline, locale) ?? undefined}
+            />
+          ) : null}
+          {showLocation ? (
+            <Fact label={t("location")} value={program.location ?? undefined} />
+          ) : null}
+          {capacityLine ? <Fact label={t("places")} value={capacityLine} /> : null}
+        </dl>
+      )}
 
       <div className="mt-8">
         <RegisterCta
@@ -162,12 +169,16 @@ export default async function ProgramDetailPage({ params }: Props) {
         </section>
       ) : null}
 
-      {program.lecturer ? <LecturerSection lecturer={program.lecturer} t={t} /> : null}
+      {program.lecturer && !comingSoon ? (
+        <LecturerSection lecturer={program.lecturer} t={t} />
+      ) : null}
 
-      <section className="mt-12">
-        <h2 className="text-2xl">{t("schedule")}</h2>
-        <ScheduleTable sessions={program.sessions} t={t} locale={locale} />
-      </section>
+      {comingSoon ? null : (
+        <section className="mt-12">
+          <h2 className="text-2xl">{t("schedule")}</h2>
+          <ScheduleTable sessions={program.sessions} t={t} locale={locale} />
+        </section>
+      )}
     </article>
   );
 }
@@ -191,6 +202,10 @@ function RegisterCta({
 }) {
   if (alreadyRegistered) {
     return <ProgramRegisterForm slug={slug} alreadyRegistered />;
+  }
+
+  if (status === "coming_soon") {
+    return <DisabledCta label={t("statusComingSoon")} />;
   }
 
   if (fullyBooked) {

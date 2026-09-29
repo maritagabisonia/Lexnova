@@ -45,12 +45,14 @@ export function ProgramCard({ program }: { program: ProgramSummary }) {
       ) : (
         <p className="mt-3 flex-1 text-sm text-ink-muted">{t("detailsSoon")}</p>
       )}
-      <p className="mt-4 text-xs text-ink-muted">
-        {translatedFormatLabel(program.format, t)}
-        {start
-          ? ` · ${t("starts", { date: start })}`
-          : ` · ${t("datesTba")}`}
-      </p>
+      {program.status === "coming_soon" ? null : (
+        <p className="mt-4 text-xs text-ink-muted">
+          {translatedFormatLabel(program.format, t)}
+          {start
+            ? ` · ${t("starts", { date: start })}`
+            : ` · ${t("datesTba")}`}
+        </p>
+      )}
       <Link
         href={`/programs/${program.slug}`}
         className="mt-5 inline-flex min-h-11 items-center text-sm text-ink hover:text-accent"

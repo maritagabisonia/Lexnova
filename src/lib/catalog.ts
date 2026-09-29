@@ -1,4 +1,6 @@
 import { cache } from "react";
+import { getLocale } from "next-intl/server";
+import { localizedText } from "@/lib/localized-content";
 import { createClient } from "@/lib/supabase/server";
 import { todayIsoDate, type ProgramSummary } from "@/lib/program-display";
 
@@ -33,8 +35,40 @@ export type NewsSummary = {
 const newsSummaryFields =
   "id, title, slug, short_description, published_at, author, cover_image_url";
 
+type ProgramContentRow = {
+  id: string;
+  title: string | null;
+  title_ka?: string | null;
+  slug: string;
+  short_description: string | null;
+  short_description_ka?: string | null;
+  status: string;
+  format: string;
+  type: string;
+  start_date: string | null;
+  created_at: string;
+};
+
 const programFields =
-  "id, title, slug, short_description, status, format, type, start_date, created_at";
+  "id, title, title_ka, slug, short_description, short_description_ka, status, format, type, start_date, created_at";
+
+function localizeProgramSummary(row: ProgramContentRow, locale: string): ProgramSummary {
+  return {
+    id: row.id,
+    title: localizedText(locale, row.title_ka, row.title) ?? "",
+    slug: row.slug,
+    short_description: localizedText(
+      locale,
+      row.short_description_ka,
+      row.short_description,
+    ),
+    status: row.status,
+    format: row.format,
+    type: row.type,
+    start_date: row.start_date,
+    created_at: row.created_at,
+  };
+}
 
 async function rowsOrEmpty<T>(query: PromiseLike<{ data: T[] | null; error: unknown }>) {
   try {
@@ -52,9 +86,17 @@ async function rowsOrEmpty<T>(query: PromiseLike<{ data: T[] | null; error: unkn
   }
 }
 
+async function localizedProgramRows(
+  query: PromiseLike<{ data: ProgramContentRow[] | null; error: unknown }>,
+) {
+  const locale = await getLocale();
+  const rows = await rowsOrEmpty<ProgramContentRow>(query);
+  return rows.map((row) => localizeProgramSummary(row, locale));
+}
+
 export async function getFeaturedPrograms() {
   const supabase = await createClient();
-  return rowsOrEmpty<ProgramSummary>(
+  return localizedProgramRows(
     supabase
       .from("programs")
       .select(programFields)
@@ -66,7 +108,7 @@ export async function getFeaturedPrograms() {
 
 export async function getUpcomingPrograms() {
   const supabase = await createClient();
-  return rowsOrEmpty<ProgramSummary>(
+  return localizedProgramRows(
     supabase
       .from("programs")
       .select(programFields)
@@ -100,12 +142,13 @@ export async function getLatestNews() {
 
 export async function getPrograms() {
   const supabase = await createClient();
-  return rowsOrEmpty<ProgramSummary>(
+  return localizedProgramRows(
     supabase
       .from("programs")
       .select(programFields)
       .neq("status", "archived")
-      .order("start_date", { ascending: true, nullsFirst: false }),
+      .order("start_date", { ascending: true, nullsFirst: false })
+      .order("created_at", { ascending: true }),
   );
 }
 
@@ -149,12 +192,13 @@ export type ProgramDetail = {
 };
 
 const programDetailFields =
-  "id, type, title, slug, short_description, full_description, target_audience, objectives, learning_outcomes, duration_text, start_date, end_date, registration_deadline, format, location, lecturer_id, max_participants, status";
+  "id, type, title, title_ka, slug, short_description, short_description_ka, full_description, full_description_ka, target_audience, target_audience_ka, objectives, objectives_ka, learning_outcomes, learning_outcomes_ka, duration_text, start_date, end_date, registration_deadline, format, location, lecturer_id, max_participants, status";
 
 export const getProgramBySlug = cache(async function getProgramBySlug(
   slug: string,
 ): Promise<ProgramDetail | null> {
   try {
+    const locale = await getLocale();
     const supabase = await createClient();
     const { data: program, error } = await supabase
       .from("programs")
@@ -167,11 +211,13 @@ export const getProgramBySlug = cache(async function getProgramBySlug(
     }
 
     const [lecturerResult, sessionsResult, countResult] = await Promise.all([
-      supabase
-        .from("lecturers")
-        .select("full_name, photo_url, bio, title")
-        .eq("id", program.lecturer_id)
-        .maybeSingle(),
+      program.lecturer_id
+        ? supabase
+            .from("lecturers")
+            .select("full_name, photo_url, bio, title")
+            .eq("id", program.lecturer_id)
+            .maybeSingle()
+        : Promise.resolve({ data: null, error: null }),
       supabase
         .from("program_sessions")
         .select("id, session_date, start_time, end_time, location, format")
@@ -197,13 +243,29 @@ export const getProgramBySlug = cache(async function getProgramBySlug(
     return {
       id: program.id,
       type: program.type,
-      title: program.title,
+      title: localizedText(locale, program.title_ka, program.title) ?? "",
       slug: program.slug,
-      short_description: program.short_description,
-      full_description: program.full_description,
-      target_audience: program.target_audience,
-      objectives: program.objectives,
-      learning_outcomes: program.learning_outcomes,
+      short_description: localizedText(
+        locale,
+        program.short_description_ka,
+        program.short_description,
+      ),
+      full_description: localizedText(
+        locale,
+        program.full_description_ka,
+        program.full_description,
+      ),
+      target_audience: localizedText(
+        locale,
+        program.target_audience_ka,
+        program.target_audience,
+      ),
+      objectives: localizedText(locale, program.objectives_ka, program.objectives),
+      learning_outcomes: localizedText(
+        locale,
+        program.learning_outcomes_ka,
+        program.learning_outcomes,
+      ),
       duration_text: program.duration_text,
       start_date: program.start_date,
       end_date: program.end_date,
@@ -284,6 +346,7 @@ export const getNewsBySlug = cache(async function getNewsBySlug(
 
     let relatedProgram: ProgramSummary | null = null;
     if (data.related_program_id) {
+      const locale = await getLocale();
       const { data: program, error: programError } = await supabase
         .from("programs")
         .select(programFields)
@@ -291,7 +354,7 @@ export const getNewsBySlug = cache(async function getNewsBySlug(
         .maybeSingle();
 
       if (!programError && program) {
-        relatedProgram = program;
+        relatedProgram = localizeProgramSummary(program, locale);
       }
     }
 
