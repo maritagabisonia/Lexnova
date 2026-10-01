@@ -3,9 +3,11 @@
 import { Suspense, useState } from "react";
 import { useTranslations } from "next-intl";
 import { logout } from "@/app/auth/actions";
+import { LocaleStableText } from "@/components/locale-stable-text";
 import { LocaleSwitcher } from "@/components/locale-switcher";
 import { Link, usePathname } from "@/i18n/navigation";
 import { isAdminPath, isDashboardPath } from "@/lib/auth-paths";
+import type { HeaderLabels } from "@/lib/header-labels";
 import { site } from "@/lib/site";
 
 const primaryNav = [
@@ -19,28 +21,30 @@ const primaryNav = [
 export function SiteHeader({
   isLoggedIn,
   isAdmin = false,
+  labels,
 }: {
   isLoggedIn: boolean;
   isAdmin?: boolean;
+  labels: HeaderLabels;
 }) {
   const t = useTranslations("nav");
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
 
   return (
-    <header className="border-b border-ink/10 bg-paper/95 backdrop-blur">
+    <header className="border-b border-ink/10 bg-paper/95 backdrop-blur [--text-sm:0.875rem] [--text-base:1rem] [--text-2xl:1.5rem] [--tracking-tight:-0.025em]">
       <div className="h-1 bg-accent" aria-hidden="true" />
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6 sm:py-4">
+      <div className="mx-auto flex max-w-6xl items-center gap-4 px-4 py-3 sm:px-6 sm:py-4">
         <Link
           href="/"
-          className="font-serif text-2xl tracking-tight text-ink"
+          className="shrink-0 font-serif text-2xl tracking-tight text-ink"
           onClick={() => setOpen(false)}
         >
           {site.name}
         </Link>
 
         <nav
-          className="hidden items-center gap-8 md:flex"
+          className="hidden min-w-0 flex-1 items-center justify-center gap-6 lg:gap-8 md:flex"
           aria-label={t("primary")}
         >
           {primaryNav.map((item) => {
@@ -49,29 +53,33 @@ export function SiteHeader({
               <Link
                 key={item.href}
                 href={item.href}
-                className={`text-sm tracking-wide transition-colors ${
+                className={`shrink-0 text-sm tracking-wide transition-colors ${
                   current
                     ? "text-ink"
                     : "text-ink-muted hover:text-accent"
                 }`}
                 aria-current={current ? "page" : undefined}
               >
-                {t(item.key)}
+                <LocaleStableText labels={labels[item.key]} />
               </Link>
             );
           })}
         </nav>
 
-        <div className="hidden items-center gap-4 md:flex">
+        <div className="hidden shrink-0 items-center gap-4 md:flex">
           <Suspense>
             <LocaleSwitcher />
           </Suspense>
-          <AuthControls isLoggedIn={isLoggedIn} isAdmin={isAdmin} />
+          <AuthControls
+            isLoggedIn={isLoggedIn}
+            isAdmin={isAdmin}
+            labels={labels}
+          />
         </div>
 
         <button
           type="button"
-          className="inline-flex size-11 items-center justify-center rounded-sm border border-ink/15 text-ink md:hidden"
+          className="ml-auto inline-flex size-11 items-center justify-center rounded-sm border border-ink/15 text-ink md:hidden"
           aria-expanded={open}
           aria-controls="mobile-nav"
           onClick={() => setOpen((value) => !value)}
@@ -120,7 +128,7 @@ export function SiteHeader({
                   aria-current={current ? "page" : undefined}
                   onClick={() => setOpen(false)}
                 >
-                  {t(item.key)}
+                  <LocaleStableText align="start" labels={labels[item.key]} />
                 </Link>
               );
             })}
@@ -128,7 +136,12 @@ export function SiteHeader({
               <Suspense>
                 <LocaleSwitcher />
               </Suspense>
-              <AuthControls isLoggedIn={isLoggedIn} isAdmin={isAdmin} stacked />
+              <AuthControls
+                isLoggedIn={isLoggedIn}
+                isAdmin={isAdmin}
+                labels={labels}
+                stacked
+              />
             </div>
           </div>
         </nav>
@@ -141,15 +154,17 @@ function AuthControls({
   isLoggedIn,
   isAdmin = false,
   stacked = false,
+  labels,
 }: {
   isLoggedIn: boolean;
   isAdmin?: boolean;
   stacked?: boolean;
+  labels: HeaderLabels;
 }) {
-  const t = useTranslations("nav");
   const pathname = usePathname();
   const onDashboard = isDashboardPath(pathname);
   const onAdmin = isAdminPath(pathname);
+  const align = stacked ? "start" : "center";
 
   if (isLoggedIn) {
     return (
@@ -168,7 +183,7 @@ function AuthControls({
             }
             aria-current={onAdmin ? "page" : undefined}
           >
-            {t("admin")}
+            <LocaleStableText align={align} labels={labels.admin} />
           </Link>
         ) : null}
         <Link
@@ -184,7 +199,7 @@ function AuthControls({
           }
           aria-current={onDashboard ? "page" : undefined}
         >
-          {t("dashboard")}
+          <LocaleStableText align={align} labels={labels.dashboard} />
         </Link>
         <form action={logout}>
           <button
@@ -195,7 +210,7 @@ function AuthControls({
                 : "text-sm text-ink-muted transition-colors hover:text-accent"
             }
           >
-            {t("logOut")}
+            <LocaleStableText align={align} labels={labels.logOut} />
           </button>
         </form>
       </>
@@ -212,17 +227,17 @@ function AuthControls({
             : "text-sm text-ink-muted transition-colors hover:text-accent"
         }
       >
-        {t("login")}
+        <LocaleStableText align={align} labels={labels.login} />
       </Link>
       <Link
         href="/register"
         className={
           stacked
             ? "inline-flex min-h-11 items-center justify-center rounded-sm bg-ink px-4 text-sm text-paper transition-colors hover:bg-ink-muted"
-            : "rounded-sm bg-ink px-4 py-2 text-sm text-paper transition-colors hover:bg-ink-muted"
+            : "inline-flex items-center justify-center rounded-sm bg-ink px-4 py-2 text-sm text-paper transition-colors hover:bg-ink-muted"
         }
       >
-        {t("register")}
+        <LocaleStableText labels={labels.register} />
       </Link>
     </>
   );
