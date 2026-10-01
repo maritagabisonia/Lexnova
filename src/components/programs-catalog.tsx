@@ -5,6 +5,7 @@ import { useTranslations } from "next-intl";
 import { ProgramCard } from "@/components/program-card";
 import {
   programFormatFilters,
+  programMatchesQuery,
   programStatusFilters,
   programTypeFilters,
   translatedFormatLabel,
@@ -32,7 +33,7 @@ export function ProgramsCatalog({
   const [status, setStatus] = useState("");
 
   const filtered = useMemo(() => {
-    const needle = query.trim().toLowerCase();
+    const needle = query.trim();
     return programs.filter((program) => {
       if (type && program.type !== type) {
         return false;
@@ -47,7 +48,7 @@ export function ProgramsCatalog({
       if (status && program.status !== status) {
         return false;
       }
-      if (needle && !program.title.toLowerCase().includes(needle)) {
+      if (needle && !programMatchesQuery(program, needle)) {
         return false;
       }
       return true;
