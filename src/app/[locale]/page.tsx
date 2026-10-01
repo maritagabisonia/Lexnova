@@ -42,6 +42,7 @@ export default async function Home() {
       <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
         <p className="text-sm tracking-wide text-accent">{site.name}</p>
         <h1 className="mt-3 max-w-3xl text-4xl sm:text-6xl">{t("headline")}</h1>
+        <p className="mt-5 text-sm tracking-wide text-accent">{t("tagline")}</p>
         <p className="mt-6 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
           {t("intro")}
         </p>

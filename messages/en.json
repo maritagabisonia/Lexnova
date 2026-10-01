@@ -122,8 +122,9 @@
     }
   },
   "home": {
-    "headline": "Legal education for a more informed public.",
-    "intro": "LexNova offers courses and training for lawyers, civic advocates, and anyone who needs a clearer map of the law — taught by practitioners, and grounded in professional judgment rather than product demos.",
+    "headline": "Law with a new vision.",
+    "tagline": "Research • Education • Innovation.",
+    "intro": "LEXNOVA combines legal research, modern education, and innovative approaches. Our goal is to advance the law on the basis of new ideas, technology, and practical knowledge — for professionals, researchers, students, and those shaping the future of law.",
     "explorePrograms": "Explore Programs",
     "viewTraining": "View Training",
     "featured": "Featured Programs",
