@@ -1,11 +1,30 @@
 import { getTranslations } from "next-intl/server";
 import { FIELD_MAX, isHttpUrl, isUuid } from "@/lib/form-input";
+import { localizedText } from "@/lib/localized-content";
 import { slugify } from "@/lib/slug";
 
 export type RelatedProgramOption = {
   id: string;
   title: string;
 };
+
+export type RelatedProgramRecord = {
+  id: string;
+  title: string | null;
+  title_ka: string | null;
+};
+
+export function mapRelatedProgramOptions(
+  rows: RelatedProgramRecord[],
+  locale: string,
+): RelatedProgramOption[] {
+  return rows
+    .map((row) => ({
+      id: row.id,
+      title: localizedText(locale, row.title_ka, row.title) ?? "",
+    }))
+    .sort((a, b) => a.title.localeCompare(b.title, locale, { sensitivity: "base" }));
+}
 
 export type NewsFormValues = {
   id?: string;
