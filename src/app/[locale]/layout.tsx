@@ -14,6 +14,7 @@ import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { routing } from "@/i18n/routing";
 import { COOKIE_NOTICE_NAME } from "@/lib/cookie-notice";
+import { getHeaderLabels } from "@/lib/header-labels";
 import { getSiteUrl } from "@/lib/seo";
 import { site } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
@@ -77,6 +78,7 @@ export default async function LocaleLayout({
   setRequestLocale(locale);
 
   const messages = await getMessages();
+  const headerLabels = await getHeaderLabels();
   const supabase = await createClient();
   const {
     data: { user },
@@ -106,7 +108,11 @@ export default async function LocaleLayout({
         }`}
       >
         <NextIntlClientProvider messages={messages}>
-          <SiteHeader isLoggedIn={Boolean(user)} isAdmin={isAdmin} />
+          <SiteHeader
+            isLoggedIn={Boolean(user)}
+            isAdmin={isAdmin}
+            labels={headerLabels}
+          />
           <main className="flex flex-1 flex-col">{children}</main>
           <SiteFooter />
           <CookieNotice dismissed={cookieNoticeDismissed} />
