@@ -318,7 +318,8 @@
       "name": "Please enter your name.",
       "email": "Please enter a valid email address.",
       "message": "Please enter a message.",
-      "generic": "We could not send your message. Please email us directly and try again later."
+      "generic": "We could not send your message. Please email us directly and try again later.",
+      "sendFailed": "We could not send your message. Please try again, or email us directly."
     },
     "faq": {
       "q1": "How do I register for a course or training?",
