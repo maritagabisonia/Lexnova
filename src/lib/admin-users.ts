@@ -3,6 +3,7 @@ import { getLocale, getTranslations } from "next-intl/server";
 import { formatAdminDate } from "@/lib/admin-format";
 import { formatRegisteredAt } from "@/lib/admin-registrations";
 import {
+  localizedProgramLabel,
   translatedStatusLabel,
   translatedTypeLabel,
 } from "@/lib/program-display";
@@ -127,7 +128,7 @@ export const getAdminUserRegistrations = cache(
       const { data, error } = await supabase
         .from("registrations")
         .select(
-          "id, program_id, status, registered_at, programs(id, title, type, status)",
+          "id, program_id, status, registered_at, programs(id, title, title_ka, type, status)",
         )
         .eq("student_id", studentId)
         .order("registered_at", { ascending: false });
@@ -145,12 +146,14 @@ export const getAdminUserRegistrations = cache(
             | {
                 id: string;
                 title: string | null;
+                title_ka: string | null;
                 type: string | null;
                 status: string | null;
               }
             | {
                 id: string;
                 title: string | null;
+                title_ka: string | null;
                 type: string | null;
                 status: string | null;
               }[]
@@ -159,7 +162,12 @@ export const getAdminUserRegistrations = cache(
         return {
           id: row.id,
           programId: program?.id ?? row.program_id,
-          programTitle: program?.title?.trim() || t("program"),
+          programTitle: localizedProgramLabel(
+            locale,
+            program?.title_ka,
+            program?.title,
+            t("program"),
+          ),
           typeLabel: translatedTypeLabel(program?.type ?? "", programsT),
           programStatusLabel: translatedStatusLabel(program?.status ?? "", programsT),
           status: row.status,

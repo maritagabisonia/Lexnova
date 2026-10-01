@@ -2,7 +2,13 @@ import { cache } from "react";
 import { getLocale } from "next-intl/server";
 import { localizedText } from "@/lib/localized-content";
 import { createClient } from "@/lib/supabase/server";
-import { todayIsoDate, type ProgramSummary } from "@/lib/program-display";
+import {
+  pickUpcomingPrograms,
+  todayIsoDate,
+  toProgramSummary,
+  type ProgramContentRow,
+  type ProgramSummary,
+} from "@/lib/program-display";
 
 export type { ProgramSummary } from "@/lib/program-display";
 export {
@@ -35,40 +41,8 @@ export type NewsSummary = {
 const newsSummaryFields =
   "id, title, slug, short_description, published_at, author, cover_image_url";
 
-type ProgramContentRow = {
-  id: string;
-  title: string | null;
-  title_ka?: string | null;
-  slug: string;
-  short_description: string | null;
-  short_description_ka?: string | null;
-  status: string;
-  format: string;
-  type: string;
-  start_date: string | null;
-  created_at: string;
-};
-
 const programFields =
   "id, title, title_ka, slug, short_description, short_description_ka, status, format, type, start_date, created_at";
-
-function localizeProgramSummary(row: ProgramContentRow, locale: string): ProgramSummary {
-  return {
-    id: row.id,
-    title: localizedText(locale, row.title_ka, row.title) ?? "",
-    slug: row.slug,
-    short_description: localizedText(
-      locale,
-      row.short_description_ka,
-      row.short_description,
-    ),
-    status: row.status,
-    format: row.format,
-    type: row.type,
-    start_date: row.start_date,
-    created_at: row.created_at,
-  };
-}
 
 async function rowsOrEmpty<T>(query: PromiseLike<{ data: T[] | null; error: unknown }>) {
   try {
@@ -91,7 +65,7 @@ async function localizedProgramRows(
 ) {
   const locale = await getLocale();
   const rows = await rowsOrEmpty<ProgramContentRow>(query);
-  return rows.map((row) => localizeProgramSummary(row, locale));
+  return rows.map((row) => toProgramSummary(row, locale));
 }
 
 export async function getFeaturedPrograms() {
@@ -108,17 +82,15 @@ export async function getFeaturedPrograms() {
 
 export async function getUpcomingPrograms() {
   const supabase = await createClient();
-  return localizedProgramRows(
+  const programs = await localizedProgramRows(
     supabase
       .from("programs")
       .select(programFields)
-      .gte("start_date", todayIsoDate())
       .or(
         "status.eq.registration_open,status.eq.coming_soon,status.eq.in_progress,status.eq.fully_booked",
-      )
-      .order("start_date", { ascending: true })
-      .limit(5),
+      ),
   );
+  return pickUpcomingPrograms(programs, todayIsoDate(), 5);
 }
 
 export async function getPublishedNews(limit?: number) {
@@ -354,7 +326,7 @@ export const getNewsBySlug = cache(async function getNewsBySlug(
         .maybeSingle();
 
       if (!programError && program) {
-        relatedProgram = localizeProgramSummary(program, locale);
+        relatedProgram = toProgramSummary(program, locale);
       }
     }
 

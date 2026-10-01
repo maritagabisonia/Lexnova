@@ -1,16 +1,109 @@
 import { calendarIntlLocale, intlLocale } from "@/i18n/dates";
+import { localizedText } from "@/lib/localized-content";
 
 export type ProgramSummary = {
   id: string;
   title: string;
+  title_en?: string | null;
+  title_ka?: string | null;
   slug: string;
   short_description: string | null;
+  short_description_en?: string | null;
+  short_description_ka?: string | null;
   status: string;
   format: string;
   type: string;
   start_date: string | null;
   created_at: string;
 };
+
+export type ProgramContentRow = {
+  id: string;
+  title: string | null;
+  title_ka?: string | null;
+  slug: string;
+  short_description: string | null;
+  short_description_ka?: string | null;
+  status: string;
+  format: string;
+  type: string;
+  start_date: string | null;
+  created_at: string;
+};
+
+function trimmedOrNull(value: string | null | undefined) {
+  const trimmed = value?.trim() ?? "";
+  return trimmed ? trimmed : null;
+}
+
+export function toProgramSummary(row: ProgramContentRow, locale: string): ProgramSummary {
+  return {
+    id: row.id,
+    title: localizedText(locale, row.title_ka, row.title) ?? "",
+    title_en: trimmedOrNull(row.title),
+    title_ka: trimmedOrNull(row.title_ka),
+    slug: row.slug,
+    short_description: localizedText(
+      locale,
+      row.short_description_ka,
+      row.short_description,
+    ),
+    short_description_en: trimmedOrNull(row.short_description),
+    short_description_ka: trimmedOrNull(row.short_description_ka),
+    status: row.status,
+    format: row.format,
+    type: row.type,
+    start_date: row.start_date,
+    created_at: row.created_at,
+  };
+}
+
+export function programMatchesQuery(program: ProgramSummary, query: string) {
+  const needle = query.trim().toLowerCase();
+  if (!needle) {
+    return true;
+  }
+  const haystack = [
+    program.title,
+    program.title_en,
+    program.title_ka,
+    program.short_description,
+    program.short_description_en,
+    program.short_description_ka,
+  ]
+    .filter(Boolean)
+    .join("\n")
+    .toLowerCase();
+  return haystack.includes(needle);
+}
+
+export function pickUpcomingPrograms(
+  programs: ProgramSummary[],
+  today: string,
+  limit = 5,
+) {
+  const dated: ProgramSummary[] = [];
+  const undated: ProgramSummary[] = [];
+  for (const program of programs) {
+    if (program.start_date && program.start_date >= today) {
+      dated.push(program);
+    } else if (!program.start_date && program.status === "coming_soon") {
+      undated.push(program);
+    }
+  }
+  dated.sort((a, b) => (a.start_date ?? "").localeCompare(b.start_date ?? ""));
+  undated.sort((a, b) => b.created_at.localeCompare(a.created_at));
+  return [...dated, ...undated].slice(0, limit);
+}
+
+export function localizedProgramLabel(
+  locale: string,
+  titleKa: string | null | undefined,
+  titleEn: string | null | undefined,
+  fallback: string,
+) {
+  return localizedText(locale, titleKa, titleEn) ?? fallback;
+}
 
 export function statusLabel(status: string) {
   const labels: Record<string, string> = {

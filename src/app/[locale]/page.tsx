@@ -117,7 +117,7 @@ export default async function Home() {
                       ? ` · ${t("starts", {
                           date: formatDate(program.start_date, locale) ?? "",
                         })}`
-                      : null}
+                      : ` · ${t("detailsComingSoon")}`}
                   </p>
                 </div>
                 <Link

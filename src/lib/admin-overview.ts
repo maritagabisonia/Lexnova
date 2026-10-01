@@ -1,6 +1,6 @@
 import { cache } from "react";
 import { getLocale, getTranslations } from "next-intl/server";
-import { formatDate, todayIsoDate } from "@/lib/program-display";
+import { formatDate, localizedProgramLabel, todayIsoDate } from "@/lib/program-display";
 import { createClient } from "@/lib/supabase/server";
 
 const ACTIVE_PROGRAM_STATUSES = [
@@ -74,7 +74,7 @@ export const getAdminOverview = cache(async function getAdminOverview(): Promise
         supabase
           .from("registrations")
           .select(
-            "id, registered_at, profiles(full_name), programs(title, slug)",
+            "id, registered_at, profiles(full_name), programs(title, title_ka, slug)",
           )
           .eq("status", "confirmed")
           .order("registered_at", { ascending: false })
@@ -107,14 +107,19 @@ export const getAdminOverview = cache(async function getAdminOverview(): Promise
       );
       const program = asOne(
         row.programs as
-          | { title: string | null; slug: string | null }
-          | { title: string | null; slug: string | null }[]
+          | { title: string | null; title_ka: string | null; slug: string | null }
+          | { title: string | null; title_ka: string | null; slug: string | null }[]
           | null,
       );
       recent.push({
         id: row.id,
         studentName: profile?.full_name?.trim() || t("student"),
-        programTitle: program?.title?.trim() || t("program"),
+        programTitle: localizedProgramLabel(
+          locale,
+          program?.title_ka,
+          program?.title,
+          t("program"),
+        ),
         programSlug: program?.slug ?? null,
         registeredOn: formatDate(row.registered_at?.slice(0, 10) ?? null, locale),
       });

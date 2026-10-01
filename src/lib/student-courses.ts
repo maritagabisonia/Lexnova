@@ -1,9 +1,15 @@
 import { cache } from "react";
-import { todayIsoDate, type ProgramSummary } from "@/lib/program-display";
+import { getLocale } from "next-intl/server";
+import {
+  todayIsoDate,
+  toProgramSummary,
+  type ProgramContentRow,
+  type ProgramSummary,
+} from "@/lib/program-display";
 import { createClient } from "@/lib/supabase/server";
 
 const programFields =
-  "id, title, slug, short_description, status, format, type, start_date, created_at";
+  "id, title, title_ka, slug, short_description, short_description_ka, status, format, type, start_date, created_at";
 
 export type CourseGroups = {
   current: ProgramSummary[];
@@ -48,9 +54,9 @@ export function groupStudentCourses(
   return { current, upcoming, completed };
 }
 
-function asProgram(
-  value: ProgramSummary | ProgramSummary[] | null | undefined,
-): ProgramSummary | null {
+function asProgramRow(
+  value: ProgramContentRow | ProgramContentRow[] | null | undefined,
+): ProgramContentRow | null {
   if (!value) {
     return null;
   }
@@ -75,13 +81,14 @@ export const getStudentCourses = cache(async function getStudentCourses(
       return [];
     }
 
+    const locale = await getLocale();
     const programs: ProgramSummary[] = [];
     for (const row of data) {
-      const program = asProgram(
-        row.programs as ProgramSummary | ProgramSummary[] | null,
+      const program = asProgramRow(
+        row.programs as ProgramContentRow | ProgramContentRow[] | null,
       );
       if (program) {
-        programs.push(program);
+        programs.push(toProgramSummary(program, locale));
       }
     }
     return programs;
