@@ -3,7 +3,10 @@ export const site = {
   tagline: "Legal education for a more informed public.",
   email: "lexnova.center@gmail.com",
   phone: "+995 555 33 25 53",
-  address: "100 Civic Place, Suite 400",
+  address: {
+    ka: "მ. კოსტავას 67, თბილისი",
+    en: "67 M. Kostava Street, Tbilisi, Georgia",
+  },
 } as const;
 
 export const socialLinks = [
@@ -19,6 +22,10 @@ export const socialLinks = [
 
 export function phoneHref(phone = site.phone) {
   return `tel:${phone.replace(/[^\d+]/g, "")}`;
+}
+
+export function siteAddress(locale: string) {
+  return locale === "ka" ? site.address.ka : site.address.en;
 }
 
 export const primaryNav = [

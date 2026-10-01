@@ -1,8 +1,8 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { ContactFaq } from "./faq";
 import { ContactForm } from "./contact-form";
 import { seoMetadata } from "@/lib/page-metadata";
-import { phoneHref, site, socialLinks } from "@/lib/site";
+import { phoneHref, site, siteAddress, socialLinks } from "@/lib/site";
 
 export async function generateMetadata() {
   return seoMetadata("contact");
@@ -10,6 +10,7 @@ export async function generateMetadata() {
 
 export default async function ContactPage() {
   const t = await getTranslations("contact");
+  const locale = await getLocale();
 
   return (
     <div className="flex flex-1 flex-col">
@@ -26,7 +27,7 @@ export default async function ContactPage() {
             <div>
               <h2 className="text-xl">{t("details")}</h2>
               <address className="mt-3 not-italic leading-relaxed text-ink-muted">
-                <p>{site.address}</p>
+                <p>{siteAddress(locale)}</p>
                 <p className="mt-2">
                   <a
                     className="inline-flex min-h-11 items-center text-ink hover:text-accent"

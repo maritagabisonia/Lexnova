@@ -32,7 +32,7 @@ export const privacyPolicy: LegalDocument = {
     {
       heading: "Who we are",
       paragraphs: [
-        `${site.name} is a legal-education site. For this draft, the contact point for privacy questions is ${site.email}. The postal address on the site is ${site.address}. Replace these details with the real controller name, registration, and address before launch.`,
+        `${site.name} is a legal-education site. For this draft, the contact point for privacy questions is ${site.email}. The postal address on the site is ${site.address.en}. Replace these details with the real controller name, registration, and address before launch.`,
       ],
     },
     {
