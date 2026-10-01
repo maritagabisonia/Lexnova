@@ -1,6 +1,7 @@
 "use server";
 
 import { getTranslations } from "next-intl/server";
+import { sendContactEmail } from "@/lib/contact-email";
 import { FIELD_MAX, tooLong } from "@/lib/form-input";
 import { createClient } from "@/lib/supabase/server";
 
@@ -39,6 +40,11 @@ export async function sendContactMessage(
     return { error: tooLongT("tooLong", { field: fields("message") }) };
   }
 
+  const emailed = await sendContactEmail({ name, email, message });
+  if (!emailed) {
+    return { error: t("sendFailed") };
+  }
+
   const supabase = await createClient();
   const { error } = await supabase.from("contact_messages").insert({
     name,
@@ -48,7 +54,6 @@ export async function sendContactMessage(
 
   if (error) {
     console.error("Contact form insert failed:", error);
-    return { error: t("generic") };
   }
 
   const successT = await getTranslations("contact");
