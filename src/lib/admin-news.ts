@@ -2,6 +2,7 @@ import { cache } from "react";
 import { getLocale, getTranslations } from "next-intl/server";
 import { formatAdminDateTime } from "@/lib/admin-format";
 import {
+  mapRelatedProgramOptions,
   toDateTimeLocal,
   type NewsFormValues,
   type RelatedProgramOption,
@@ -61,18 +62,19 @@ export const getAdminNews = cache(async function getAdminNews(): Promise<
 export const getAdminRelatedPrograms = cache(
   async function getAdminRelatedPrograms(): Promise<RelatedProgramOption[]> {
     try {
+      const locale = await getLocale();
       const supabase = await createClient();
       const { data, error } = await supabase
         .from("programs")
-        .select("id, title")
-        .order("title", { ascending: true });
+        .select("id, title, title_ka")
+        .order("created_at", { ascending: false });
       if (error || !data) {
         if (error) {
           console.error("Admin related programs failed:", error);
         }
         return [];
       }
-      return data.map((row) => ({ id: row.id, title: row.title }));
+      return mapRelatedProgramOptions(data, locale);
     } catch (error) {
       console.error("Admin related programs failed:", error);
       return [];
