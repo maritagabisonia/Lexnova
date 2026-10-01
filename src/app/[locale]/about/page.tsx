@@ -39,13 +39,52 @@ const distinctiveAreaKeys = [
   "culturalHeritage",
 ] as const;
 
+// Placeholder portraits. Keep the section, but do not render it until real
+// team members are ready to publish.
+const SHOW_TEAM = false;
+
 export async function generateMetadata() {
   return seoMetadata("about");
 }
 
-export default async function AboutPage() {
+async function AboutTeamSection() {
   const t = await getTranslations("about");
   const team = ["amelia", "julian", "noor"] as const;
+
+  return (
+    <section className="border-t border-ink/10">
+      <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
+        <h2 className="text-3xl">{t("teamTitle")}</h2>
+        <PlaceholderComment name="Team" />
+        <div className="mt-8 grid gap-6 md:grid-cols-3">
+          {team.map((person) => (
+            <article
+              key={person}
+              className="flex h-full flex-col border border-ink/10 bg-paper p-5"
+            >
+              <div
+                className="flex aspect-[4/3] w-full items-center justify-center bg-paper-muted text-2xl font-serif tracking-wide text-ink-muted"
+                aria-hidden="true"
+              >
+                {t(`team.${person}.initials`)}
+              </div>
+              <h3 className="mt-4 text-xl">{t(`team.${person}.name`)}</h3>
+              <p className="mt-1 text-sm tracking-wide text-accent">
+                {t(`team.${person}.role`)}
+              </p>
+              <p className="mt-3 text-sm leading-relaxed text-ink-muted">
+                {t(`team.${person}.bio`)}
+              </p>
+            </article>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export default async function AboutPage() {
+  const t = await getTranslations("about");
 
   return (
     <div className="flex flex-1 flex-col">
@@ -118,34 +157,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      <section className="border-t border-ink/10">
-        <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
-          <h2 className="text-3xl">{t("teamTitle")}</h2>
-          <PlaceholderComment name="Team" />
-          <div className="mt-8 grid gap-6 md:grid-cols-3">
-            {team.map((person) => (
-              <article
-                key={person}
-                className="flex h-full flex-col border border-ink/10 bg-paper p-5"
-              >
-                <div
-                  className="flex aspect-[4/3] w-full items-center justify-center bg-paper-muted text-2xl font-serif tracking-wide text-ink-muted"
-                  aria-hidden="true"
-                >
-                  {t(`team.${person}.initials`)}
-                </div>
-                <h3 className="mt-4 text-xl">{t(`team.${person}.name`)}</h3>
-                <p className="mt-1 text-sm tracking-wide text-accent">
-                  {t(`team.${person}.role`)}
-                </p>
-                <p className="mt-3 text-sm leading-relaxed text-ink-muted">
-                  {t(`team.${person}.bio`)}
-                </p>
-              </article>
-            ))}
-          </div>
-        </div>
-      </section>
+      {SHOW_TEAM ? <AboutTeamSection /> : null}
     </div>
   );
 }
