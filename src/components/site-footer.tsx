@@ -1,6 +1,6 @@
 import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { site } from "@/lib/site";
+import { phoneHref, site } from "@/lib/site";
 
 const legalNav = [
   { href: "/privacy-policy", key: "privacyPolicy" },
@@ -37,7 +37,7 @@ export async function SiteFooter() {
           <p>
             <a
               className="inline-flex min-h-11 items-center hover:text-accent md:min-h-0"
-              href={`tel:${site.phone}`}
+              href={phoneHref()}
             >
               {site.phone}
             </a>

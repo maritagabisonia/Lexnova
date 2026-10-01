@@ -2,7 +2,7 @@ import { getTranslations } from "next-intl/server";
 import { ContactFaq } from "./faq";
 import { ContactForm } from "./contact-form";
 import { seoMetadata } from "@/lib/page-metadata";
-import { site, socialLinks } from "@/lib/site";
+import { phoneHref, site, socialLinks } from "@/lib/site";
 
 export async function generateMetadata() {
   return seoMetadata("contact");
@@ -38,7 +38,7 @@ export default async function ContactPage() {
                 <p>
                   <a
                     className="inline-flex min-h-11 items-center text-ink hover:text-accent"
-                    href={`tel:${site.phone}`}
+                    href={phoneHref()}
                   >
                     {site.phone}
                   </a>
@@ -46,22 +46,25 @@ export default async function ContactPage() {
               </address>
             </div>
 
-            <div>
-              <h2 className="text-xl">{t("follow")}</h2>
-              <ul className="mt-3 text-ink-muted">
-                {socialLinks.map((item) => (
-                  <li key={item.href}>
-                    <a
-                      href={item.href}
-                      className="inline-flex min-h-11 items-center text-ink hover:text-accent"
-                      rel="noreferrer"
-                    >
-                      {item.label}
-                    </a>
-                  </li>
-                ))}
-              </ul>
-            </div>
+            {socialLinks.length > 0 ? (
+              <div>
+                <h2 className="text-xl">{t("follow")}</h2>
+                <ul className="mt-3 text-ink-muted">
+                  {socialLinks.map((item) => (
+                    <li key={item.href}>
+                      <a
+                        href={item.href}
+                        className="inline-flex min-h-11 items-center text-ink hover:text-accent"
+                        rel="noreferrer"
+                        target="_blank"
+                      >
+                        {item.label}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ) : null}
           </div>
         </div>
       </section>

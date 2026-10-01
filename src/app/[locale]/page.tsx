@@ -9,7 +9,7 @@ import {
   translatedFormatLabel,
 } from "@/lib/catalog";
 import { seoMetadata } from "@/lib/page-metadata";
-import { site } from "@/lib/site";
+import { phoneHref, site } from "@/lib/site";
 
 const aboutTagKeys = [
   "aboutTag1",
@@ -224,7 +224,7 @@ export default async function Home() {
               <span className="mx-3 hidden text-paper/40 sm:inline">·</span>
               <a
                 className="inline-flex min-h-11 items-center hover:text-accent sm:min-h-0"
-                href={`tel:${site.phone}`}
+                href={phoneHref()}
               >
                 {site.phone}
               </a>
