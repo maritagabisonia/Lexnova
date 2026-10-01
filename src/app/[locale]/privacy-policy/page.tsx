@@ -1,7 +1,7 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { LegalPage } from "@/components/legal-page";
 import { seoMetadata } from "@/lib/page-metadata";
-import { site } from "@/lib/site";
+import { site, siteAddress } from "@/lib/site";
 
 export async function generateMetadata() {
   return seoMetadata("privacyPolicy");
@@ -9,7 +9,12 @@ export async function generateMetadata() {
 
 export default async function PrivacyPolicyPage() {
   const t = await getTranslations("legal.privacy");
-  const vars = { name: site.name, email: site.email, address: site.address };
+  const locale = await getLocale();
+  const vars = {
+    name: site.name,
+    email: site.email,
+    address: siteAddress(locale),
+  };
 
   return (
     <LegalPage

@@ -1,6 +1,6 @@
-import { getTranslations } from "next-intl/server";
+import { getLocale, getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
-import { phoneHref, site } from "@/lib/site";
+import { phoneHref, site, siteAddress } from "@/lib/site";
 
 const legalNav = [
   { href: "/privacy-policy", key: "privacyPolicy" },
@@ -11,6 +11,7 @@ const legalNav = [
 export async function SiteFooter() {
   const t = await getTranslations("footer");
   const brand = await getTranslations("brand");
+  const locale = await getLocale();
   const year = new Date().getFullYear();
 
   return (
@@ -25,7 +26,7 @@ export async function SiteFooter() {
 
         <div className="space-y-2 text-sm text-paper/80">
           <p className="font-medium text-paper">{t("contact")}</p>
-          <p>{site.address}</p>
+          <p>{siteAddress(locale)}</p>
           <p>
             <a
               className="inline-flex min-h-11 items-center hover:text-accent md:min-h-0"
