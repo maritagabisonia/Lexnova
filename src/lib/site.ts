@@ -1,17 +1,25 @@
 export const site = {
   name: "LexNova",
   tagline: "Legal education for a more informed public.",
-  email: "hello@lexnova.org",
-  phone: "+1 (555) 010-1947",
+  email: "lexnova.center@gmail.com",
+  phone: "+995 555 33 25 53",
   address: "100 Civic Place, Suite 400",
 } as const;
 
-/* PLACEHOLDER: Social links — replace hrefs when accounts exist. */
 export const socialLinks = [
-  { label: "LinkedIn", href: "https://www.linkedin.com/company/lexnova" },
-  { label: "X", href: "https://x.com/lexnova" },
-  { label: "YouTube", href: "https://www.youtube.com/@lexnova" },
+  {
+    label: "Instagram",
+    href: "https://www.instagram.com/lexnova_center?stkn=MXZnaG83eHZjcWMzbA%3D%3D&utm_source=qr",
+  },
+  {
+    label: "Facebook",
+    href: "https://www.facebook.com/share/19gEsDk4Qc/?mibextid=wwXIfr",
+  },
 ] as const;
+
+export function phoneHref(phone = site.phone) {
+  return `tel:${phone.replace(/[^\d+]/g, "")}`;
+}
 
 export const primaryNav = [
   { href: "/", label: "Home" },
