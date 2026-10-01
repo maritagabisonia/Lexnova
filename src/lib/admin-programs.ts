@@ -4,6 +4,7 @@ import { formatAdminDateTime } from "@/lib/admin-format";
 import { localizedText } from "@/lib/localized-content";
 import { formatDate, typeLabel, statusLabel } from "@/lib/program-display";
 import {
+  toProgramFormValues,
   type AdminLecturerOption,
   type ProgramFormValues,
 } from "@/lib/program-fields";
@@ -12,7 +13,7 @@ import { createClient } from "@/lib/supabase/server";
 
 export type { AdminLecturerOption, ProgramFormValues } from "@/lib/program-fields";
 export type { AdminSessionValues } from "@/lib/session-fields";
-export { emptyProgramFormValues } from "@/lib/program-fields";
+export { emptyProgramFormValues, programDisplayTitle } from "@/lib/program-fields";
 
 export type AdminProgramRow = {
   id: string;
@@ -110,7 +111,7 @@ export const getAdminProgram = cache(async function getAdminProgram(
     const { data, error } = await supabase
       .from("programs")
       .select(
-        "id, type, title, slug, short_description, full_description, target_audience, objectives, learning_outcomes, duration_text, start_date, end_date, registration_deadline, format, location, lecturer_id, max_participants, status, price, created_at, updated_at",
+        "id, type, title, title_ka, slug, short_description, short_description_ka, full_description, full_description_ka, target_audience, target_audience_ka, objectives, objectives_ka, learning_outcomes, learning_outcomes_ka, duration_text, start_date, end_date, registration_deadline, format, location, lecturer_id, max_participants, status, price, created_at, updated_at",
       )
       .eq("id", id)
       .maybeSingle();
@@ -119,36 +120,10 @@ export const getAdminProgram = cache(async function getAdminProgram(
       return null;
     }
 
-    const type = data.type === "training" ? "training" : "course";
-    const format =
-      data.format === "in_person" || data.format === "hybrid"
-        ? data.format
-        : "online";
-
-    return {
-      id: data.id,
-      type,
-      title: data.title ?? "",
-      slug: data.slug ?? "",
-      short_description: data.short_description ?? "",
-      full_description: data.full_description ?? "",
-      target_audience: data.target_audience ?? "",
-      objectives: data.objectives ?? "",
-      learning_outcomes: data.learning_outcomes ?? "",
-      duration_text: data.duration_text ?? "",
-      start_date: data.start_date ?? "",
-      end_date: data.end_date ?? "",
-      registration_deadline: data.registration_deadline ?? "",
-      format,
-      location: data.location ?? "",
-      lecturer_id: data.lecturer_id ?? "",
-      max_participants:
-        data.max_participants == null ? "" : String(data.max_participants),
-      status: data.status ?? "coming_soon",
-      price: data.price == null ? "" : String(data.price),
+    return toProgramFormValues(data, {
       created_at: formatTimestamp(data.created_at ?? null, locale),
       updated_at: formatTimestamp(data.updated_at ?? null, locale),
-    };
+    });
   } catch {
     return null;
   }
