@@ -12,6 +12,7 @@ export const headerLabelKeys = [
   "admin",
   "dashboard",
   "logOut",
+  "account",
 ] as const;
 
 export type HeaderLabelKey = (typeof headerLabelKeys)[number];

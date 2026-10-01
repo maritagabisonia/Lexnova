@@ -19,6 +19,8 @@
     "admin": "Admin",
     "dashboard": "Dashboard",
     "logOut": "Log Out",
+    "account": "Account",
+    "accountMenu": "Account menu",
     "primary": "Primary",
     "mobile": "Mobile",
     "openMenu": "Open menu",
