@@ -27,12 +27,18 @@ export type ProgramFormValues = {
   id?: string;
   type: "course" | "training";
   title: string;
+  title_ka: string;
   slug: string;
   short_description: string;
+  short_description_ka: string;
   full_description: string;
+  full_description_ka: string;
   target_audience: string;
+  target_audience_ka: string;
   objectives: string;
+  objectives_ka: string;
   learning_outcomes: string;
+  learning_outcomes_ka: string;
   duration_text: string;
   start_date: string;
   end_date: string;
@@ -50,12 +56,18 @@ export type ProgramFormValues = {
 export const emptyProgramFormValues: ProgramFormValues = {
   type: "course",
   title: "",
+  title_ka: "",
   slug: "",
   short_description: "",
+  short_description_ka: "",
   full_description: "",
+  full_description_ka: "",
   target_audience: "",
+  target_audience_ka: "",
   objectives: "",
+  objectives_ka: "",
   learning_outcomes: "",
+  learning_outcomes_ka: "",
   duration_text: "",
   start_date: "",
   end_date: "",
@@ -70,6 +82,86 @@ export const emptyProgramFormValues: ProgramFormValues = {
   updated_at: null,
 };
 
+export type ProgramRecord = {
+  id: string;
+  type: string;
+  title: string | null;
+  title_ka: string | null;
+  slug: string | null;
+  short_description: string | null;
+  short_description_ka: string | null;
+  full_description: string | null;
+  full_description_ka: string | null;
+  target_audience: string | null;
+  target_audience_ka: string | null;
+  objectives: string | null;
+  objectives_ka: string | null;
+  learning_outcomes: string | null;
+  learning_outcomes_ka: string | null;
+  duration_text: string | null;
+  start_date: string | null;
+  end_date: string | null;
+  registration_deadline: string | null;
+  format: string | null;
+  location: string | null;
+  lecturer_id: string | null;
+  max_participants: number | null;
+  status: string | null;
+  price: number | null;
+};
+
+function textOrEmpty(value: string | null | undefined) {
+  return value ?? "";
+}
+
+export function toProgramFormValues(
+  data: ProgramRecord,
+  timestamps: { created_at: string | null; updated_at: string | null },
+): ProgramFormValues {
+  const type = data.type === "training" ? "training" : "course";
+  const format =
+    data.format === "in_person" || data.format === "hybrid"
+      ? data.format
+      : "online";
+
+  return {
+    id: data.id,
+    type,
+    title: textOrEmpty(data.title),
+    title_ka: textOrEmpty(data.title_ka),
+    slug: textOrEmpty(data.slug),
+    short_description: textOrEmpty(data.short_description),
+    short_description_ka: textOrEmpty(data.short_description_ka),
+    full_description: textOrEmpty(data.full_description),
+    full_description_ka: textOrEmpty(data.full_description_ka),
+    target_audience: textOrEmpty(data.target_audience),
+    target_audience_ka: textOrEmpty(data.target_audience_ka),
+    objectives: textOrEmpty(data.objectives),
+    objectives_ka: textOrEmpty(data.objectives_ka),
+    learning_outcomes: textOrEmpty(data.learning_outcomes),
+    learning_outcomes_ka: textOrEmpty(data.learning_outcomes_ka),
+    duration_text: textOrEmpty(data.duration_text),
+    start_date: textOrEmpty(data.start_date),
+    end_date: textOrEmpty(data.end_date),
+    registration_deadline: textOrEmpty(data.registration_deadline),
+    format,
+    location: textOrEmpty(data.location),
+    lecturer_id: textOrEmpty(data.lecturer_id),
+    max_participants:
+      data.max_participants == null ? "" : String(data.max_participants),
+    status: data.status ?? "coming_soon",
+    price: data.price == null ? "" : String(data.price),
+    created_at: timestamps.created_at,
+    updated_at: timestamps.updated_at,
+  };
+}
+
+export function programDisplayTitle(
+  program: Pick<ProgramFormValues, "title" | "title_ka">,
+) {
+  return program.title.trim() || program.title_ka.trim();
+}
+
 function emptyToNull(value: string) {
   const trimmed = value.trim();
   return trimmed ? trimmed : null;
@@ -77,13 +169,19 @@ function emptyToNull(value: string) {
 
 export type ProgramWritePayload = {
   type: "course" | "training";
-  title: string;
+  title: string | null;
+  title_ka: string | null;
   slug: string;
   short_description: string | null;
+  short_description_ka: string | null;
   full_description: string | null;
+  full_description_ka: string | null;
   target_audience: string | null;
+  target_audience_ka: string | null;
   objectives: string | null;
+  objectives_ka: string | null;
   learning_outcomes: string | null;
+  learning_outcomes_ka: string | null;
   duration_text: string | null;
   start_date: string | null;
   end_date: string | null;
@@ -102,6 +200,7 @@ export async function parseProgramForm(
   const t = await getTranslations("admin.errors");
   const fields = await getTranslations("admin.form");
   const title = String(formData.get("title") ?? "").trim();
+  const titleKa = String(formData.get("title_ka") ?? "").trim();
   const slugInput = String(formData.get("slug") ?? "").trim();
   const slug = slugify(slugInput || title);
   const type = String(formData.get("type") ?? "");
@@ -109,10 +208,13 @@ export async function parseProgramForm(
   const status = String(formData.get("status") ?? "");
   const lecturerId = String(formData.get("lecturer_id") ?? "").trim();
 
-  if (!title) {
+  if (!title && !titleKa) {
     return { error: t("enterTitle") };
   }
   if (title.length > FIELD_MAX.title) {
+    return { error: t("tooLong", { field: fields("title") }) };
+  }
+  if (titleKa.length > FIELD_MAX.title) {
     return { error: t("tooLong", { field: fields("title") }) };
   }
   if (!slug) {
@@ -145,19 +247,37 @@ export async function parseProgramForm(
   }
 
   const shortDescription = emptyToNull(String(formData.get("short_description") ?? ""));
+  const shortDescriptionKa = emptyToNull(
+    String(formData.get("short_description_ka") ?? ""),
+  );
   const fullDescription = emptyToNull(String(formData.get("full_description") ?? ""));
+  const fullDescriptionKa = emptyToNull(
+    String(formData.get("full_description_ka") ?? ""),
+  );
   const targetAudience = emptyToNull(String(formData.get("target_audience") ?? ""));
+  const targetAudienceKa = emptyToNull(
+    String(formData.get("target_audience_ka") ?? ""),
+  );
   const objectives = emptyToNull(String(formData.get("objectives") ?? ""));
+  const objectivesKa = emptyToNull(String(formData.get("objectives_ka") ?? ""));
   const learningOutcomes = emptyToNull(String(formData.get("learning_outcomes") ?? ""));
+  const learningOutcomesKa = emptyToNull(
+    String(formData.get("learning_outcomes_ka") ?? ""),
+  );
   const durationText = emptyToNull(String(formData.get("duration_text") ?? ""));
   const location = emptyToNull(String(formData.get("location") ?? ""));
 
   for (const [value, field, max] of [
     [shortDescription, "shortDescription", FIELD_MAX.shortText],
+    [shortDescriptionKa, "shortDescription", FIELD_MAX.shortText],
     [fullDescription, "fullDescription", FIELD_MAX.longText],
+    [fullDescriptionKa, "fullDescription", FIELD_MAX.longText],
     [targetAudience, "targetAudience", FIELD_MAX.longText],
+    [targetAudienceKa, "targetAudience", FIELD_MAX.longText],
     [objectives, "objectives", FIELD_MAX.longText],
+    [objectivesKa, "objectives", FIELD_MAX.longText],
     [learningOutcomes, "learningOutcomes", FIELD_MAX.longText],
+    [learningOutcomesKa, "learningOutcomes", FIELD_MAX.longText],
     [durationText, "duration", FIELD_MAX.shortText],
     [location, "location", FIELD_MAX.shortText],
   ] as const) {
@@ -189,13 +309,19 @@ export async function parseProgramForm(
   return {
     data: {
       type,
-      title,
+      title: emptyToNull(title),
+      title_ka: emptyToNull(titleKa),
       slug,
       short_description: shortDescription,
+      short_description_ka: shortDescriptionKa,
       full_description: fullDescription,
+      full_description_ka: fullDescriptionKa,
       target_audience: targetAudience,
+      target_audience_ka: targetAudienceKa,
       objectives: objectives,
+      objectives_ka: objectivesKa,
       learning_outcomes: learningOutcomes,
+      learning_outcomes_ka: learningOutcomesKa,
       duration_text: durationText,
       start_date: startDate,
       end_date: endDate,

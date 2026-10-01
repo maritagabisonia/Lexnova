@@ -3,6 +3,7 @@ import { getTranslations } from "next-intl/server";
 import { Link } from "@/i18n/navigation";
 import { notFound } from "next/navigation";
 import {
+  programDisplayTitle,
   getAdminLecturers,
   getAdminProgram,
   getAdminProgramSessions,
@@ -31,7 +32,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { id } = await params;
   const t = await getTranslations("admin");
   const program = await getAdminProgram(id);
-  return { title: program ? t("editNamed", { name: program.title }) : t("editProgram") };
+  return { title: program ? t("editNamed", { name: programDisplayTitle(program) }) : t("editProgram") };
 }
 
 export default async function EditProgramPage({ params, searchParams }: Props) {
@@ -86,7 +87,7 @@ export default async function EditProgramPage({ params, searchParams }: Props) {
       {tab === "program" ? (
         <>
           <ProgramForm mode="edit" lecturers={lecturers} program={program} />
-          <DeleteProgramButton programId={program.id} title={program.title} />
+          <DeleteProgramButton programId={program.id} title={programDisplayTitle(program)} />
         </>
       ) : null}
 

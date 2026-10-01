@@ -47,7 +47,7 @@ export function ProgramForm({
   const displayedSlug = slugLocked ? slug : slugify(title);
 
   return (
-    <form action={formAction} className="mt-8 max-w-3xl space-y-6">
+    <form action={formAction} className="mt-8 max-w-5xl space-y-6">
       {program.id ? <input type="hidden" name="id" value={program.id} /> : null}
       <input type="hidden" name="type" value={type} />
       <AuthMessage state={state} />
@@ -76,12 +76,24 @@ export function ProgramForm({
         </div>
       </fieldset>
 
-      <Field
-        id="title"
-        label={t("title")}
-        value={title}
-        onChange={(value) => setTitle(value)}
-      />
+      <p className="text-sm text-ink-muted">{t("copyLead")}</p>
+      <div className="grid gap-6 lg:grid-cols-2">
+        <Field
+          id="title_ka"
+          label={`${t("title")} · ${t("georgian")}`}
+          defaultValue={program.title_ka}
+          required={false}
+          lang="ka"
+        />
+        <Field
+          id="title"
+          label={`${t("title")} · ${t("english")}`}
+          value={title}
+          onChange={(value) => setTitle(value)}
+          required={false}
+          lang="en"
+        />
+      </div>
       <div className="space-y-1.5">
         <label htmlFor="slug" className="block text-sm text-ink">
           {t("slug")}
@@ -97,9 +109,7 @@ export function ProgramForm({
           className={inputClass}
           autoComplete="off"
         />
-        <p className="text-xs text-ink-muted">
-          {t("slugHint")}
-        </p>
+        <p className="text-xs text-ink-muted">{t("slugHint")}</p>
       </div>
 
       <SelectField
@@ -136,31 +146,68 @@ export function ProgramForm({
         ]}
       />
 
-      <TextArea
-        id="short_description"
-        label={t("shortDescription")}
-        defaultValue={program.short_description}
-      />
-      <TextArea
-        id="full_description"
-        label={t("fullDescription")}
-        defaultValue={program.full_description}
-      />
-      <TextArea
-        id="target_audience"
-        label={t("targetAudience")}
-        defaultValue={program.target_audience}
-      />
-      <TextArea
-        id="objectives"
-        label={t("objectives")}
-        defaultValue={program.objectives}
-      />
-      <TextArea
-        id="learning_outcomes"
-        label={t("learningOutcomes")}
-        defaultValue={program.learning_outcomes}
-      />
+      <div className="grid gap-6 lg:grid-cols-2">
+        <TextArea
+          id="short_description_ka"
+          label={`${t("shortDescription")} · ${t("georgian")}`}
+          defaultValue={program.short_description_ka}
+          lang="ka"
+        />
+        <TextArea
+          id="short_description"
+          label={`${t("shortDescription")} · ${t("english")}`}
+          defaultValue={program.short_description}
+          lang="en"
+        />
+        <TextArea
+          id="full_description_ka"
+          label={`${t("fullDescription")} · ${t("georgian")}`}
+          defaultValue={program.full_description_ka}
+          lang="ka"
+        />
+        <TextArea
+          id="full_description"
+          label={`${t("fullDescription")} · ${t("english")}`}
+          defaultValue={program.full_description}
+          lang="en"
+        />
+        <TextArea
+          id="target_audience_ka"
+          label={`${t("targetAudience")} · ${t("georgian")}`}
+          defaultValue={program.target_audience_ka}
+          lang="ka"
+        />
+        <TextArea
+          id="target_audience"
+          label={`${t("targetAudience")} · ${t("english")}`}
+          defaultValue={program.target_audience}
+          lang="en"
+        />
+        <TextArea
+          id="objectives_ka"
+          label={`${t("objectives")} · ${t("georgian")}`}
+          defaultValue={program.objectives_ka}
+          lang="ka"
+        />
+        <TextArea
+          id="objectives"
+          label={`${t("objectives")} · ${t("english")}`}
+          defaultValue={program.objectives}
+          lang="en"
+        />
+        <TextArea
+          id="learning_outcomes_ka"
+          label={`${t("learningOutcomes")} · ${t("georgian")}`}
+          defaultValue={program.learning_outcomes_ka}
+          lang="ka"
+        />
+        <TextArea
+          id="learning_outcomes"
+          label={`${t("learningOutcomes")} · ${t("english")}`}
+          defaultValue={program.learning_outcomes}
+          lang="en"
+        />
+      </div>
 
       <Field
         id="duration_text"
@@ -262,6 +309,7 @@ function Field({
   onChange,
   required = true,
   min,
+  lang,
 }: {
   id: string;
   label: string;
@@ -271,6 +319,7 @@ function Field({
   onChange?: (value: string) => void;
   required?: boolean;
   min?: number;
+  lang?: string;
 }) {
   return (
     <div className="space-y-1.5">
@@ -281,6 +330,7 @@ function Field({
         id={id}
         name={id}
         type={type}
+        lang={lang}
         required={required}
         value={value}
         defaultValue={onChange ? undefined : defaultValue}
@@ -297,10 +347,12 @@ function TextArea({
   id,
   label,
   defaultValue,
+  lang,
 }: {
   id: string;
   label: string;
   defaultValue: string;
+  lang?: string;
 }) {
   return (
     <div className="space-y-1.5">
@@ -310,6 +362,7 @@ function TextArea({
       <textarea
         id={id}
         name={id}
+        lang={lang}
         defaultValue={defaultValue}
         className={textareaClass}
       />
