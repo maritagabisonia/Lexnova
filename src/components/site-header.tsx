@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useId, useRef, useState } from "react";
+import Image from "next/image";
 import { useTranslations } from "next-intl";
 import { logout } from "@/app/auth/actions";
 import { LocaleStableText } from "@/components/locale-stable-text";
@@ -37,10 +38,17 @@ export function SiteHeader({
       <div className="mx-auto flex max-w-6xl items-center gap-10 px-4 py-3 sm:px-6 sm:py-4">
         <Link
           href="/"
-          className="shrink-0 font-serif text-2xl tracking-tight text-ink"
+          className="shrink-0"
           onClick={() => setOpen(false)}
         >
-          {site.name}
+          <Image
+            src="/logo.png"
+            alt={site.name}
+            width={44}
+            height={44}
+            className="h-11 w-11 object-contain"
+            preload
+          />
         </Link>
 
         <nav
