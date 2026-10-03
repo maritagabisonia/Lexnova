@@ -1,4 +1,5 @@
 import { getLocale, getTranslations } from "next-intl/server";
+import Image from "next/image";
 import { ProgramCard } from "@/components/program-card";
 import { Link } from "@/i18n/navigation";
 import {
@@ -40,25 +41,40 @@ export default async function Home() {
   return (
     <div className="flex flex-1 flex-col">
       <section className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6 sm:py-24">
-        <p className="text-sm tracking-wide text-accent">{site.name}</p>
-        <h1 className="mt-3 max-w-3xl text-4xl sm:text-6xl">{t("headline")}</h1>
-        <p className="mt-5 text-sm tracking-wide text-accent">{t("tagline")}</p>
-        <p className="mt-6 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
-          {t("intro")}
-        </p>
-        <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <Link
-            href="/programs"
-            className="inline-flex min-h-11 items-center justify-center rounded-sm bg-ink px-5 text-sm text-paper transition-colors hover:bg-ink-muted"
-          >
-            {t("explorePrograms")}
-          </Link>
-          <Link
-            href="/programs?type=training"
-            className="inline-flex min-h-11 items-center justify-center rounded-sm border border-ink px-5 text-sm text-ink transition-colors hover:bg-ink hover:text-paper"
-          >
-            {t("viewTraining")}
-          </Link>
+        <div className="grid items-center gap-10 lg:grid-cols-2 lg:gap-12">
+          <div>
+            <p className="text-sm tracking-wide text-accent">{site.name}</p>
+            <h1 className="mt-3 max-w-3xl text-4xl sm:text-6xl">{t("headline")}</h1>
+            <p className="mt-5 text-sm tracking-wide text-accent">{t("tagline")}</p>
+            <p className="mt-6 max-w-2xl text-base leading-relaxed text-ink-muted sm:text-lg">
+              {t("intro")}
+            </p>
+            <div className="mt-8 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+              <Link
+                href="/programs"
+                className="inline-flex min-h-11 items-center justify-center rounded-sm bg-ink px-5 text-sm text-paper transition-colors hover:bg-ink-muted"
+              >
+                {t("explorePrograms")}
+              </Link>
+              <Link
+                href="/programs?type=training"
+                className="inline-flex min-h-11 items-center justify-center rounded-sm border border-ink px-5 text-sm text-ink transition-colors hover:bg-ink hover:text-paper"
+              >
+                {t("viewTraining")}
+              </Link>
+            </div>
+          </div>
+          <div className="min-w-0">
+            <Image
+              src="/hero-editorial.png"
+              alt=""
+              width={1600}
+              height={595}
+              className="h-auto w-full"
+              sizes="(min-width: 1024px) 36rem, 100vw"
+              preload
+            />
+          </div>
         </div>
       </section>
 
