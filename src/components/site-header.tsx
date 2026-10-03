@@ -46,7 +46,7 @@ export function SiteHeader({
             alt={site.name}
             width={44}
             height={44}
-            className="h-11 w-11 object-contain"
+            className="h-11 w-11 bg-transparent object-contain"
             preload
           />
         </Link>
