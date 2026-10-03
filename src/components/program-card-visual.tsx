@@ -36,10 +36,11 @@ function ProgramSubjectIcon({ name }: { name: ProgramIconName }) {
     case "tax":
       return (
         <IconFrame>
-          <path d="M12 3v3M8 6.5h8" />
-          <path d="M7 10.5 12 8l5 2.5-5 2.5-5-2.5Z" />
-          <circle cx="8.5" cy="17.5" r="2.4" />
-          <circle cx="15.5" cy="18.2" r="2" />
+          <path d="M12 3.5v3M6.5 7.5h11" />
+          <path d="M6.5 7.5 4.8 11h3.4L6.5 7.5Z" />
+          <path d="M17.5 7.5 15.8 11h3.4L17.5 7.5Z" />
+          <circle cx="12" cy="17" r="3.1" />
+          <path d="M12 15.4v3.2M10.6 17h2.8" />
         </IconFrame>
       );
     case "columns":
