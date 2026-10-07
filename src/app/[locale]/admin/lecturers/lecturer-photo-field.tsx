@@ -119,11 +119,17 @@ export function LecturerPhotoField({
     event.preventDefault();
     dragCount.current = 0;
     setDragging(false);
+    if (uploading) {
+      return;
+    }
     handleFiles(event.dataTransfer.files);
   }
 
   function onDragEnter(event: DragEvent<HTMLDivElement>) {
     event.preventDefault();
+    if (uploading) {
+      return;
+    }
     dragCount.current += 1;
     setDragging(true);
   }
