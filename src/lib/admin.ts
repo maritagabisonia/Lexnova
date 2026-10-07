@@ -3,6 +3,7 @@ export const adminNav = [
   { href: "/admin/programs", label: "Programs" },
   { href: "/admin/news", label: "News" },
   { href: "/admin/lecturers", label: "Lecturers" },
+  { href: "/admin/faq", label: "FAQ" },
   { href: "/admin/students", label: "Students" },
   { href: "/admin/users", label: "Users" },
 ] as const;

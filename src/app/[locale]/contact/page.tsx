@@ -1,4 +1,5 @@
 import { getLocale, getTranslations } from "next-intl/server";
+import { getPublicFaqItems } from "@/lib/public-faq";
 import { ContactFaq } from "./faq";
 import { ContactForm } from "./contact-form";
 import { seoMetadata } from "@/lib/page-metadata";
@@ -11,6 +12,7 @@ export async function generateMetadata() {
 export default async function ContactPage() {
   const t = await getTranslations("contact");
   const locale = await getLocale();
+  const faqItems = await getPublicFaqItems();
 
   return (
     <div className="flex flex-1 flex-col">
@@ -74,7 +76,7 @@ export default async function ContactPage() {
         <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
           <h2 className="text-3xl">{t("faqTitle")}</h2>
           <div className="mt-8">
-            <ContactFaq />
+            <ContactFaq items={faqItems} />
           </div>
         </div>
       </section>

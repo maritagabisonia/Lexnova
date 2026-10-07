@@ -9,6 +9,7 @@ const navKeys = {
   "/admin/programs": "programs",
   "/admin/news": "news",
   "/admin/lecturers": "lecturers",
+  "/admin/faq": "faq",
   "/admin/students": "students",
   "/admin/users": "users",
 } as const;
