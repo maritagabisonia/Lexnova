@@ -9,6 +9,7 @@ import {
   updateLecturer,
   type LecturerActionState,
 } from "./actions";
+import { LecturerPhotoField } from "./lecturer-photo-field";
 
 const inputClass =
   "min-h-11 w-full rounded-sm border border-ink/15 bg-paper px-3 py-2 text-ink outline-none focus:border-accent";
@@ -26,7 +27,7 @@ export function LecturerForm({
   const t = useTranslations("admin.form");
   const action = mode === "create" ? createLecturer : updateLecturer;
   const [state, formAction, pending] = useActionState(action, initialState);
-  const [photoUrl, setPhotoUrl] = useState(lecturer.photo_url);
+  const [photoUploading, setPhotoUploading] = useState(false);
 
   return (
     <form action={formAction} className="mt-8 max-w-3xl space-y-6">
@@ -40,17 +41,11 @@ export function LecturerForm({
         defaultValue={lecturer.title}
         required={false}
       />
-      <Field
-        id="photo_url"
-        label={t("photoUrl")}
-        value={photoUrl}
-        onChange={setPhotoUrl}
-        required={false}
+      <LecturerPhotoField
+        lecturerId={lecturer.id}
+        initialUrl={lecturer.photo_url}
+        onUploadingChange={setPhotoUploading}
       />
-      {photoUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={photoUrl} alt="" className="h-36 w-36 object-cover" />
-      ) : null}
       <div className="space-y-1.5">
         <label htmlFor="bio" className="block text-sm text-ink">
           {t("bio")}
@@ -78,7 +73,7 @@ export function LecturerForm({
 
       <button
         type="submit"
-        disabled={pending}
+        disabled={pending || photoUploading}
         className="inline-flex min-h-11 items-center justify-center rounded-sm bg-ink px-6 text-sm text-paper transition-colors hover:bg-ink-muted disabled:opacity-60"
       >
         {pending
@@ -95,15 +90,11 @@ function Field({
   id,
   label,
   defaultValue,
-  value,
-  onChange,
   required = true,
 }: {
   id: string;
   label: string;
   defaultValue?: string;
-  value?: string;
-  onChange?: (value: string) => void;
   required?: boolean;
 }) {
   return (
@@ -116,9 +107,7 @@ function Field({
         name={id}
         type="text"
         required={required}
-        value={value}
-        defaultValue={onChange ? undefined : defaultValue}
-        onChange={onChange ? (event) => onChange(event.target.value) : undefined}
+        defaultValue={defaultValue}
         className={inputClass}
       />
     </div>

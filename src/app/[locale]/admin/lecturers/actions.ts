@@ -3,17 +3,28 @@
 import { getTranslations } from "next-intl/server";
 import { revalidateLocalized } from "@/lib/revalidate";
 import { redirect } from "@/i18n/redirect";
-import { parseUuid } from "@/lib/form-input";
+import { isUuid, parseUuid } from "@/lib/form-input";
 import {
   lecturerWriteErrorMessage,
   parseLecturerForm,
 } from "@/lib/lecturer-fields";
+import {
+  LECTURER_PHOTO_BUCKET,
+  LECTURER_PHOTO_MAX_BYTES,
+  lecturerPhotoContentType,
+  lecturerPhotoExtension,
+} from "@/lib/lecturer-photo";
 import { requireAdmin } from "@/lib/require-auth";
 import { createServiceClient } from "@/lib/supabase/service";
 
 export type LecturerActionState = {
   error?: string;
   success?: string;
+};
+
+export type LecturerPhotoUploadState = {
+  url?: string;
+  error?: string;
 };
 
 function revalidateLecturerPaths(id?: string) {
@@ -77,4 +88,41 @@ export async function updateLecturer(
 
   revalidateLecturerPaths(id.id);
   return { success: t("lecturerSaved") };
+}
+
+export async function uploadLecturerPhoto(
+  formData: FormData,
+): Promise<LecturerPhotoUploadState> {
+  await requireAdmin();
+  const t = await getTranslations("admin.errors");
+  const file = formData.get("file");
+  if (!(file instanceof File) || file.size === 0) {
+    return { error: t("photoType") };
+  }
+  if (file.size > LECTURER_PHOTO_MAX_BYTES) {
+    return { error: t("photoSize") };
+  }
+  const ext = lecturerPhotoExtension(file);
+  if (!ext) {
+    return { error: t("photoType") };
+  }
+
+  const lecturerId = String(formData.get("lecturer_id") ?? "");
+  const folder = isUuid(lecturerId) ? lecturerId : "new";
+  const path = `lecturers/${folder}/${crypto.randomUUID()}.${ext}`;
+  const supabase = createServiceClient();
+  const { error } = await supabase.storage
+    .from(LECTURER_PHOTO_BUCKET)
+    .upload(path, file, {
+      cacheControl: "3600",
+      contentType: file.type || lecturerPhotoContentType(ext),
+      upsert: false,
+    });
+  if (error) {
+    console.error("Upload lecturer photo failed:", error);
+    return { error: t("photoUpload") };
+  }
+
+  const { data } = supabase.storage.from(LECTURER_PHOTO_BUCKET).getPublicUrl(path);
+  return { url: data.publicUrl };
 }
