@@ -15,7 +15,9 @@ import {
   type ProgramDetail,
   type ProgramSession,
 } from "@/lib/catalog";
+import { intlLocale } from "@/i18n/dates";
 import { descriptionFromFields } from "@/lib/seo";
+import { phoneHref } from "@/lib/site";
 import { createClient } from "@/lib/supabase/server";
 import { ProgramRegisterForm } from "./register-form";
 
@@ -103,24 +105,27 @@ export default async function ProgramDetailPage({ params }: Props) {
 
       <h1 className="mt-4 text-3xl sm:text-5xl">{program.title}</h1>
 
-      {comingSoon ? null : (
-        <dl className="mt-6 space-y-2 text-sm text-ink-muted">
-          <Fact label={t("format")} value={translatedFormatLabel(program.format, t)} />
-          {dateLine ? <Fact label={t("dates")} value={dateLine} /> : null}
-          {program.duration_text ? (
-            <Fact label={t("duration")} value={program.duration_text} />
-          ) : null}
-          {program.registration_deadline ? (
-            <Fact
-              label={t("deadline")}
-              value={formatDate(program.registration_deadline, locale) ?? undefined}
-            />
-          ) : null}
-          {showLocation ? (
-            <Fact label={t("location")} value={program.location ?? undefined} />
-          ) : null}
-        </dl>
-      )}
+      <dl className="mt-6 space-y-2 text-sm text-ink-muted">
+        {comingSoon ? null : (
+          <>
+            <Fact label={t("format")} value={translatedFormatLabel(program.format, t)} />
+            {dateLine ? <Fact label={t("dates")} value={dateLine} /> : null}
+            {program.duration_text ? (
+              <Fact label={t("duration")} value={program.duration_text} />
+            ) : null}
+            {program.registration_deadline ? (
+              <Fact
+                label={t("deadline")}
+                value={formatDate(program.registration_deadline, locale) ?? undefined}
+              />
+            ) : null}
+            {showLocation ? (
+              <Fact label={t("location")} value={program.location ?? undefined} />
+            ) : null}
+          </>
+        )}
+        <PriceFact price={program.price} locale={locale} t={t} />
+      </dl>
 
       <div className="mt-8">
         <RegisterCta
@@ -253,6 +258,49 @@ function Fact({ label, value }: { label: string; value?: string | null }) {
     <div className="flex flex-wrap gap-x-3">
       <dt className="text-ink">{label}</dt>
       <dd>{value}</dd>
+    </div>
+  );
+}
+
+function hasDisplayPrice(price: number | null): price is number {
+  return price != null && price > 0;
+}
+
+function formatProgramPrice(price: number, locale: string) {
+  return new Intl.NumberFormat(intlLocale(locale), {
+    minimumFractionDigits: Number.isInteger(price) ? 0 : 2,
+    maximumFractionDigits: 2,
+  }).format(price);
+}
+
+function PriceFact({
+  price,
+  locale,
+  t,
+}: {
+  price: number | null;
+  locale: string;
+  t: ProgramsT;
+}) {
+  const value = hasDisplayPrice(price)
+    ? formatProgramPrice(price, locale)
+    : t("free");
+
+  return (
+    <div>
+      <div className="flex flex-wrap gap-x-3">
+        <dt className="text-ink">{t("price")}</dt>
+        <dd>{value}</dd>
+      </div>
+      <p className="mt-1 text-xs text-ink-muted">
+        {t.rich("paymentNote", {
+          phone: (chunks) => (
+            <a className="text-ink hover:text-accent" href={phoneHref()}>
+              {chunks}
+            </a>
+          ),
+        })}
+      </p>
     </div>
   );
 }

@@ -158,13 +158,22 @@ export type ProgramDetail = {
   location: string | null;
   max_participants: number | null;
   status: string;
+  price: number | null;
   lecturer: LecturerSummary | null;
   sessions: ProgramSession[];
   registeredCount: number | null;
 };
 
 const programDetailFields =
-  "id, type, title, title_ka, slug, short_description, short_description_ka, full_description, full_description_ka, target_audience, target_audience_ka, objectives, objectives_ka, learning_outcomes, learning_outcomes_ka, duration_text, start_date, end_date, registration_deadline, format, location, lecturer_id, max_participants, status";
+  "id, type, title, title_ka, slug, short_description, short_description_ka, full_description, full_description_ka, target_audience, target_audience_ka, objectives, objectives_ka, learning_outcomes, learning_outcomes_ka, duration_text, start_date, end_date, registration_deadline, format, location, lecturer_id, max_participants, status, price";
+
+function parseProgramPrice(value: unknown): number | null {
+  if (value == null || value === "") {
+    return null;
+  }
+  const price = typeof value === "number" ? value : Number(value);
+  return Number.isFinite(price) ? price : null;
+}
 
 export const getProgramBySlug = cache(async function getProgramBySlug(
   slug: string,
@@ -246,6 +255,7 @@ export const getProgramBySlug = cache(async function getProgramBySlug(
       location: program.location,
       max_participants: program.max_participants,
       status: program.status,
+      price: parseProgramPrice(program.price),
       lecturer: lecturerResult.data ?? null,
       sessions: rowsOrEmptySync(sessionsResult.data, sessionsResult.error),
       registeredCount,
