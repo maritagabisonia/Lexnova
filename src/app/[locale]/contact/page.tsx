@@ -73,7 +73,6 @@ export default async function ContactPage() {
       <section className="border-t border-ink/10 bg-paper-muted/50">
         <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
           <h2 className="text-3xl">{t("faqTitle")}</h2>
-          <p className="mt-2 text-sm text-ink-muted">{t("faqLead")}</p>
           <div className="mt-8">
             <ContactFaq />
           </div>
