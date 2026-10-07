@@ -79,7 +79,6 @@ export default async function ProgramDetailPage({ params }: Props) {
   const showLocation =
     !comingSoon && program.format !== "online" && Boolean(program.location);
   const dateLine = comingSoon ? null : programDateLine(program, t, locale);
-  const capacityLine = comingSoon ? null : programCapacityLine(program, t);
 
   return (
     <article className="mx-auto w-full max-w-3xl flex-1 px-4 py-16 sm:px-6">
@@ -120,7 +119,6 @@ export default async function ProgramDetailPage({ params }: Props) {
           {showLocation ? (
             <Fact label={t("location")} value={program.location ?? undefined} />
           ) : null}
-          {capacityLine ? <Fact label={t("places")} value={capacityLine} /> : null}
         </dl>
       )}
 
@@ -266,19 +264,6 @@ function programDateLine(program: ProgramDetail, t: ProgramsT, locale: string) {
     return t("dateRange", { start, end });
   }
   return start ? t("startsOn", { date: start }) : end ? t("endsOn", { date: end }) : null;
-}
-
-function programCapacityLine(program: ProgramDetail, t: ProgramsT) {
-  if (!program.max_participants) {
-    return null;
-  }
-  if (program.registeredCount == null) {
-    return t("upToPlaces", { count: program.max_participants });
-  }
-  return t("placesFilled", {
-    filled: program.registeredCount,
-    total: program.max_participants,
-  });
 }
 
 function LecturerSection({
