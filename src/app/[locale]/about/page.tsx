@@ -1,15 +1,9 @@
 import { getTranslations } from "next-intl/server";
+import {
+  getAboutTeamLecturers,
+  type AboutTeamLecturer,
+} from "@/lib/catalog";
 import { seoMetadata } from "@/lib/page-metadata";
-
-function PlaceholderComment({ name }: { name: string }) {
-  return (
-    <span
-      dangerouslySetInnerHTML={{
-        __html: `<!-- PLACEHOLDER: ${name} — replace this copy -->`,
-      }}
-    />
-  );
-}
 
 const coreAreaKeys = [
   "tax",
@@ -39,43 +33,65 @@ const distinctiveAreaKeys = [
   "culturalHeritage",
 ] as const;
 
-// Placeholder portraits. Keep the section, but do not render it until real
-// team members are ready to publish.
-const SHOW_TEAM = false;
-
 export async function generateMetadata() {
   return seoMetadata("about");
 }
 
+function lecturerInitials(name: string) {
+  return name
+    .split(/\s+/)
+    .filter(Boolean)
+    .slice(0, 2)
+    .map((part) => part[0]?.toUpperCase() ?? "")
+    .join("");
+}
+
+function AboutTeamCard({ lecturer }: { lecturer: AboutTeamLecturer }) {
+  const initials = lecturerInitials(lecturer.full_name);
+
+  return (
+    <article className="flex h-full flex-col border border-ink/10 bg-paper p-5">
+      {lecturer.photo_url ? (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={lecturer.photo_url}
+          alt={lecturer.full_name}
+          className="aspect-[4/3] w-full object-cover"
+        />
+      ) : (
+        <div
+          className="flex aspect-[4/3] w-full items-center justify-center bg-paper-muted text-2xl font-serif tracking-wide text-ink-muted"
+          aria-hidden="true"
+        >
+          {initials}
+        </div>
+      )}
+      <h3 className="mt-4 text-xl">{lecturer.full_name}</h3>
+      {lecturer.title ? (
+        <p className="mt-1 text-sm tracking-wide text-accent">{lecturer.title}</p>
+      ) : null}
+      {lecturer.bio ? (
+        <p className="mt-3 text-sm leading-relaxed text-ink-muted">{lecturer.bio}</p>
+      ) : null}
+    </article>
+  );
+}
+
 async function AboutTeamSection() {
   const t = await getTranslations("about");
-  const team = ["amelia", "julian", "noor"] as const;
+  const team = await getAboutTeamLecturers();
+
+  if (team.length === 0) {
+    return null;
+  }
 
   return (
     <section className="border-t border-ink/10">
       <div className="mx-auto w-full max-w-6xl px-4 py-16 sm:px-6">
         <h2 className="text-3xl">{t("teamTitle")}</h2>
-        <PlaceholderComment name="Team" />
         <div className="mt-8 grid gap-6 md:grid-cols-3">
-          {team.map((person) => (
-            <article
-              key={person}
-              className="flex h-full flex-col border border-ink/10 bg-paper p-5"
-            >
-              <div
-                className="flex aspect-[4/3] w-full items-center justify-center bg-paper-muted text-2xl font-serif tracking-wide text-ink-muted"
-                aria-hidden="true"
-              >
-                {t(`team.${person}.initials`)}
-              </div>
-              <h3 className="mt-4 text-xl">{t(`team.${person}.name`)}</h3>
-              <p className="mt-1 text-sm tracking-wide text-accent">
-                {t(`team.${person}.role`)}
-              </p>
-              <p className="mt-3 text-sm leading-relaxed text-ink-muted">
-                {t(`team.${person}.bio`)}
-              </p>
-            </article>
+          {team.map((lecturer) => (
+            <AboutTeamCard key={lecturer.id} lecturer={lecturer} />
           ))}
         </div>
       </div>
@@ -157,7 +173,7 @@ export default async function AboutPage() {
         </div>
       </section>
 
-      {SHOW_TEAM ? <AboutTeamSection /> : null}
+      <AboutTeamSection />
     </div>
   );
 }

@@ -58,7 +58,7 @@ export const getAdminLecturer = cache(async function getAdminLecturer(
     const supabase = await createClient();
     const { data, error } = await supabase
       .from("lecturers")
-      .select("id, full_name, title, photo_url, bio, created_at")
+      .select("id, full_name, title, photo_url, bio, show_on_about, created_at")
       .eq("id", id)
       .maybeSingle();
     if (error || !data) {
@@ -70,6 +70,7 @@ export const getAdminLecturer = cache(async function getAdminLecturer(
       title: data.title ?? "",
       photo_url: data.photo_url ?? "",
       bio: data.bio ?? "",
+      show_on_about: Boolean(data.show_on_about),
       created_at: formatTimestamp(data.created_at ?? null, locale),
     };
   } catch {
