@@ -28,10 +28,16 @@ export function LecturerForm({
   const action = mode === "create" ? createLecturer : updateLecturer;
   const [state, formAction, pending] = useActionState(action, initialState);
   const [photoUploading, setPhotoUploading] = useState(false);
+  const [showOnAbout, setShowOnAbout] = useState(lecturer.show_on_about);
 
   return (
     <form action={formAction} className="mt-8 max-w-3xl space-y-6">
       {lecturer.id ? <input type="hidden" name="id" value={lecturer.id} /> : null}
+      <input
+        type="hidden"
+        name="show_on_about"
+        value={showOnAbout ? "true" : "false"}
+      />
       <AuthMessage state={state} />
 
       <Field id="full_name" label={t("fullName")} defaultValue={lecturer.full_name} />
@@ -57,6 +63,35 @@ export function LecturerForm({
           className={textareaClass}
         />
       </div>
+
+      <fieldset>
+        <legend className="mb-2 block text-sm text-ink">{t("showOnAbout")}</legend>
+        <div className="flex gap-2" role="group" aria-label={t("showOnAbout")}>
+          {(
+            [
+              { value: true, label: t("showOnAboutShow") },
+              { value: false, label: t("showOnAboutHide") },
+            ] as const
+          ).map((option) => {
+            const selected = showOnAbout === option.value;
+            return (
+              <button
+                key={String(option.value)}
+                type="button"
+                aria-pressed={selected}
+                onClick={() => setShowOnAbout(option.value)}
+                className={`min-h-11 rounded-sm px-4 text-sm ${
+                  selected
+                    ? "bg-ink text-paper"
+                    : "border border-ink/15 text-ink hover:border-accent"
+                }`}
+              >
+                {option.label}
+              </button>
+            );
+          })}
+        </div>
+      </fieldset>
 
       {mode === "edit" ? (
         <dl className="grid gap-3 text-sm text-ink-muted sm:grid-cols-2">

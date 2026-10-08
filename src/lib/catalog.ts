@@ -131,6 +131,19 @@ export type LecturerSummary = {
   title: string | null;
 };
 
+export type AboutTeamLecturer = LecturerSummary & { id: string };
+
+export async function getAboutTeamLecturers() {
+  const supabase = await createClient();
+  return rowsOrEmpty<AboutTeamLecturer>(
+    supabase
+      .from("lecturers")
+      .select("id, full_name, photo_url, bio, title")
+      .eq("show_on_about", true)
+      .order("full_name", { ascending: true }),
+  );
+}
+
 export type ProgramSession = {
   id: string;
   session_date: string;
