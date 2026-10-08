@@ -49,11 +49,28 @@ export default async function NewsArticlePage({ params }: Props) {
         </Link>
       </p>
 
-      <CoverImage
-        src={article.cover_image_url}
-        alt={article.title}
-        className="mt-6 aspect-[16/9] w-full"
-      />
+      {article.images.length > 1 ? (
+        <ul
+          aria-label={t("gallery")}
+          className="mt-6 grid gap-3 sm:grid-cols-2"
+        >
+          {article.images.map((src, index) => (
+            <li key={`${src}-${index}`}>
+              <CoverImage
+                src={src}
+                alt={index === 0 ? article.title : ""}
+                className="aspect-[16/9] w-full"
+              />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <CoverImage
+          src={article.images[0] ?? article.cover_image_url}
+          alt={article.title}
+          className="mt-6 aspect-[16/9] w-full"
+        />
+      )}
 
       {published || article.author ? (
         <p className="mt-6 text-xs tracking-wide text-ink-muted">

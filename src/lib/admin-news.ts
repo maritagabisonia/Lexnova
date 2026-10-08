@@ -98,11 +98,31 @@ export const getAdminArticle = cache(async function getAdminArticle(
     if (error || !data) {
       return null;
     }
+    const { data: imageRows, error: imagesError } = await supabase
+      .from("news_images")
+      .select("id, url, sort_order")
+      .eq("news_id", id)
+      .order("sort_order", { ascending: true })
+      .order("created_at", { ascending: true });
+    if (imagesError) {
+      console.error("Admin news images failed:", imagesError);
+    }
+    const images =
+      imageRows && imageRows.length > 0
+        ? imageRows.map((row) => ({
+            id: row.id,
+            url: row.url,
+            sort_order: row.sort_order,
+          }))
+        : data.cover_image_url
+          ? [{ url: data.cover_image_url, sort_order: 0 }]
+          : [];
     return {
       id: data.id,
       title: data.title ?? "",
       slug: data.slug ?? "",
-      cover_image_url: data.cover_image_url ?? "",
+      cover_image_url: data.cover_image_url ?? images[0]?.url ?? "",
+      images,
       short_description: data.short_description ?? "",
       content: data.content ?? "",
       author: data.author ?? "",

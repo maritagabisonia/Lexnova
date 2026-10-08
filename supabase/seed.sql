@@ -336,3 +336,13 @@ If you attended and would like a certificate of completion reissued, email hello
     true,
     '2026-05-20 14:00:00+00'
   );
+
+insert into public.news_images (news_id, url, sort_order)
+select id, cover_image_url, 0
+from public.news_articles
+where cover_image_url is not null
+  and btrim(cover_image_url) <> ''
+  and not exists (
+    select 1 from public.news_images as images
+    where images.news_id = news_articles.id
+  );
