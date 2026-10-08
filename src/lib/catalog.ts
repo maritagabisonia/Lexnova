@@ -305,8 +305,31 @@ export type NewsArticle = {
   author: string | null;
   published_at: string | null;
   cover_image_url: string | null;
+  images: string[];
   relatedProgram: ProgramSummary | null;
 };
+
+async function getNewsImageUrls(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  newsId: string,
+  fallback: string | null,
+) {
+  const { data, error } = await supabase
+    .from("news_images")
+    .select("url")
+    .eq("news_id", newsId)
+    .order("sort_order", { ascending: true })
+    .order("created_at", { ascending: true });
+  if (error) {
+    console.error("News images query failed:", error);
+    return fallback ? [fallback] : [];
+  }
+  const urls = (data ?? []).map((row) => row.url).filter(Boolean);
+  if (urls.length === 0 && fallback) {
+    return [fallback];
+  }
+  return urls;
+}
 
 export const getNewsBySlug = cache(async function getNewsBySlug(
   slug: string,
@@ -340,6 +363,12 @@ export const getNewsBySlug = cache(async function getNewsBySlug(
       }
     }
 
+    const images = await getNewsImageUrls(
+      supabase,
+      data.id,
+      data.cover_image_url,
+    );
+
     return {
       id: data.id,
       title: data.title,
@@ -348,7 +377,8 @@ export const getNewsBySlug = cache(async function getNewsBySlug(
       content: data.content,
       author: data.author,
       published_at: data.published_at,
-      cover_image_url: data.cover_image_url,
+      cover_image_url: images[0] ?? data.cover_image_url,
+      images,
       relatedProgram,
     };
   } catch {

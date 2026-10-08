@@ -26,11 +26,18 @@ export function mapRelatedProgramOptions(
     .sort((a, b) => a.title.localeCompare(b.title, locale, { sensitivity: "base" }));
 }
 
+export type NewsImageValue = {
+  id?: string;
+  url: string;
+  sort_order: number;
+};
+
 export type NewsFormValues = {
   id?: string;
   title: string;
   slug: string;
   cover_image_url: string;
+  images: NewsImageValue[];
   short_description: string;
   content: string;
   author: string;
@@ -44,6 +51,7 @@ export const emptyNewsFormValues: NewsFormValues = {
   title: "",
   slug: "",
   cover_image_url: "",
+  images: [],
   short_description: "",
   content: "",
   author: "",

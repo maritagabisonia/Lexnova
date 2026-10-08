@@ -13,6 +13,7 @@ import {
   updateArticle,
   type NewsActionState,
 } from "./actions";
+import { NewsImagesField } from "./news-images-field";
 
 const inputClass =
   "min-h-11 w-full rounded-sm border border-ink/15 bg-paper px-3 py-2 text-ink outline-none focus:border-accent";
@@ -36,7 +37,7 @@ export function ArticleForm({
   const [slug, setSlug] = useState(article.slug);
   const [slugLocked, setSlugLocked] = useState(mode === "edit");
   const [published, setPublished] = useState(article.published);
-  const [coverUrl, setCoverUrl] = useState(article.cover_image_url);
+  const [imagesUploading, setImagesUploading] = useState(false);
   const displayedSlug = slugLocked ? slug : slugify(title);
 
   return (
@@ -120,17 +121,11 @@ export function ArticleForm({
         </select>
       </div>
 
-      <Field
-        id="cover_image_url"
-        label={t("coverImageUrl")}
-        value={coverUrl}
-        onChange={setCoverUrl}
-        required={false}
+      <NewsImagesField
+        articleId={article.id}
+        initialImages={article.images ?? []}
+        onUploadingChange={setImagesUploading}
       />
-      {coverUrl ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img src={coverUrl} alt="" className="aspect-[16/9] w-full max-w-md object-cover" />
-      ) : null}
 
       <TextArea
         id="short_description"
@@ -166,7 +161,7 @@ export function ArticleForm({
 
       <button
         type="submit"
-        disabled={pending}
+        disabled={pending || imagesUploading}
         className="inline-flex min-h-11 items-center justify-center rounded-sm bg-ink px-6 text-sm text-paper transition-colors hover:bg-ink-muted disabled:opacity-60"
       >
         {pending
